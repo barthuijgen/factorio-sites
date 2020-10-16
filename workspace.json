@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "projects": {
+    "blueprints": {
+      "root": "apps/blueprints",
+      "sourceRoot": "apps/blueprints",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/blueprints",
+            "outputPath": "dist/apps/blueprints"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "blueprints:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "blueprints:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "blueprints:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/blueprints/**/*.{ts,tsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/blueprints/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "blueprints-e2e": {
+      "root": "apps/blueprints-e2e",
+      "sourceRoot": "apps/blueprints-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/blueprints-e2e/cypress.json",
+            "tsConfig": "apps/blueprints-e2e/tsconfig.e2e.json",
+            "devServerTarget": "blueprints:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "blueprints:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/blueprints-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/next"
+  },
+  "schematics": {
+    "@nrwl/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "style": "@emotion/styled",
+        "linter": "eslint"
+      }
+    }
+  },
+  "defaultProject": "blueprints"
+}
