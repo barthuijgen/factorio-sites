@@ -14,8 +14,11 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strict": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@factorio-sites/generate-bp-image": ["libs/generate-bp-image/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -29,6 +29,12 @@
     "blueprints-e2e": {
       "tags": [],
       "implicitDependencies": ["blueprints"]
+    },
+    "generate-bp-image": {
+      "tags": []
+    },
+    "blueprint-image-function": {
+      "tags": []
     }
   }
 }
