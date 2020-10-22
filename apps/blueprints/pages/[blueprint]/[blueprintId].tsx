@@ -142,7 +142,7 @@ export const Index: NextPage<IndexProps> = ({
       <Panel
         title={image_exists ? undefined : "Image"}
         gridColumn={chakraResponsive({ mobile: "1", desktop: "2" })}
-        gridRow={chakraResponsive({ mobile: "1", desktop: undefined })}
+        gridRow={chakraResponsive({ mobile: "1", desktop: null })}
       >
         {renderImage()}
       </Panel>
@@ -153,7 +153,7 @@ export const Index: NextPage<IndexProps> = ({
       >
         <Markdown>{blueprint_page.description_markdown}</Markdown>
       </Panel>
-      {selected.type === "blueprint" && data && (
+      {selected.type === "blueprint" && data?.blueprint && (
         <Panel
           title={(<span>Entities for {BBCode.toReact(data.blueprint.label)}</span>) as any}
           gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}

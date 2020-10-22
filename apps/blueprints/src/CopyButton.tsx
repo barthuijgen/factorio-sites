@@ -12,7 +12,7 @@ export const CopyButton: React.FC<Omit<ButtonProps, "children"> & { content: str
     <Button
       {...props}
       isLoading={loading}
-      leftIcon={icon}
+      leftIcon={icon ?? undefined}
       variantColor={icon === "small-close" ? "red" : "green"}
       onClick={() => {
         setLoading(true);

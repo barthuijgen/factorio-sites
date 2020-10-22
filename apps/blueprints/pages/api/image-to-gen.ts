@@ -25,6 +25,8 @@ const getOneMessage = async (): Promise<BlueprintEntry> => {
       const data = JSON.parse(message.data.toString());
       const blueprint = await getBlueprintById(data.blueprintId);
 
+      if (!blueprint) return message.ack();
+
       if (await hasBlueprintImage(blueprint.image_hash)) {
         console.log(`Blueprint ${data.blueprintId} image already exists ${blueprint.image_hash}`);
         return message.ack();
@@ -43,8 +45,9 @@ const getOneMessage = async (): Promise<BlueprintEntry> => {
 const handler: NextApiHandler = async (req, res) => {
   // Allow the url to be used in the blueprint editor
   if (
-    req.headers.origin === "https://teoxoy.github.io" ||
-    req.headers.origin.startsWith("http://localhost")
+    req.headers.origin &&
+    (req.headers.origin === "https://teoxoy.github.io" ||
+      req.headers.origin.startsWith("http://localhost"))
   ) {
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
   }

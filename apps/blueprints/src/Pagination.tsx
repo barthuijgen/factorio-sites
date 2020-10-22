@@ -11,7 +11,7 @@ interface PaginationProps {
 
 const PaginationLink: React.FC<PaginationProps> = ({ page }) => {
   const router = useRouter();
-  const query = { ...router.query, page };
+  const query: Record<string, string> = { ...router.query, page: page.toString() };
   const href =
     "?" +
     Object.keys(query)

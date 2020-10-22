@@ -21,8 +21,8 @@ export function chakraResponsive({
   mobile,
   desktop,
 }: {
-  mobile: string;
-  desktop: string;
-}): string[] {
+  mobile: string | null;
+  desktop: string | null;
+}): Array<string | null> {
   return [mobile, mobile, desktop, desktop];
 }
