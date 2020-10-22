@@ -17,7 +17,11 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@factorio-sites/generate-bp-image": ["libs/generate-bp-image/src/index.ts"]
+      "@factorio-sites/generate-bp-image": ["libs/generate-bp-image/src/index.ts"],
+      "@factorio-sites/database": ["libs/database/src/index.ts"],
+      "@factorio-sites/node-utils": ["libs/node-utils/src/index.ts"],
+      "@factorio-sites/common-utils": ["libs/common-utils/src/index.ts"],
+      "@factorio-sites/web-utils": ["libs/web-utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

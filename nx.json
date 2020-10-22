@@ -35,6 +35,21 @@
     },
     "blueprint-image-function": {
       "tags": []
+    },
+    "factorioprints-scraper": {
+      "tags": []
+    },
+    "database": {
+      "tags": []
+    },
+    "node-utils": {
+      "tags": []
+    },
+    "common-utils": {
+      "tags": []
+    },
+    "web-utils": {
+      "tags": []
     }
   }
 }

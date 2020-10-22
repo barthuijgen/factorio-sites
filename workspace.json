@@ -147,6 +147,140 @@
           }
         }
       }
+    },
+    "factorioprints-scraper": {
+      "root": "apps/factorioprints-scraper",
+      "sourceRoot": "apps/factorioprints-scraper/src",
+      "projectType": "application",
+      "prefix": "factorioprints-scraper",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/factorioprints-scraper",
+            "main": "apps/factorioprints-scraper/src/main.ts",
+            "tsConfig": "apps/factorioprints-scraper/tsconfig.app.json",
+            "assets": ["apps/factorioprints-scraper/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/factorioprints-scraper/src/environments/environment.ts",
+                  "with": "apps/factorioprints-scraper/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "factorioprints-scraper:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/factorioprints-scraper/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/factorioprints-scraper/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "database": {
+      "root": "libs/database",
+      "sourceRoot": "libs/database/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/database/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/database/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "node-utils": {
+      "root": "libs/node-utils",
+      "sourceRoot": "libs/node-utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/node-utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/node-utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "common-utils": {
+      "root": "libs/common-utils",
+      "sourceRoot": "libs/common-utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/common-utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/common-utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "web-utils": {
+      "root": "libs/web-utils",
+      "sourceRoot": "libs/web-utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/web-utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/web-utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

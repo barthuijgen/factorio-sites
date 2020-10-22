@@ -14,6 +14,7 @@ RUN yarn nx build blueprints
 FROM node:14-slim
 
 WORKDIR /usr/src/app
+
 COPY apps/blueprints/prod.package.json ./package.json
 COPY yarn.lock .
 
