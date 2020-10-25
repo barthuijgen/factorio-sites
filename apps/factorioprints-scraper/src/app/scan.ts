@@ -6,7 +6,7 @@ import * as WebSocket from "ws";
 
 const fsWriteFile = promisify(fs.writeFile);
 const fsExists = promisify(fs.exists);
-const CACHE_DIR = path.join(__dirname, "../../../.cache");
+const CACHE_DIR = path.join(__dirname, "../../../.cache/factorioprints-data");
 
 const getMostFavoriteRequestObject = ({
   lastId,
@@ -34,7 +34,7 @@ const getBlueprintRequestObject = ({ id }: { id: string }) => ({
 });
 
 const openWebsocket = (): Promise<WebSocket> => {
-  const ws = new WebSocket("wss://s-usc1c-nss-239.firebaseio.com/.ws?v=5&ns=facorio-blueprints");
+  const ws = new WebSocket("wss://s-usc1c-nss-238.firebaseio.com/.ws?v=5&ns=facorio-blueprints");
   return new Promise((resolve) => {
     ws.on("open", function open() {
       resolve(ws);
@@ -48,7 +48,7 @@ const openWebsocket = (): Promise<WebSocket> => {
   });
 };
 
-export async function scanFactorioPrints() {
+export async function scanFactorioPrints(page_from: number, page_to: number) {
   const ws = await openWebsocket();
 
   const sendMessage = (data: any) => {
@@ -93,7 +93,7 @@ export async function scanFactorioPrints() {
   };
 
   const getMostFavorited = async (
-    page = 1,
+    page = page_from,
     reqObj: Parameters<typeof getMostFavoriteRequestObject>[0]
   ) => {
     const data = await sendMessageAndWaitForResponse(
@@ -152,7 +152,7 @@ export async function scanFactorioPrints() {
       console.error(reason);
     });
 
-    if (page < 3) {
+    if (page < page_to) {
       const lastBp = blueprints[blueprints.length - 1];
       getMostFavorited(page + 1, {
         lastId: lastBp.id,

@@ -1,4 +1,5 @@
 import { writeToDatastore } from "./app/populate-db";
+import { scanFactorioPrints } from "./app/scan";
 
 // async function writeTestBP() {
 //   const source =
@@ -22,7 +23,7 @@ import { writeToDatastore } from "./app/populate-db";
 // }
 
 async function main() {
-  // scanFactorioPrints();
+  // scanFactorioPrints(1, 3);
   writeToDatastore();
   // writeTestBP();
 }

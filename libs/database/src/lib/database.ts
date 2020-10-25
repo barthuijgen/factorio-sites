@@ -429,7 +429,6 @@ async function createBlueprintPage(
     {
       name: "updated_at",
       value: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
-      excludeFromIndexes: true,
     },
     { name: "factorioprints_id", value: extraInfo.factorioprints_id || null },
   ];
@@ -509,7 +508,7 @@ export async function saveBlueprintFromFactorioprints(
   };
 
   if (parsed.data.blueprint) {
-    console.log(`string has one blueprint...`);
+    console.log("string has one blueprint...");
     const { insertedId } = await createBlueprint(parsed.data.blueprint, extraInfo).catch(
       (error) => {
         if (error instanceof DatastoreExistsError) {
@@ -520,7 +519,7 @@ export async function saveBlueprintFromFactorioprints(
     );
     await createBlueprintPage("blueprint", insertedId, extraInfoPage);
   } else if (parsed.data.blueprint_book) {
-    console.log(`string has a blueprint book...`);
+    console.log("string has a blueprint book...");
     const { insertedId } = await createBlueprintBook(parsed.data.blueprint_book, extraInfo);
     await createBlueprintPage("blueprint_book", insertedId, extraInfoPage);
   }
