@@ -30,9 +30,6 @@
       "tags": [],
       "implicitDependencies": ["blueprints"]
     },
-    "generate-bp-image": {
-      "tags": []
-    },
     "blueprint-image-function": {
       "tags": []
     },

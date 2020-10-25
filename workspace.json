@@ -77,27 +77,6 @@
         }
       }
     },
-    "generate-bp-image": {
-      "root": "libs/generate-bp-image",
-      "sourceRoot": "libs/generate-bp-image/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/generate-bp-image/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/generate-bp-image/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "blueprint-image-function": {
       "root": "apps/blueprint-image-function",
       "sourceRoot": "apps/blueprint-image-function/src",
