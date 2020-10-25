@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { jsx, css } from "@emotion/core";
 import { NextPage, NextPageContext } from "next";
 import BBCode from "bbcode-to-react";
-import { Button, Grid } from "@chakra-ui/core";
+import { Button, Grid, Image } from "@chakra-ui/core";
 import {
   BlueprintBookEntry,
   BlueprintEntry,
@@ -174,9 +174,12 @@ export const Index: NextPage<IndexProps> = ({
                 .map(([entry_name, entry]) => (
                   <tr key={entry_name} css={{}}>
                     <td css={{ border: "1px solid #909090" }}>
-                      <img
+                      <Image
                         alt={entry_name.replace(/-/g, " ")}
                         src={`https://factorioprints.com/icons/${entry_name}.png`}
+                        fallbackSrc="https://storage.googleapis.com/factorio-blueprints-assets/error-icon.png"
+                        width="32px"
+                        height="32px"
                       />
                     </td>
                     <td css={{ padding: "5px 10px", border: "1px solid #909090" }}>{entry_name}</td>
