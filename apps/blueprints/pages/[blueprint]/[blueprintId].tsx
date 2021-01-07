@@ -1,9 +1,9 @@
 /** @jsx jsx */
 import React, { ReactNode, useEffect, useState } from "react";
-import { jsx, css } from "@emotion/core";
+import { jsx, css } from "@emotion/react";
 import { NextPage, NextPageContext } from "next";
 import BBCode from "bbcode-to-react";
-import { Button, Grid, Image } from "@chakra-ui/core";
+import { Button, Grid, Image } from "@chakra-ui/react";
 import {
   BlueprintBookEntry,
   BlueprintEntry,
@@ -67,7 +67,8 @@ export const Index: NextPage<IndexProps> = ({
         } else {
           setData(null);
         }
-      });
+      })
+      .catch((reason) => console.error(reason));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHash]);
 
@@ -213,7 +214,7 @@ export const Index: NextPage<IndexProps> = ({
           ) : (
             <>
               <Button
-                variantColor="green"
+                colorScheme="green"
                 css={{ position: "absolute", right: "65px" }}
                 onClick={() => {
                   setShowJson(false);
@@ -231,7 +232,7 @@ export const Index: NextPage<IndexProps> = ({
           )
         ) : (
           <Button
-            variantColor="green"
+            colorScheme="green"
             onClick={() => {
               setShowJson(true);
               if (selected.type === "blueprint_book") {

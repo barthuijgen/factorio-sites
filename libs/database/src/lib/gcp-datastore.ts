@@ -1,4 +1,3 @@
-import { Storage } from "@google-cloud/storage";
 import { Datastore } from "@google-cloud/datastore";
 import { encodeBlueprint, hashString, parseBlueprintString } from "@factorio-sites/node-utils";
 import {
@@ -6,88 +5,16 @@ import {
   BlueprintBook,
   getBlueprintContentForImageHash,
 } from "@factorio-sites/common-utils";
-import { getBlueprintImageRequestTopic } from "./pubsub";
+import { getBlueprintImageRequestTopic } from "./gcp-pubsub";
+import { saveBlueprintString } from "./gcp-storage";
+import { BlueprintBookEntry, BlueprintEntry, BlueprintPageEntry } from "./types";
 
-// to dev on windows run: $env:GOOGLE_APPLICATION_CREDENTIALS="FULL_PATH"
-const storage = new Storage();
 const datastore = new Datastore();
-
-const BLUEPRINT_BUCKET = storage.bucket("blueprint-strings");
-const IMAGE_BUCKET = storage.bucket("blueprint-images");
 const BlueprintEntity = "Blueprint";
 const BlueprintBookEntity = "BlueprintBook";
 const BlueprintPageEntity = "BlueprintPage";
 const BlueprintStringEntity = "BlueprintString";
 const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
-
-interface BlueprintChild {
-  type: "blueprint";
-  id: string;
-  name: string;
-}
-interface BlueprintBookChild {
-  type: "blueprint_book";
-  id: string;
-  name: string;
-  children: ChildTree;
-}
-type ChildTree = Array<BlueprintChild | BlueprintBookChild>;
-
-export interface BlueprintEntry {
-  id: string;
-  label: string; // from source
-  description: string | null; // from source
-  game_version: number; // from source
-  blueprint_hash: string;
-  image_hash: string;
-  created_at: number;
-  updated_at: number;
-  tags: string[];
-  factorioprints_id?: string;
-  // BlueprintEntry->BlueprintString 1:m
-  // BlueprintEntry->BlueprintPageEntry n:m
-}
-
-export interface BlueprintBookEntry {
-  id: string;
-  label: string;
-  description?: string;
-  /** strings as keys of BlueprintEntry */
-  blueprint_ids: string[];
-  /** strings as keys of BlueprintBookEntry (currently unsupported) */
-  blueprint_book_ids: string[];
-  child_tree: ChildTree;
-  blueprint_hash: string;
-  created_at: number;
-  updated_at: number;
-  is_modded: boolean;
-  factorioprints_id?: string;
-  // BlueprintBook:BlueprintBook n:m
-  // BlueprintBook:BlueprintEntry 1:m
-}
-
-export interface BlueprintPageEntry {
-  id: string;
-  blueprint_id?: string;
-  blueprint_book_id?: string;
-  title: string;
-  description_markdown: string;
-  created_at: number;
-  updated_at: number;
-  factorioprints_id?: string;
-  // BlueprintPageEntry->BlueprintEntry 1:m
-  // BlueprintPageEntry->BlueprintBook 1:m
-}
-
-export interface BlueprintStringEntry {
-  blueprint_id: string;
-  blueprint_hash: string;
-  image_hash: string;
-  version: number;
-  changes_markdown: string;
-  created_at: Date;
-  // BlueprintString->BlueprintEntry m:1
-}
 
 class DatastoreExistsError extends Error {
   constructor(public existingId: string, message: string) {
@@ -129,35 +56,32 @@ export async function getBlueprintBookByHash(hash: string): Promise<BlueprintBoo
   return result[0] ? mapBlueprintBookEntityToObject(result[0]) : null;
 }
 
-async function createBlueprintBook(
+export async function createBlueprintBook(
   blueprintBook: BlueprintBook,
   extraInfo: { tags: string[]; created_at: number; updated_at: number; factorioprints_id: string }
-): Promise<{ insertedId: string; child_tree: ChildTree }> {
+): Promise<{ insertedId: string; child_tree: BlueprintBookEntry["child_tree"] }> {
   const string = await encodeBlueprint({ blueprint_book: blueprintBook });
   const blueprint_hash = hashString(string);
 
   const exists = await getBlueprintBookByHash(blueprint_hash);
   if (exists) {
-    throw new DatastoreExistsError(exists.id, "Blueprint book already exists");
+    const book = await getBlueprintBookById(exists.id);
+    if (!book) throw Error("this is impossible, just pleasing typescript");
+    return { insertedId: exists.id, child_tree: book.child_tree };
   }
 
   // Write string to google storage
-  await BLUEPRINT_BUCKET.file(blueprint_hash).save(string);
+  await saveBlueprintString(blueprint_hash, string);
 
   const blueprint_ids = [];
   const blueprint_book_ids = [];
-  const child_tree: ChildTree = [];
+  const child_tree: BlueprintBookEntry["child_tree"] = [];
 
   // Create the book's child objects
   for (let i = 0; i < blueprintBook.blueprints.length; i++) {
     const blueprint = blueprintBook.blueprints[i];
     if (blueprint.blueprint) {
-      const result = await createBlueprint(blueprint.blueprint, extraInfo).catch((error) => {
-        if (error instanceof DatastoreExistsError) {
-          console.log(`Blueprint already exists with id ${error.existingId}`);
-          return { insertedId: error.existingId };
-        } else throw error;
-      });
+      const result = await createBlueprint(blueprint.blueprint, extraInfo);
       child_tree.push({
         type: "blueprint",
         id: result.insertedId,
@@ -165,15 +89,7 @@ async function createBlueprintBook(
       });
       blueprint_ids.push(result.insertedId);
     } else if (blueprint.blueprint_book) {
-      const result = await createBlueprintBook(blueprint.blueprint_book, extraInfo).catch(
-        (error) => {
-          if (error instanceof DatastoreExistsError) {
-            console.log(`Blueprint book already exists with id ${error.existingId}`);
-            // TODO: query blueprint book to get child_tree
-            return { insertedId: error.existingId, child_tree: [] as ChildTree };
-          } else throw error;
-        }
-      );
+      const result = await createBlueprintBook(blueprint.blueprint_book, extraInfo);
       child_tree.push({
         type: "blueprint_book",
         id: result.insertedId,
@@ -299,11 +215,11 @@ export async function createBlueprint(
 
   const exists = await getBlueprintByHash(blueprint_hash);
   if (exists) {
-    throw new DatastoreExistsError(exists.id, "Blueprint already exists");
+    return { insertedId: exists.id };
   }
 
   // Write string to google storage
-  await BLUEPRINT_BUCKET.file(blueprint_hash).save(string);
+  await saveBlueprintString(blueprint_hash, string);
 
   // Write blueprint details to datastore
   const [result] = await datastore.insert({
@@ -362,15 +278,6 @@ export async function createBlueprint(
 
 export async function updateBlueprint(blueprint: BlueprintEntry) {
   datastore.save(mapBlueprintObjectToEntity(blueprint));
-}
-
-/*
- * BlueprintString
- */
-
-export async function getBlueprintStringByHash(hash: string): Promise<string | null> {
-  const [buffer] = await BLUEPRINT_BUCKET.file(hash).download();
-  return buffer ? buffer.toString() : null;
 }
 
 /*
@@ -453,21 +360,6 @@ async function createBlueprintPage(
   });
 
   console.log(`Created Blueprint Page`);
-}
-
-/*
- * BlueprintImage
- */
-
-export async function saveBlueprintImage(hash: string, image: Buffer): Promise<void> {
-  return IMAGE_BUCKET.file(`${hash}.webp`).save(image, {
-    contentType: "image/webp",
-  });
-}
-
-export async function hasBlueprintImage(hash: string): Promise<boolean> {
-  const [result] = await IMAGE_BUCKET.file(`${hash}.webp`).exists();
-  return result;
 }
 
 /*

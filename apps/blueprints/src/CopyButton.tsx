@@ -1,31 +1,49 @@
-import React, { useState } from "react";
-import { Button, ButtonProps } from "@chakra-ui/core";
+import React, { useMemo, useState } from "react";
+import { Button, ButtonProps } from "@chakra-ui/react";
+import { MdCheck, MdClose } from "react-icons/md";
+
+const SUCCESS_ICON_DURATION = 2000;
 
 export const CopyButton: React.FC<Omit<ButtonProps, "children"> & { content: string }> = ({
   content,
   ...props
 }) => {
   const [loading, setLoading] = useState(false);
-  const [icon, setIcon] = useState<"check" | "small-close" | null>(null);
+  const [icon, setIcon] = useState<"red" | "green" | null>(null);
+
+  const iconProps = useMemo(() => {
+    if (icon === "green") {
+      return {
+        colorScheme: "green",
+        leftIcon: <MdCheck />,
+      };
+    } else if (icon === "red") {
+      return {
+        colorScheme: "red",
+        leftIcon: <MdClose />,
+      };
+    } else {
+      return { colorScheme: "green" };
+    }
+  }, [icon]);
 
   return (
     <Button
       {...props}
       isLoading={loading}
-      leftIcon={icon ?? undefined}
-      variantColor={icon === "small-close" ? "red" : "green"}
+      {...iconProps}
       onClick={() => {
         setLoading(true);
         navigator.clipboard
           .writeText(content)
           .then(() => {
             setLoading(false);
-            setIcon("check");
-            setTimeout(() => setIcon(null), 2500);
+            setIcon("green");
+            setTimeout(() => setIcon(null), SUCCESS_ICON_DURATION);
           })
           .catch(() => {
             setLoading(false);
-            setIcon("small-close");
+            setIcon("red");
           });
       }}
     >

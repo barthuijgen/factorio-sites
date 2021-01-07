@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import { jsx, css, SerializedStyles } from "@emotion/core";
-import { Box, BoxProps } from "@chakra-ui/core";
+import { jsx, css, SerializedStyles } from "@emotion/react";
+import { Box, BoxProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 const panelStyles = css`

@@ -1,9 +1,9 @@
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx } from "@emotion/react";
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Box, BoxProps, Button } from "@chakra-ui/core";
+import { Box, BoxProps, Button } from "@chakra-ui/react";
 
 interface PaginationProps {
   page: number;
@@ -13,7 +13,7 @@ const PaginationLink: React.FC<PaginationProps> = ({ page }) => {
   const router = useRouter();
   const query: Record<string, string> = { ...router.query, page: page.toString() };
   const href =
-    "?" +
+    "/?" +
     Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join("&");

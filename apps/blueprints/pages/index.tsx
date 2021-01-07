@@ -3,10 +3,10 @@
 import React from "react";
 import { NextPage, NextPageContext } from "next";
 import Link from "next/link";
-import { jsx, css } from "@emotion/core";
+import { jsx, css } from "@emotion/react";
 import { BlueprintPageEntry, getMostRecentBlueprintPages } from "@factorio-sites/database";
 import { Panel } from "../src/Panel";
-import { SimpleGrid } from "@chakra-ui/core";
+import { SimpleGrid } from "@chakra-ui/react";
 import { Pagination } from "../src/Pagination";
 
 const linkStyles = css`

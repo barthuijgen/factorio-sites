@@ -1,6 +1,6 @@
 /** @jsx jsx */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { jsx, css } from "@emotion/core";
+import { jsx, css } from "@emotion/react";
 import Link from "next/link";
 import BBCode from "bbcode-to-react";
 import { BlueprintBookEntry } from "@factorio-sites/database";

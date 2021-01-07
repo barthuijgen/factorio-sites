@@ -1,10 +1,9 @@
 /** @jsx jsx */
-import { jsx, css, Global } from "@emotion/core";
-import { AppProps } from "next/app";
+import { AppProps, NextWebVitalsMetric } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
-import { CSSReset, ITheme, theme } from "@chakra-ui/core";
-import { ThemeProvider } from "emotion-theming";
+import { jsx, css, Global } from "@emotion/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import NProgress from "nprogress";
 import { Header } from "../src/Header";
 
@@ -39,26 +38,10 @@ if (typeof window !== "undefined") {
   Router.events.on("routeChangeError", () => NProgress.done());
 }
 
-const config = (theme: ITheme) => ({
-  light: {
-    color: theme.colors.gray[800],
-    bg: theme.colors.gray[300],
-    borderColor: theme.colors.gray[200],
-    placeholderColor: theme.colors.gray[500],
-  },
-  dark: {
-    color: theme.colors.whiteAlpha[900],
-    bg: theme.colors.gray[800],
-    borderColor: theme.colors.whiteAlpha[300],
-    placeholderColor: theme.colors.whiteAlpha[400],
-  },
-});
-
-const CustomApp = ({ Component, pageProps }: AppProps) => {
+const BlueprintsApp = ({ Component, pageProps }: AppProps) => {
   return (
-    <ThemeProvider theme={theme}>
+    <ChakraProvider>
       <Global styles={globalStyles} />
-      <CSSReset config={config} />
       <Head>
         <title>Welcome to blueprints!</title>
         <link
@@ -72,8 +55,12 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </main>
       </div>
-    </ThemeProvider>
+    </ChakraProvider>
   );
 };
 
-export default CustomApp;
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+  console.log(metric);
+}
+
+export default BlueprintsApp;

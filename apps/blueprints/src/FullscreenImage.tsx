@@ -1,7 +1,7 @@
 /** @jsx jsx */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-import { jsx, css } from "@emotion/core";
+import { jsx, css } from "@emotion/react";
 import { MapInteractionCSS } from "react-map-interaction";
 
 const elementStyle = css`

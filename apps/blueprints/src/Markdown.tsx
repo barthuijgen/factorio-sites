@@ -1,6 +1,6 @@
 /** @jsx jsx */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { jsx, css } from "@emotion/core";
+import { jsx, css } from "@emotion/react";
 import ReactMarkdown from "react-markdown";
 
 const markdownStyle = css`
