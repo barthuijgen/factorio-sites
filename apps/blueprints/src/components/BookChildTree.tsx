@@ -1,9 +1,7 @@
-/** @jsx jsx */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { jsx, css } from "@emotion/react";
+import { css } from "@emotion/react";
 import Link from "next/link";
 import BBCode from "bbcode-to-react";
-import { BlueprintBookEntry } from "@factorio-sites/database";
+import { ChildTree } from "@factorio-sites/database";
 
 const componentStyles = css`
   .blueprint,
@@ -22,7 +20,7 @@ const componentStyles = css`
 `;
 
 interface BookChildTreeProps {
-  child_tree: BlueprintBookEntry["child_tree"];
+  child_tree: ChildTree;
   base_url: string;
   selected_id: string;
 }

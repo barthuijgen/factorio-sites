@@ -1,13 +1,11 @@
-/** @jsx jsx */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { NextPage, NextPageContext } from "next";
 import Link from "next/link";
-import { jsx, css } from "@emotion/react";
-import { BlueprintPageEntry, getMostRecentBlueprintPages } from "@factorio-sites/database";
-import { Panel } from "../src/Panel";
+import { css } from "@emotion/react";
+import { BlueprintPage, getMostRecentBlueprintPages } from "@factorio-sites/database";
 import { SimpleGrid } from "@chakra-ui/react";
-import { Pagination } from "../src/Pagination";
+import { Panel } from "../components/Panel";
+import { Pagination } from "../components/Pagination";
 
 const linkStyles = css`
   width: 100%;
@@ -23,7 +21,7 @@ const linkStyles = css`
   }
 `;
 
-const BlueprintComponent: React.FC<{ blueprint: BlueprintPageEntry }> = ({ blueprint }) => (
+const BlueprintComponent: React.FC<{ blueprint: BlueprintPage }> = ({ blueprint }) => (
   <div css={linkStyles}>
     <Link href={`/blueprint/${blueprint.id}`} passHref>
       <a>{blueprint.title}</a>
@@ -33,7 +31,7 @@ const BlueprintComponent: React.FC<{ blueprint: BlueprintPageEntry }> = ({ bluep
 
 interface IndexProps {
   page: number;
-  blueprints: BlueprintPageEntry[];
+  blueprints: BlueprintPage[];
 }
 
 export const Index: NextPage<IndexProps> = ({ page, blueprints }) => {

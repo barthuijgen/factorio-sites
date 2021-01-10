@@ -187,14 +187,21 @@
     "react/no-direct-mutation-state": "warn",
     "react/no-is-mounted": "warn",
     "react/no-typos": "error",
-    "react/react-in-jsx-scope": "error",
+    "react/react-in-jsx-scope": "off",
     "react/require-render-return": "error",
     "react/style-prop-object": "warn",
     "react/jsx-no-useless-fragment": "warn",
     "jsx-a11y/accessible-emoji": "warn",
     "jsx-a11y/alt-text": "warn",
     "jsx-a11y/anchor-has-content": "warn",
-    "jsx-a11y/anchor-is-valid": ["warn", { "aspects": ["noHref", "invalidHref"] }],
+    "jsx-a11y/anchor-is-valid": [
+      "warn",
+      {
+        "components": ["Link"],
+        "specialLink": ["hrefLeft", "hrefRight"],
+        "aspects": ["noHref", "invalidHref", "preferButton"]
+      }
+    ],
     "jsx-a11y/aria-activedescendant-has-tabindex": "warn",
     "jsx-a11y/aria-props": "warn",
     "jsx-a11y/aria-proptypes": "warn",

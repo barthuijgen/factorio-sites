@@ -1,7 +1,7 @@
 import * as pako from "pako";
-import { BlueprintData } from "@factorio-sites/common-utils";
+import { BlueprintStringData } from "@factorio-sites/common-utils";
 
-export function parseBlueprintStringClient(source: string): { data: BlueprintData } {
+export function parseBlueprintStringClient(source: string): { data: BlueprintStringData } {
   const encoded = atob(source.substring(1));
   const decoded = pako.inflate(encoded);
   const string = new TextDecoder("utf-8").decode(decoded);
@@ -9,7 +9,7 @@ export function parseBlueprintStringClient(source: string): { data: BlueprintDat
   return { data: jsonObject };
 }
 
-export function encodeBlueprintStringClient(data: BlueprintData): string {
+export function encodeBlueprintStringClient(data: BlueprintStringData): string {
   const json = JSON.stringify(data);
   const encoded = new TextEncoder().encode(json);
   const compressed = pako.deflate(encoded, { to: "string" });

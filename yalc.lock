@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "@fbe/editor": {
+      "signature": "fcd9eadabd31e2c2000a5ea3e4b000f8",
+      "file": true
+    }
+  }
+}

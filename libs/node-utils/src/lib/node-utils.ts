@@ -1,11 +1,11 @@
 import * as crypto from "crypto";
 import * as pako from "pako";
 // import * as phin from "phin";
-import { BlueprintData } from "@factorio-sites/common-utils";
+import { BlueprintStringData } from "@factorio-sites/common-utils";
 
 export const parseBlueprintString = async (
   string: string
-): Promise<{ hash: string; data: BlueprintData; string: string }> => {
+): Promise<{ hash: string; data: BlueprintStringData; string: string }> => {
   // if (string.startsWith("http:") || string.startsWith("https:")) {
   //   const result = await phin(string);
   //   string = result.body.toString();
@@ -24,7 +24,7 @@ export const parseBlueprintString = async (
   };
 };
 
-export const encodeBlueprint = async (data: BlueprintData): Promise<string> => {
+export const encodeBlueprint = async (data: BlueprintStringData): Promise<string> => {
   const json = JSON.stringify(data);
   const encoded = new TextEncoder().encode(json);
   const compressed = pako.deflate(encoded);

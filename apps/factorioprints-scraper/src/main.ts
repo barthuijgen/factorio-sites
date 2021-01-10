@@ -1,5 +1,12 @@
+import "./environments/environment";
+if (process.env.NODE_ENV === "development") {
+  console.log(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+}
+
+// import { saveBlueprintFromFactorioprints } from "@factorio-sites/database";
+// import { parseBlueprintString } from "@factorio-sites/node-utils";
+// import { scanFactorioPrints } from "./app/scan";
 import { writeToDatastore } from "./app/populate-db";
-import { scanFactorioPrints } from "./app/scan";
 
 // async function writeTestBP() {
 //   const source =
@@ -11,12 +18,10 @@ import { scanFactorioPrints } from "./app/scan";
 //   // use createBlueprint
 //   saveBlueprintFromFactorioprints(
 //     {
-//       factorioprints_id: null,
+//       factorioprints_id: "-id",
 //       title: "my blueprint",
 //       description_markdown: "",
-//       tags: [],
-//       updated_at: Date.now() / 1000,
-//       created_at: Date.now() / 1000,
+//       tags: ["tag1", "tag2"],
 //     },
 //     string
 //   );
@@ -24,8 +29,8 @@ import { scanFactorioPrints } from "./app/scan";
 
 async function main() {
   // scanFactorioPrints(1, 3);
-  writeToDatastore();
   // writeTestBP();
+  writeToDatastore();
 }
 
 main().catch((reason) => {

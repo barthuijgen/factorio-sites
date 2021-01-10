@@ -4,7 +4,7 @@ interface Entity {
   position: { x: number; y: number };
 }
 
-export interface Blueprint {
+export interface BlueprintData {
   entities: Entity[];
   tiles?: { name: string; position: { x: number; y: number } }[];
   icons: { signal: { type: "item" | "fluid"; name: string } }[];
@@ -14,33 +14,44 @@ export interface Blueprint {
   version: number;
 }
 
-export interface BlueprintBook {
+export interface BlueprintBookData {
   active_index: number;
-  blueprints: Array<{ index: number } & BlueprintData>;
+  blueprints: Array<{ index: number } & BlueprintStringData>;
   item: string;
   label: string;
   description?: string;
   version: number;
 }
 
-export interface BlueprintData {
-  blueprint_book?: BlueprintBook;
-  blueprint?: Blueprint;
+export interface BlueprintPageData {
+  id: string;
+  blueprint_id?: string;
+  blueprint_book_id?: string;
+  title: string;
+  description_markdown: string;
+  created_at: number;
+  updated_at: number;
+  factorioprints_id?: string;
 }
 
-export const getBlueprintContentForImageHash = (blueprint: Blueprint): string => {
+export interface BlueprintStringData {
+  blueprint_book?: BlueprintBookData;
+  blueprint?: BlueprintData;
+}
+
+export const getBlueprintContentForImageHash = (blueprint: BlueprintData): string => {
   return JSON.stringify({
     entities: blueprint.entities,
     tiles: blueprint.tiles,
   });
 };
 
-export const flattenBlueprintData = (data: BlueprintData) => {
-  const blueprints: Blueprint[] = [];
-  const books: BlueprintBook[] = [];
+export const flattenBlueprintData = (data: BlueprintStringData) => {
+  const blueprints: BlueprintData[] = [];
+  const books: BlueprintBookData[] = [];
 
   // Recursively go through the string to find all blueprints
-  const findAndPushBlueprints = (data: BlueprintData) => {
+  const findAndPushBlueprints = (data: BlueprintStringData) => {
     if (data.blueprint) {
       blueprints.push(data.blueprint);
     } else if (data.blueprint_book) {
@@ -59,25 +70,28 @@ export const flattenBlueprintData = (data: BlueprintData) => {
   };
 };
 
-export const findBlueprintByPath = (data: BlueprintData, path: number[]): Blueprint | null => {
+export const findBlueprintByPath = (
+  data: BlueprintStringData,
+  path: number[]
+): BlueprintStringData | null => {
   if (path.length === 0) {
-    return (data.blueprint || data.blueprint_book?.blueprints[0]) as Blueprint;
+    return (data.blueprint || data.blueprint_book?.blueprints[0]) as BlueprintStringData;
   } else if (data.blueprint_book && path.length === 1) {
-    return data.blueprint_book.blueprints[path[0]].blueprint as Blueprint;
+    return data.blueprint_book.blueprints[path[0]].blueprint as BlueprintStringData;
   }
   return null;
 };
 
 export const findActiveBlueprint = (
-  data: BlueprintData
-): { blueprint: Blueprint; path: number[] } => {
+  data: BlueprintStringData
+): { blueprint: BlueprintData; path: number[] } => {
   if (data.blueprint) {
     return { blueprint: data.blueprint, path: [0] };
   } else if (data.blueprint_book) {
     const findActive = (
-      book: BlueprintBook,
+      book: BlueprintBookData,
       _path: number[] = []
-    ): { blueprint: Blueprint; path: number[] } => {
+    ): { blueprint: BlueprintData; path: number[] } => {
       const active = book.blueprints.find((bp) => bp.index === book.active_index);
 
       if (active && active.blueprint) {

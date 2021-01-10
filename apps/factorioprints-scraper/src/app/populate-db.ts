@@ -10,7 +10,7 @@ const fsReadFile = promisify(fs.readFile);
 const CACHE_DIR = path.join(__dirname, "../../../.cache/factorioprints-data");
 
 export async function writeToDatastore() {
-  const filecontent = await fsReadFile(path.join(CACHE_DIR, `most-fav-json/page2.json`), "utf8");
+  const filecontent = await fsReadFile(path.join(CACHE_DIR, `most-fav-json/page1.json`), "utf8");
   const data = JSON.parse(filecontent);
 
   for (let i = 0; i < data.length; i++) {

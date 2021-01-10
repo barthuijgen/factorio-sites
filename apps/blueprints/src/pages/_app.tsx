@@ -1,11 +1,10 @@
-/** @jsx jsx */
 import { AppProps, NextWebVitalsMetric } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
-import { jsx, css, Global } from "@emotion/react";
+import { css, Global } from "@emotion/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import NProgress from "nprogress";
-import { Header } from "../src/Header";
+import { Header } from "../components/Header";
 
 const globalStyles = css`
   html {
@@ -60,7 +59,7 @@ const BlueprintsApp = ({ Component, pageProps }: AppProps) => {
 };
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
-  console.log(metric);
+  // console.log(metric);
 }
 
 export default BlueprintsApp;

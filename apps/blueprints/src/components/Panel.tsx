@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { jsx, css, SerializedStyles } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import { Box, BoxProps } from "@chakra-ui/react";
 import { ReactNode } from "react";
 

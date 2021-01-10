@@ -1,25 +1,25 @@
-/** @jsx jsx */
 import React, { ReactNode, useEffect, useState } from "react";
-import { jsx, css } from "@emotion/react";
+import { css } from "@emotion/react";
 import { NextPage, NextPageContext } from "next";
 import BBCode from "bbcode-to-react";
 import { Button, Grid, Image } from "@chakra-ui/react";
 import {
-  BlueprintBookEntry,
-  BlueprintEntry,
-  BlueprintPageEntry,
+  BlueprintBook,
+  Blueprint,
+  BlueprintPage,
   getBlueprintBookById,
   getBlueprintById,
   getBlueprintPageById,
   hasBlueprintImage,
 } from "@factorio-sites/database";
-import { BlueprintData, timeLogger } from "@factorio-sites/common-utils";
+import { BlueprintStringData, timeLogger } from "@factorio-sites/common-utils";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
-import { Panel } from "../../src/Panel";
-import { Markdown } from "../../src/Markdown";
-import { FullscreenImage } from "../../src/FullscreenImage";
-import { BookChildTree } from "../../src/BookChildTree";
-import { CopyButton } from "../../src/CopyButton";
+import { Panel } from "../../components/Panel";
+import { Markdown } from "../../components/Markdown";
+import { FullscreenImage } from "../../components/FullscreenImage";
+import { BookChildTree } from "../../components/BookChildTree";
+import { CopyButton } from "../../components/CopyButton";
+import { ImageEditor } from "../../components/ImageEditor";
 
 const imageStyle = css`
   display: flex;
@@ -30,15 +30,15 @@ const imageStyle = css`
 `;
 
 type Selected =
-  | { type: "blueprint"; data: Pick<BlueprintEntry, "id" | "blueprint_hash" | "image_hash"> }
-  | { type: "blueprint_book"; data: Pick<BlueprintBookEntry, "id" | "blueprint_hash"> };
+  | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash"> }
+  | { type: "blueprint_book"; data: Pick<BlueprintBook, "id" | "blueprint_hash"> };
 
 interface IndexProps {
   image_exists: boolean;
   selected: Selected;
-  blueprint: BlueprintEntry | null;
-  blueprint_book: BlueprintBookEntry | null;
-  blueprint_page: BlueprintPageEntry;
+  blueprint: Blueprint | null;
+  blueprint_book: BlueprintBook | null;
+  blueprint_page: BlueprintPage;
 }
 
 export const Index: NextPage<IndexProps> = ({
@@ -50,7 +50,7 @@ export const Index: NextPage<IndexProps> = ({
 }) => {
   const [imageZoom, setImageZoom] = useState(false);
   const [blueprintString, setBlueprintString] = useState<string | null>(null);
-  const [data, setData] = useState<BlueprintData | null>(null);
+  const [data, setData] = useState<BlueprintStringData | null>(null);
   const [showJson, setShowJson] = useState(false);
 
   const selectedHash = selected.data.blueprint_hash;
@@ -145,7 +145,8 @@ export const Index: NextPage<IndexProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "2" })}
         gridRow={chakraResponsive({ mobile: "1", desktop: null })}
       >
-        {renderImage()}
+        {/* {renderImage()} */}
+        {blueprintString && <ImageEditor string={blueprintString}></ImageEditor>}
       </Panel>
 
       <Panel
@@ -277,8 +278,8 @@ export async function getServerSideProps(context: NextPageContext) {
   let blueprint: IndexProps["blueprint"] = null;
   let blueprint_book: IndexProps["blueprint_book"] = null;
   let selected!: IndexProps["selected"];
-  let selected_blueprint!: BlueprintEntry | null;
-  let selected_blueprint_book!: BlueprintBookEntry | null;
+  let selected_blueprint!: Blueprint | null;
+  let selected_blueprint_book!: BlueprintBook | null;
 
   if (blueprint_page.blueprint_id) {
     blueprint = await getBlueprintById(blueprint_page.blueprint_id);

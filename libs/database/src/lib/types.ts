@@ -3,19 +3,21 @@ interface BlueprintChild {
   id: string;
   name: string;
 }
+
 interface BlueprintBookChild {
   type: "blueprint_book";
   id: string;
   name: string;
   children: ChildTree;
 }
-type ChildTree = Array<BlueprintChild | BlueprintBookChild>;
 
-export interface BlueprintEntry {
+export type ChildTree = Array<BlueprintChild | BlueprintBookChild>;
+
+export interface Blueprint {
   id: string;
   label: string; // from source
   description: string | null; // from source
-  game_version: number; // from source
+  game_version: string | null; // from source
   blueprint_hash: string;
   image_hash: string;
   created_at: number;
@@ -26,14 +28,14 @@ export interface BlueprintEntry {
   // BlueprintEntry->BlueprintPageEntry n:m
 }
 
-export interface BlueprintBookEntry {
+export interface BlueprintBook {
   id: string;
   label: string;
   description?: string;
   /** strings as keys of BlueprintEntry */
-  blueprint_ids: string[];
+  // blueprint_ids: string[];
   /** strings as keys of BlueprintBookEntry (currently unsupported) */
-  blueprint_book_ids: string[];
+  // blueprint_book_ids: string[];
   child_tree: ChildTree;
   blueprint_hash: string;
   created_at: number;
@@ -44,20 +46,24 @@ export interface BlueprintBookEntry {
   // BlueprintBook:BlueprintEntry 1:m
 }
 
-export interface BlueprintPageEntry {
+/**
+ * Blueprint page data object for app use
+ * must be JSON serializable
+ */
+export interface BlueprintPage {
   id: string;
-  blueprint_id?: string;
-  blueprint_book_id?: string;
+  blueprint_id: string | null;
+  blueprint_book_id: string | null;
   title: string;
   description_markdown: string;
   created_at: number;
   updated_at: number;
-  factorioprints_id?: string;
+  factorioprints_id: string | null;
   // BlueprintPageEntry->BlueprintEntry 1:m
   // BlueprintPageEntry->BlueprintBook 1:m
 }
 
-export interface BlueprintStringEntry {
+export interface BlueprintString {
   blueprint_id: string;
   blueprint_hash: string;
   image_hash: string;
