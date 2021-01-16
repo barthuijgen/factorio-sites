@@ -1,10 +1,14 @@
-import { AppProps, NextWebVitalsMetric } from "next/app";
+import { AppContext, AppProps } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 import { css, Global } from "@emotion/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import NProgress from "nprogress";
+
 import { Header } from "../components/Header";
+import { AuthContext, AuthContextProps } from "../providers/auth";
+import { useFetch } from "../hooks/fetch";
+import { getSessionToken } from "@factorio-sites/node-utils";
 
 const globalStyles = css`
   html {
@@ -37,29 +41,42 @@ if (typeof window !== "undefined") {
   Router.events.on("routeChangeError", () => NProgress.done());
 }
 
-const BlueprintsApp = ({ Component, pageProps }: AppProps) => {
+const BlueprintsApp = ({
+  Component,
+  pageProps,
+  authenticated,
+}: AppProps & { authenticated: boolean }) => {
+  const auth = useFetch<{ auth: AuthContextProps }>("/api/user", { skip: !authenticated });
+
   return (
     <ChakraProvider>
-      <Global styles={globalStyles} />
-      <Head>
-        <title>Welcome to blueprints!</title>
-        <link
-          href="https://cdn.factorio.com/assets/fonts/titillium-web.css"
-          rel="stylesheet"
-        ></link>
-      </Head>
-      <div>
-        <Header />
-        <main>
-          <Component {...pageProps} />
-        </main>
-      </div>
+      <AuthContext.Provider value={auth.data?.auth || null}>
+        <Global styles={globalStyles} />
+        <Head>
+          <title>Welcome to blueprints!</title>
+          <link
+            href="https://cdn.factorio.com/assets/fonts/titillium-web.css"
+            rel="stylesheet"
+          ></link>
+        </Head>
+        <div>
+          {!auth.loading && (
+            <>
+              <Header />
+              <main>
+                <Component {...pageProps} />
+              </main>
+            </>
+          )}
+        </div>
+      </AuthContext.Provider>
     </ChakraProvider>
   );
 };
 
-export function reportWebVitals(metric: NextWebVitalsMetric) {
-  // console.log(metric);
-}
+BlueprintsApp.getInitialProps = ({ ctx }: AppContext) => {
+  const userToken = getSessionToken(ctx.req);
+  return { authenticated: !!userToken };
+};
 
 export default BlueprintsApp;

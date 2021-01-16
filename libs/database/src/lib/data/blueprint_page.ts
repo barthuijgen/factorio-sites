@@ -1,4 +1,6 @@
-import { BlueprintPageModel, BlueprintPageInstance } from "../postgres/models";
+import { Op } from "sequelize";
+import { BlueprintPageModel } from "../postgres/database";
+import { BlueprintPageInstance } from "../postgres/models/BlueprintPage";
 import { BlueprintPage } from "../types";
 
 const mapBlueprintPageEntityToObject = (entity: BlueprintPageInstance): BlueprintPage => ({
@@ -13,29 +15,46 @@ const mapBlueprintPageEntityToObject = (entity: BlueprintPageInstance): Blueprin
 });
 
 export async function getBlueprintPageById(id: string): Promise<BlueprintPage | null> {
-  const result = await BlueprintPageModel.findByPk(id).catch(() => null);
+  const result = await BlueprintPageModel()
+    .findByPk(id)
+    .catch(() => null);
   return result ? mapBlueprintPageEntityToObject(result) : null;
 }
 
 export async function getBlueprintPageByFactorioprintsId(
   id: string
 ): Promise<BlueprintPage | null> {
-  const result = await BlueprintPageModel.findOne({
-    where: { factorioprints_id: id },
-  }).catch(() => null);
+  const result = await BlueprintPageModel()
+    .findOne({
+      where: { factorioprints_id: id },
+    })
+    .catch(() => null);
   return result ? mapBlueprintPageEntityToObject(result) : null;
 }
 
-export async function getMostRecentBlueprintPages(page = 1): Promise<BlueprintPage[]> {
-  const perPage = 10;
-  const result =
-    (await BlueprintPageModel.findAll({
+export async function getMostRecentBlueprintPages({
+  page = 1,
+  perPage = 10,
+  query,
+}: {
+  page: number;
+  perPage: number;
+  query?: string;
+}): Promise<{ count: number; rows: BlueprintPage[] }> {
+  const result = await BlueprintPageModel()
+    .findAndCountAll({
+      where: query ? { title: { [Op.iLike]: `%${query}%` } } : undefined,
       order: [["updated_at", "DESC"]],
       limit: perPage,
       offset: (page - 1) * perPage,
       raw: true,
-    }).catch(() => null)) || [];
-  return result.map(mapBlueprintPageEntityToObject);
+    })
+    .catch(() => null);
+
+  return {
+    count: result?.count ?? 0,
+    rows: result?.rows.map(mapBlueprintPageEntityToObject) ?? [],
+  };
 }
 
 export async function createBlueprintPage(
@@ -43,13 +62,15 @@ export async function createBlueprintPage(
   targetId: string,
   extraInfo: {
     title: string;
+    user_id: string | null;
     description_markdown: string;
     created_at?: number;
     updated_at?: number;
     factorioprints_id?: string;
   }
 ) {
-  await BlueprintPageModel.create({
+  const page = await BlueprintPageModel().create({
+    user_id: extraInfo.user_id,
     title: extraInfo.title,
     description_markdown: extraInfo.description_markdown,
     factorioprints_id: extraInfo.factorioprints_id,
@@ -60,4 +81,5 @@ export async function createBlueprintPage(
   });
 
   console.log(`Created Blueprint Page`);
+  return page;
 }

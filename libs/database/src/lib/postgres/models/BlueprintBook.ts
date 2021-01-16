@@ -1,9 +1,9 @@
-import { DataTypes, UUIDV4, Optional, Model } from "sequelize";
+import { DataTypes, UUIDV4, Optional, Model, Sequelize } from "sequelize";
 import { ChildTree } from "../../types";
-import { sequelize } from "../sequelize";
 
 interface BlueprintBookAttributes {
   id: string;
+  user_id: string | null;
   label: string;
   description?: string;
   child_tree: ChildTree;
@@ -21,35 +21,40 @@ export interface BlueprintBookInstance
     >,
     BlueprintBookAttributes {}
 
-export const BlueprintBookModel = sequelize.define<BlueprintBookInstance>(
-  "blueprint_book",
-  {
-    id: {
-      primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
+export const getBlueprintBookModel = (sequelize: Sequelize) => {
+  return sequelize.define<BlueprintBookInstance>(
+    "blueprint_book",
+    {
+      id: {
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+      },
+      user_id: {
+        type: DataTypes.UUID,
+      },
+      label: {
+        type: DataTypes.STRING,
+      },
+      description: {
+        type: DataTypes.TEXT,
+      },
+      child_tree: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      blueprint_hash: {
+        type: DataTypes.STRING(40),
+        allowNull: false,
+      },
+      is_modded: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+      factorioprints_id: {
+        type: DataTypes.STRING,
+      },
     },
-    label: {
-      type: DataTypes.STRING,
-    },
-    description: {
-      type: DataTypes.TEXT,
-    },
-    child_tree: {
-      type: DataTypes.JSON,
-      allowNull: false,
-    },
-    blueprint_hash: {
-      type: DataTypes.STRING(40),
-      allowNull: false,
-    },
-    is_modded: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-    },
-    factorioprints_id: {
-      type: DataTypes.STRING,
-    },
-  },
-  {}
-);
+    {}
+  );
+};

@@ -44,3 +44,4 @@ Thumbs.db
 .env.local
 .local.env
 /.yalc
+local.readme.md

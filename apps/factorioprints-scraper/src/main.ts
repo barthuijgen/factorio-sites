@@ -6,7 +6,8 @@ if (process.env.NODE_ENV === "development") {
 // import { saveBlueprintFromFactorioprints } from "@factorio-sites/database";
 // import { parseBlueprintString } from "@factorio-sites/node-utils";
 // import { scanFactorioPrints } from "./app/scan";
-import { writeToDatastore } from "./app/populate-db";
+import { init } from "@factorio-sites/database";
+import { writeToDatabase } from "./app/populate-db";
 
 // async function writeTestBP() {
 //   const source =
@@ -28,9 +29,10 @@ import { writeToDatastore } from "./app/populate-db";
 // }
 
 async function main() {
+  await init();
   // scanFactorioPrints(1, 3);
   // writeTestBP();
-  writeToDatastore();
+  writeToDatabase();
 }
 
 main().catch((reason) => {

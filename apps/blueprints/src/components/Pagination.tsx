@@ -5,6 +5,8 @@ import { Box, BoxProps, Button } from "@chakra-ui/react";
 
 interface PaginationProps {
   page: number;
+  totalPages?: number;
+  totalItems?: number;
 }
 
 const PaginationLink: React.FC<PaginationProps> = ({ page }) => {
@@ -25,9 +27,14 @@ const PaginationLink: React.FC<PaginationProps> = ({ page }) => {
   );
 };
 
-export const Pagination: React.FC<BoxProps & PaginationProps> = ({ page, ...props }) => (
-  <Box {...props}>
+export const Pagination: React.FC<BoxProps & PaginationProps> = ({
+  page,
+  totalPages,
+  totalItems,
+}) => (
+  <Box>
     {page > 1 && <PaginationLink page={page - 1} />}
-    <PaginationLink page={page + 1} />
+    {!totalPages || (page + 1 < totalPages && <PaginationLink page={page + 1} />)}
+    {totalItems ? <Box css={{ marginTop: "1rem" }}>{totalItems} total items</Box> : null}
   </Box>
 );

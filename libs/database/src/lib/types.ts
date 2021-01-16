@@ -23,7 +23,7 @@ export interface Blueprint {
   created_at: number;
   updated_at: number;
   tags: string[];
-  factorioprints_id?: string;
+  factorioprints_id: string | null;
   // BlueprintEntry->BlueprintString 1:m
   // BlueprintEntry->BlueprintPageEntry n:m
 }
@@ -32,10 +32,6 @@ export interface BlueprintBook {
   id: string;
   label: string;
   description?: string;
-  /** strings as keys of BlueprintEntry */
-  // blueprint_ids: string[];
-  /** strings as keys of BlueprintBookEntry (currently unsupported) */
-  // blueprint_book_ids: string[];
   child_tree: ChildTree;
   blueprint_hash: string;
   created_at: number;

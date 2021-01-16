@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 COPY package.json .
 COPY yarn.lock .
+COPY fbe-editor-v1.0.0.tgz .
 
 RUN yarn
 
@@ -17,6 +18,7 @@ WORKDIR /usr/src/app
 
 COPY apps/blueprints/prod.package.json ./package.json
 COPY yarn.lock .
+COPY fbe-editor-v1.0.0.tgz .
 
 RUN yarn install --production
 

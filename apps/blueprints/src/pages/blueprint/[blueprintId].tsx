@@ -1,5 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { css } from "@emotion/react";
+import React, { useEffect, useState } from "react";
 import { NextPage, NextPageContext } from "next";
 import BBCode from "bbcode-to-react";
 import { Button, Grid, Image } from "@chakra-ui/react";
@@ -11,23 +10,15 @@ import {
   getBlueprintById,
   getBlueprintPageById,
   hasBlueprintImage,
+  init,
 } from "@factorio-sites/database";
 import { BlueprintStringData, timeLogger } from "@factorio-sites/common-utils";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
 import { Markdown } from "../../components/Markdown";
-import { FullscreenImage } from "../../components/FullscreenImage";
 import { BookChildTree } from "../../components/BookChildTree";
 import { CopyButton } from "../../components/CopyButton";
 import { ImageEditor } from "../../components/ImageEditor";
-
-const imageStyle = css`
-  display: flex;
-  justify-content: center;
-  &:hover {
-    cursor: pointer;
-  }
-`;
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash"> }
@@ -48,7 +39,7 @@ export const Index: NextPage<IndexProps> = ({
   blueprint_book,
   blueprint_page,
 }) => {
-  const [imageZoom, setImageZoom] = useState(false);
+  // const [imageZoom, setImageZoom] = useState(false);
   const [blueprintString, setBlueprintString] = useState<string | null>(null);
   const [data, setData] = useState<BlueprintStringData | null>(null);
   const [showJson, setShowJson] = useState(false);
@@ -62,7 +53,7 @@ export const Index: NextPage<IndexProps> = ({
         setShowJson(false);
         setBlueprintString(string);
         if (selected.type === "blueprint") {
-          const { data } = parseBlueprintStringClient(string);
+          const data = parseBlueprintStringClient(string);
           setData(data);
         } else {
           setData(null);
@@ -82,32 +73,32 @@ export const Index: NextPage<IndexProps> = ({
     });
   }, []);
 
-  const renderImage = () => {
-    let render: ReactNode;
-    if (selected.type === "blueprint_book") {
-      render = <div>Can't show image for a book, select a blueprint to the the image</div>;
-    } else if (!image_exists) {
-      render = <div>The image is not generated yet</div>;
-    } else if (imageZoom) {
-      render = (
-        <FullscreenImage
-          close={() => setImageZoom(false)}
-          alt="blueprint"
-          src={`https://storage.googleapis.com/blueprint-images/${selected.data.image_hash}.webp`}
-        />
-      );
-    } else {
-      render = (
-        <div onClick={() => setImageZoom(true)}>
-          <img
-            alt="blueprint"
-            src={`https://storage.googleapis.com/blueprint-images/${selected.data.image_hash}.webp`}
-          />
-        </div>
-      );
-    }
-    return <div css={imageStyle}>{render}</div>;
-  };
+  // const renderImage = () => {
+  //   let render: ReactNode;
+  //   if (selected.type === "blueprint_book") {
+  //     render = <div>Can't show image for a book, select a blueprint to the the image</div>;
+  //   } else if (!image_exists) {
+  //     render = <div>The image is not generated yet</div>;
+  //   } else if (imageZoom) {
+  //     render = (
+  //       <FullscreenImage
+  //         close={() => setImageZoom(false)}
+  //         alt="blueprint"
+  //         src={`https://storage.googleapis.com/blueprint-images/${selected.data.image_hash}.webp`}
+  //       />
+  //     );
+  //   } else {
+  //     render = (
+  //       <div onClick={() => setImageZoom(true)}>
+  //         <img
+  //           alt="blueprint"
+  //           src={`https://storage.googleapis.com/blueprint-images/${selected.data.image_hash}.webp`}
+  //         />
+  //       </div>
+  //     );
+  //   }
+  //   return <div css={imageStyle}>{render}</div>;
+  // };
 
   return (
     <Grid
@@ -157,7 +148,14 @@ export const Index: NextPage<IndexProps> = ({
       </Panel>
       {selected.type === "blueprint" && data?.blueprint && (
         <Panel
-          title={(<span>Entities for {BBCode.toReact(data.blueprint.label)}</span>) as any}
+          title={
+            (
+              <span>
+                Entities for{" "}
+                {data.blueprint.label ? BBCode.toReact(data.blueprint.label) : "blueprint"}
+              </span>
+            ) as any
+          }
           gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         >
           <table>
@@ -240,7 +238,7 @@ export const Index: NextPage<IndexProps> = ({
                 fetch(`/api/string/${selectedHash}`)
                   .then((res) => res.text())
                   .then((string) => {
-                    const { data } = parseBlueprintStringClient(string);
+                    const data = parseBlueprintStringClient(string);
                     setData(data);
                   });
               }
@@ -255,10 +253,12 @@ export const Index: NextPage<IndexProps> = ({
 };
 
 export async function getServerSideProps(context: NextPageContext) {
+  await init();
+
   const throwError = (message: string) => {
     if (!blueprint_page && context.res) {
       context.res.statusCode = 404;
-      context.res.end({ error: message });
+      context.res.end(JSON.stringify({ error: message }));
       return {};
     }
   };
@@ -318,7 +318,6 @@ export async function getServerSideProps(context: NextPageContext) {
     };
   }
 
-  // selected = {type: 'blueprint', data: {id: blueprint.id}}
   const image_exists =
     selected.type === "blueprint" ? await hasBlueprintImage(selected.data.image_hash) : false;
 

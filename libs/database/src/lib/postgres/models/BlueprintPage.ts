@@ -1,8 +1,8 @@
-import { DataTypes, UUIDV4, Optional, Model } from "sequelize";
-import { sequelize } from "../sequelize";
+import { DataTypes, UUIDV4, Optional, Model, Sequelize } from "sequelize";
 
 interface BlueprintPageAttributes {
   id: string;
+  user_id: string | null;
   blueprint_id?: string;
   blueprint_book_id?: string;
   title: string;
@@ -19,30 +19,37 @@ export interface BlueprintPageInstance
     >,
     BlueprintPageAttributes {}
 
-export const BlueprintPageModel = sequelize.define<BlueprintPageInstance>(
-  "blueprint_page",
-  {
-    id: {
-      primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
+export const getBlueprintPageModel = (sequelize: Sequelize) => {
+  return sequelize.define<BlueprintPageInstance>(
+    "blueprint_page",
+    {
+      id: {
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+      },
+      user_id: {
+        type: DataTypes.UUID,
+      },
+      blueprint_id: {
+        type: DataTypes.UUID,
+        unique: true,
+      },
+      blueprint_book_id: {
+        type: DataTypes.UUID,
+        unique: true,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      description_markdown: {
+        type: DataTypes.TEXT,
+      },
+      factorioprints_id: {
+        type: DataTypes.STRING,
+      },
     },
-    blueprint_id: {
-      type: DataTypes.UUID,
-    },
-    blueprint_book_id: {
-      type: DataTypes.UUID,
-    },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description_markdown: {
-      type: DataTypes.TEXT,
-    },
-    factorioprints_id: {
-      type: DataTypes.STRING,
-    },
-  },
-  {}
-);
+    {}
+  );
+};

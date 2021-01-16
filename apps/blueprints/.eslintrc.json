@@ -195,11 +195,11 @@
     "jsx-a11y/alt-text": "warn",
     "jsx-a11y/anchor-has-content": "warn",
     "jsx-a11y/anchor-is-valid": [
-      "warn",
+      "error",
       {
         "components": ["Link"],
         "specialLink": ["hrefLeft", "hrefRight"],
-        "aspects": ["noHref", "invalidHref", "preferButton"]
+        "aspects": ["invalidHref", "preferButton"]
       }
     ],
     "jsx-a11y/aria-activedescendant-has-tabindex": "warn",

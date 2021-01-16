@@ -1,12 +1,17 @@
 import * as pako from "pako";
 import { BlueprintStringData } from "@factorio-sites/common-utils";
 
-export function parseBlueprintStringClient(source: string): { data: BlueprintStringData } {
-  const encoded = atob(source.substring(1));
-  const decoded = pako.inflate(encoded);
-  const string = new TextDecoder("utf-8").decode(decoded);
-  const jsonObject = JSON.parse(string);
-  return { data: jsonObject };
+export function parseBlueprintStringClient(source: string): BlueprintStringData | null {
+  try {
+    const encoded = atob(source.substring(1));
+    const decoded = pako.inflate(encoded);
+    const string = new TextDecoder("utf-8").decode(decoded);
+    const data = JSON.parse(string);
+    return data;
+  } catch (reason) {
+    console.log("Failed to parse blueprint string", reason);
+    return null;
+  }
 }
 
 export function encodeBlueprintStringClient(data: BlueprintStringData): string {

@@ -1,14 +1,13 @@
 import { BlueprintBookData } from "@factorio-sites/common-utils";
 import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
 import { saveBlueprintString } from "../gcp-storage";
-import { BlueprintBookModel, BlueprintBookInstance } from "../postgres/models";
+import { BlueprintBookModel } from "../postgres/database";
+import { BlueprintBookInstance } from "../postgres/models/BlueprintBook";
 import { BlueprintBook, ChildTree } from "../types";
 import { createBlueprint } from "./blueprint";
 
 const mapBlueprintBookEntityToObject = (entity: BlueprintBookInstance): BlueprintBook => ({
   id: entity.id,
-  // blueprint_ids: entity.blueprint_ids.map((key: any) => key.id),
-  // blueprint_book_ids: entity.blueprint_book_ids.map((key: any) => key.id),
   child_tree: entity.child_tree ? entity.child_tree : [],
   blueprint_hash: entity.blueprint_hash,
   label: entity.label,
@@ -20,20 +19,25 @@ const mapBlueprintBookEntityToObject = (entity: BlueprintBookInstance): Blueprin
 });
 
 export async function getBlueprintBookById(id: string): Promise<BlueprintBook | null> {
-  const result = await BlueprintBookModel.findByPk(id).catch(() => null);
+  const result = await BlueprintBookModel()
+    .findByPk(id)
+    .catch(() => null);
   return result ? mapBlueprintBookEntityToObject(result) : null;
 }
 
 export async function getBlueprintBookByHash(hash: string): Promise<BlueprintBook | null> {
-  const result = await BlueprintBookModel.findOne({
-    where: { blueprint_hash: hash },
-  }).catch(() => null);
+  const result = await BlueprintBookModel()
+    .findOne({
+      where: { blueprint_hash: hash },
+    })
+    .catch(() => null);
   return result ? mapBlueprintBookEntityToObject(result) : null;
 }
 
 export async function createBlueprintBook(
   blueprintBook: BlueprintBookData,
   extraInfo: {
+    user_id: string | null;
     tags: string[];
     created_at?: number;
     updated_at?: number;
@@ -80,7 +84,8 @@ export async function createBlueprintBook(
     }
   }
 
-  const result = await BlueprintBookModel.create({
+  const result = await BlueprintBookModel().create({
+    user_id: extraInfo.user_id,
     label: blueprintBook.label,
     description: blueprintBook.description,
     blueprint_hash: blueprint_hash,

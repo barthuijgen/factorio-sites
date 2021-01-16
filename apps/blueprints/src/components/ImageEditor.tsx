@@ -1,3 +1,4 @@
+import { parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { useEffect, useRef, useState } from "react";
 
 type FBE = typeof import("@fbe/editor");
@@ -29,6 +30,10 @@ export const ImageEditor: React.FC<{ string: string }> = ({ string }) => {
 
   useEffect(() => {
     (async () => {
+      if (!parseBlueprintStringClient(string)) {
+        return;
+      }
+
       const FBE = FbeRef.current;
       const editor = editorRef.current;
       if (!editorLoaded || !FBE || !editor) return;

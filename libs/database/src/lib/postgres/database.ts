@@ -1,10 +1,43 @@
-import { sequelize } from "./sequelize";
-import { BlueprintModel } from "./models/Blueprint";
-import { BlueprintStringModel } from "./models/BlueprintString";
-import { BlueprintBookModel } from "./models/BlueprintBook";
-import { BlueprintPageModel } from "./models/BlueprintPage";
+import { Sequelize } from "sequelize";
+import { getBlueprintModel } from "./models/Blueprint";
+import { getBlueprintStringModel } from "./models/BlueprintString";
+import { getBlueprintBookModel } from "./models/BlueprintBook";
+import { getBlueprintPageModel } from "./models/BlueprintPage";
+import { getUsertModel } from "./models/User";
+import { getSessionModel } from "./models/Session";
+import { getEnv, getEnvOrThrow, getSecretOrThrow } from "../env.util";
 
-export const init = async () => {
+const _init = async () => {
+  const databasePassword = getEnvOrThrow("POSTGRES_PASSWORD");
+
+  const sequelize = new Sequelize({
+    dialect: "postgres",
+    host: getEnvOrThrow("POSTGRES_HOST"),
+    port: 5432,
+    database: getEnvOrThrow("POSTGRES_DB"),
+    username: getEnvOrThrow("POSTGRES_USER"),
+    password: databasePassword.startsWith("projects/")
+      ? await getSecretOrThrow(databasePassword)
+      : databasePassword,
+    define: {
+      underscored: true,
+      freezeTableName: true,
+      updatedAt: "updated_at",
+      createdAt: "created_at",
+    },
+  });
+
+  const UserModel = getUsertModel(sequelize);
+  const SessionModel = getSessionModel(sequelize);
+  const BlueprintModel = getBlueprintModel(sequelize);
+  const BlueprintStringModel = getBlueprintStringModel(sequelize);
+  const BlueprintBookModel = getBlueprintBookModel(sequelize);
+  const BlueprintPageModel = getBlueprintPageModel(sequelize);
+
+  UserModel.hasMany(SessionModel, { foreignKey: "user_id" });
+
+  SessionModel.belongsTo(UserModel, { foreignKey: "user_id" });
+
   BlueprintModel.hasOne(BlueprintStringModel, { foreignKey: "blueprint_id" });
   BlueprintModel.hasMany(BlueprintPageModel, { foreignKey: "blueprint_id" });
 
@@ -29,33 +62,65 @@ export const init = async () => {
     timestamps: false,
   });
 
-  if (process.env.SYNCHRONIZE_DB) {
-    console.log(`[SYNCHRONIZE_DB] syncing database ${process.env.POSTGRES_DB}`);
-    await BlueprintModel.sync({ force: true });
-    await BlueprintStringModel.sync({ force: true });
-    await BlueprintBookModel.sync({ force: true });
-    await BlueprintPageModel.sync({ force: true });
-    await sequelize.models["blueprint_book_books"].sync({ force: true });
-    await sequelize.models["blueprint_book_blueprints"].sync({ force: true });
+  // Test database connection, if it fails the method will throw
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[DB] connecting to database ${sequelize.config.database}`);
+    await sequelize.authenticate();
+  }
 
-    // SEED
-    {
-      const bp = await BlueprintModel.create({
-        blueprint_hash: "blueprint_hash",
-        label: "label",
-        image_hash: "image-hash",
-        image_version: 1,
-        tags: ["tag1"],
-      });
-      await BlueprintStringModel.create({
-        blueprint_hash: "blueprint_hash",
-        blueprint_id: bp.id,
-        changes_markdown: "markdown",
-        image_hash: "image-hash",
-        version: 1,
-      });
+  if (getEnv("SYNCHRONIZE_DB")) {
+    const sync_tables = getEnv("SYNCHRONIZE_DB")?.split(",") || [];
+    console.log(`[SYNCHRONIZE_DB] syncing database`, { sync_tables });
+
+    for (const key in sequelize.models) {
+      if (sync_tables.includes(key) || sync_tables.includes("*")) {
+        await sequelize.models[key].sync({ force: true });
+      }
     }
   }
 
-  return sequelize;
+  return {
+    sequelize,
+    UserModel,
+    SessionModel,
+    BlueprintModel,
+    BlueprintStringModel,
+    BlueprintBookModel,
+    BlueprintPageModel,
+  };
 };
+
+const promise = _init()
+  .then((result) => {
+    _sequelize = result.sequelize;
+    _UserModel = result.UserModel;
+    _SessionModel = result.SessionModel;
+    _BlueprintModel = result.BlueprintModel;
+    _BlueprintStringModel = result.BlueprintStringModel;
+    _BlueprintBookModel = result.BlueprintBookModel;
+    _BlueprintPageModel = result.BlueprintPageModel;
+    return result;
+  })
+  .catch((reason) => {
+    console.log("Database failed to init!", reason);
+  });
+
+let _sequelize: Sequelize;
+let _UserModel: ReturnType<typeof getUsertModel>;
+let _SessionModel: ReturnType<typeof getSessionModel>;
+let _BlueprintModel: ReturnType<typeof getBlueprintModel>;
+let _BlueprintStringModel: ReturnType<typeof getBlueprintStringModel>;
+let _BlueprintBookModel: ReturnType<typeof getBlueprintBookModel>;
+let _BlueprintPageModel: ReturnType<typeof getBlueprintPageModel>;
+
+export const init = async () => {
+  return promise;
+};
+
+export const sequelize = () => _sequelize;
+export const UserModel = () => _UserModel;
+export const SessionModel = () => _SessionModel;
+export const BlueprintModel = () => _BlueprintModel;
+export const BlueprintStringModel = () => _BlueprintStringModel;
+export const BlueprintBookModel = () => _BlueprintBookModel;
+export const BlueprintPageModel = () => _BlueprintPageModel;

@@ -1,5 +1,4 @@
-import { DataTypes, UUIDV4, Optional, Model } from "sequelize";
-import { sequelize } from "../sequelize";
+import { DataTypes, UUIDV4, Optional, Model, Sequelize } from "sequelize";
 
 interface BlueprintStringAttributes {
   id: string;
@@ -12,41 +11,43 @@ interface BlueprintStringAttributes {
   updated_at: Date;
 }
 
-interface BlueprintStringInstance
+export interface BlueprintStringInstance
   extends Model<
       Omit<BlueprintStringAttributes, "created_at" | "updated_at">,
       Optional<BlueprintStringAttributes, "id" | "created_at" | "updated_at">
     >,
     BlueprintStringAttributes {}
 
-export const BlueprintStringModel = sequelize.define<BlueprintStringInstance>(
-  "blueprint_string",
-  {
-    id: {
-      primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: UUIDV4,
+export const getBlueprintStringModel = (sequelize: Sequelize) => {
+  return sequelize.define<BlueprintStringInstance>(
+    "blueprint_string",
+    {
+      id: {
+        primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+      },
+      blueprint_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      blueprint_hash: {
+        type: DataTypes.STRING(40),
+        allowNull: false,
+        unique: true,
+      },
+      image_hash: {
+        type: DataTypes.STRING(40),
+        allowNull: false,
+      },
+      version: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      changes_markdown: {
+        type: DataTypes.STRING(40),
+      },
     },
-    blueprint_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    blueprint_hash: {
-      type: DataTypes.STRING(40),
-      allowNull: false,
-      unique: true,
-    },
-    image_hash: {
-      type: DataTypes.STRING(40),
-      allowNull: false,
-    },
-    version: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    changes_markdown: {
-      type: DataTypes.STRING(40),
-    },
-  },
-  {}
-);
+    {}
+  );
+};

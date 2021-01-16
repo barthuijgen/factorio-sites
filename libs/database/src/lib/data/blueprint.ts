@@ -2,7 +2,8 @@ import { BlueprintData, getBlueprintContentForImageHash } from "@factorio-sites/
 import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
 import { getBlueprintImageRequestTopic } from "../gcp-pubsub";
 import { saveBlueprintString } from "../gcp-storage";
-import { BlueprintInstance, BlueprintModel, BlueprintStringModel } from "../postgres/models";
+import { BlueprintModel, BlueprintStringModel } from "../postgres/database";
+import { BlueprintInstance } from "../postgres/models/Blueprint";
 import { Blueprint } from "../types";
 
 const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
@@ -16,25 +17,30 @@ const mapBlueprintInstanceToEntry = (entity: BlueprintInstance): Blueprint => ({
   tags: entity.tags,
   created_at: entity.created_at && entity.created_at.getTime() / 1000,
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
-  factorioprints_id: entity.factorioprints_id || undefined,
+  factorioprints_id: entity.factorioprints_id || null,
   game_version: entity.game_version || null,
 });
 
 export async function getBlueprintById(id: string): Promise<Blueprint | null> {
-  const result = await BlueprintModel.findByPk(id).catch(() => null);
+  const result = await BlueprintModel()
+    .findByPk(id)
+    .catch(() => null);
   return result ? mapBlueprintInstanceToEntry(result) : null;
 }
 
 export async function getBlueprintByHash(hash: string): Promise<Blueprint | null> {
-  const result = await BlueprintModel.findOne({
-    where: { blueprint_hash: hash },
-  }).catch(() => null);
+  const result = await BlueprintModel()
+    .findOne({
+      where: { blueprint_hash: hash },
+    })
+    .catch(() => null);
   return result ? mapBlueprintInstanceToEntry(result) : null;
 }
 
 export async function createBlueprint(
   blueprint: BlueprintData,
   extraInfo: {
+    user_id: string | null;
     tags: string[];
     created_at?: number;
     updated_at?: number;
@@ -54,7 +60,8 @@ export async function createBlueprint(
   await saveBlueprintString(blueprint_hash, string);
 
   // Write blueprint details to datastore
-  const result = await BlueprintModel.create({
+  const result = await BlueprintModel().create({
+    user_id: extraInfo.user_id,
     label: blueprint.label,
     description: blueprint.description,
     blueprint_hash: blueprint_hash,
@@ -73,7 +80,7 @@ export async function createBlueprint(
     blueprintId: result.id,
   });
 
-  await BlueprintStringModel.create({
+  await BlueprintStringModel().create({
     blueprint_id: result.id,
     blueprint_hash: blueprint_hash,
     image_hash: image_hash,

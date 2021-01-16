@@ -5,10 +5,10 @@ import {
   getBlueprintById,
   getBlueprintStringByHash,
   hasBlueprintImage,
-  BlueprintEntry,
+  Blueprint,
 } from "@factorio-sites/database";
 
-const getOneMessage = async (): Promise<BlueprintEntry> => {
+const getOneMessage = async (): Promise<Blueprint> => {
   const topic = getBlueprintImageRequestTopic();
   const [subscription] = await topic
     .subscription("blueprint-image-function-app", {
