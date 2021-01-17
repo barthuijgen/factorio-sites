@@ -23,9 +23,6 @@ export interface Blueprint {
   created_at: number;
   updated_at: number;
   tags: string[];
-  factorioprints_id: string | null;
-  // BlueprintEntry->BlueprintString 1:m
-  // BlueprintEntry->BlueprintPageEntry n:m
 }
 
 export interface BlueprintBook {
@@ -37,9 +34,6 @@ export interface BlueprintBook {
   created_at: number;
   updated_at: number;
   is_modded: boolean;
-  factorioprints_id?: string;
-  // BlueprintBook:BlueprintBook n:m
-  // BlueprintBook:BlueprintEntry 1:m
 }
 
 /**
@@ -55,16 +49,7 @@ export interface BlueprintPage {
   created_at: number;
   updated_at: number;
   factorioprints_id: string | null;
+  favorite_count?: number;
   // BlueprintPageEntry->BlueprintEntry 1:m
   // BlueprintPageEntry->BlueprintBook 1:m
-}
-
-export interface BlueprintString {
-  blueprint_id: string;
-  blueprint_hash: string;
-  image_hash: string;
-  version: number;
-  changes_markdown: string;
-  created_at: Date;
-  // BlueprintString->BlueprintEntry m:1
 }

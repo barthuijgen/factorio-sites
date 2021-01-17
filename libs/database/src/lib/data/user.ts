@@ -1,5 +1,5 @@
 import * as bcrypt from "bcrypt";
-import { SessionModel, UserModel } from "../postgres/database";
+import { sequelize, SessionModel, UserModel } from "../postgres/database";
 import { SessionInstance } from "../postgres/models/Session";
 import { UserInstance } from "../postgres/models/User";
 
@@ -86,5 +86,20 @@ export const getSessionByToken = async (
   return SessionModel().findOne<any>({
     where: { session_token: token },
     include: [UserModel()],
+  });
+};
+
+export const isBlueprintPageUserFavorite = async (user_id: string, blueprint_page_id: string) => {
+  const UserFavorites = sequelize().models.user_favorites;
+  return UserFavorites.findOne({
+    where: { user_id, blueprint_page_id },
+  });
+};
+
+export const createUserFavorite = async (user_id: string, blueprint_page_id: string) => {
+  const UserFavorites = sequelize().models.user_favorites;
+  return UserFavorites.create({
+    user_id,
+    blueprint_page_id,
   });
 };

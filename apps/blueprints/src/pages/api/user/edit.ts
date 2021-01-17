@@ -5,7 +5,7 @@ import { AuthContextProps } from "../../../providers/auth";
 import { parseSequelizeError } from "../../../utils/api.utils";
 
 const handler: NextApiHandler = async (req, res) => {
-  if (req.method !== "POST") return res.status(400).end({ error: "method must be POST" });
+  if (req.method !== "POST") return res.status(400).json({ error: "method must be POST" });
 
   await init();
 

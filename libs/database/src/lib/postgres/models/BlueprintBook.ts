@@ -3,13 +3,11 @@ import { ChildTree } from "../../types";
 
 interface BlueprintBookAttributes {
   id: string;
-  user_id: string | null;
   label: string;
   description?: string;
   child_tree: ChildTree;
   blueprint_hash: string;
   is_modded: boolean;
-  factorioprints_id?: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -30,9 +28,6 @@ export const getBlueprintBookModel = (sequelize: Sequelize) => {
         type: DataTypes.UUID,
         defaultValue: UUIDV4,
       },
-      user_id: {
-        type: DataTypes.UUID,
-      },
       label: {
         type: DataTypes.STRING,
       },
@@ -50,9 +45,6 @@ export const getBlueprintBookModel = (sequelize: Sequelize) => {
       is_modded: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-      },
-      factorioprints_id: {
-        type: DataTypes.STRING,
       },
     },
     {}

@@ -2,7 +2,6 @@ import { DataTypes, UUIDV4, Optional, Model, Sequelize } from "sequelize";
 
 interface BlueprintAttributes {
   id: string;
-  user_id: string | null;
   label?: string;
   description?: string;
   game_version?: string;
@@ -10,7 +9,6 @@ interface BlueprintAttributes {
   image_hash: string;
   image_version: number;
   tags: string[];
-  factorioprints_id?: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -30,9 +28,6 @@ export const getBlueprintModel = (sequelize: Sequelize) => {
         primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: UUIDV4,
-      },
-      user_id: {
-        type: DataTypes.UUID,
       },
       label: {
         type: DataTypes.STRING,
@@ -62,9 +57,6 @@ export const getBlueprintModel = (sequelize: Sequelize) => {
         set(value: string[]) {
           this.setDataValue("tags", Array.isArray(value) ? value : []);
         },
-      },
-      factorioprints_id: {
-        type: DataTypes.STRING,
       },
     },
     {}

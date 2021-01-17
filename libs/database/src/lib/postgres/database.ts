@@ -1,6 +1,5 @@
 import { Sequelize } from "sequelize";
 import { getBlueprintModel } from "./models/Blueprint";
-import { getBlueprintStringModel } from "./models/BlueprintString";
 import { getBlueprintBookModel } from "./models/BlueprintBook";
 import { getBlueprintPageModel } from "./models/BlueprintPage";
 import { getUsertModel } from "./models/User";
@@ -30,7 +29,6 @@ const _init = async () => {
   const UserModel = getUsertModel(sequelize);
   const SessionModel = getSessionModel(sequelize);
   const BlueprintModel = getBlueprintModel(sequelize);
-  const BlueprintStringModel = getBlueprintStringModel(sequelize);
   const BlueprintBookModel = getBlueprintBookModel(sequelize);
   const BlueprintPageModel = getBlueprintPageModel(sequelize);
 
@@ -38,10 +36,7 @@ const _init = async () => {
 
   SessionModel.belongsTo(UserModel, { foreignKey: "user_id" });
 
-  BlueprintModel.hasOne(BlueprintStringModel, { foreignKey: "blueprint_id" });
   BlueprintModel.hasMany(BlueprintPageModel, { foreignKey: "blueprint_id" });
-
-  BlueprintStringModel.belongsTo(BlueprintModel, { foreignKey: "blueprint_id" });
 
   BlueprintPageModel.belongsTo(BlueprintModel, { foreignKey: "blueprint_id" });
   BlueprintPageModel.belongsTo(BlueprintBookModel, { foreignKey: "blueprint_book_id" });
@@ -60,6 +55,12 @@ const _init = async () => {
     foreignKey: "blueprint_book_id",
     otherKey: "blueprint_id",
     timestamps: false,
+  });
+  UserModel.belongsToMany(BlueprintPageModel, {
+    through: "user_favorites",
+    as: "favorites",
+    foreignKey: "user_id",
+    otherKey: "blueprint_page_id",
   });
 
   // Test database connection, if it fails the method will throw
@@ -84,7 +85,6 @@ const _init = async () => {
     UserModel,
     SessionModel,
     BlueprintModel,
-    BlueprintStringModel,
     BlueprintBookModel,
     BlueprintPageModel,
   };
@@ -96,7 +96,6 @@ const promise = _init()
     _UserModel = result.UserModel;
     _SessionModel = result.SessionModel;
     _BlueprintModel = result.BlueprintModel;
-    _BlueprintStringModel = result.BlueprintStringModel;
     _BlueprintBookModel = result.BlueprintBookModel;
     _BlueprintPageModel = result.BlueprintPageModel;
     return result;
@@ -109,7 +108,6 @@ let _sequelize: Sequelize;
 let _UserModel: ReturnType<typeof getUsertModel>;
 let _SessionModel: ReturnType<typeof getSessionModel>;
 let _BlueprintModel: ReturnType<typeof getBlueprintModel>;
-let _BlueprintStringModel: ReturnType<typeof getBlueprintStringModel>;
 let _BlueprintBookModel: ReturnType<typeof getBlueprintBookModel>;
 let _BlueprintPageModel: ReturnType<typeof getBlueprintPageModel>;
 
@@ -121,6 +119,5 @@ export const sequelize = () => _sequelize;
 export const UserModel = () => _UserModel;
 export const SessionModel = () => _SessionModel;
 export const BlueprintModel = () => _BlueprintModel;
-export const BlueprintStringModel = () => _BlueprintStringModel;
 export const BlueprintBookModel = () => _BlueprintBookModel;
 export const BlueprintPageModel = () => _BlueprintPageModel;

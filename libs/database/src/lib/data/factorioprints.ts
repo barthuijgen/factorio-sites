@@ -22,11 +22,9 @@ export async function saveBlueprintFromFactorioprints(
   // console.log(`string has ${books.length} books with ${blueprints.length} blueprints`);
 
   const extraInfo = {
-    user_id: null,
     created_at: factorioprintData.created_at,
     updated_at: factorioprintData.updated_at,
     tags: factorioprintData.tags,
-    factorioprints_id: factorioprintData.factorioprints_id,
   };
 
   const extraInfoPage = {

@@ -7,6 +7,7 @@ interface BlueprintPageAttributes {
   blueprint_book_id?: string;
   title: string;
   description_markdown: string;
+  tags: string[];
   factorioprints_id?: string;
   created_at: Date;
   updated_at: Date;
@@ -46,10 +47,27 @@ export const getBlueprintPageModel = (sequelize: Sequelize) => {
       description_markdown: {
         type: DataTypes.TEXT,
       },
+      tags: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        set(value: string[]) {
+          this.setDataValue("tags", Array.isArray(value) ? value : []);
+        },
+      },
       factorioprints_id: {
         type: DataTypes.STRING,
       },
     },
-    {}
+    { validate:{
+      blueprintOrBook() {
+        if (!this.blueprint_id && !this.blueprint_book_id) {
+          throw new Error('Must have either a blueprint_id or a blueprint_book_id');
+        }
+      },
+      externalOrInternal() {
+        if (!this.user_id && !this.factorioprints_id) {
+          throw new Error('Must have either a user_id or a factorioprints_id');
+        }
+      }
+    }}
   );
 };

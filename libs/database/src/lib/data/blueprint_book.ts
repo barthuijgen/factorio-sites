@@ -15,7 +15,6 @@ const mapBlueprintBookEntityToObject = (entity: BlueprintBookInstance): Blueprin
   created_at: entity.created_at && entity.created_at.getTime() / 1000,
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   is_modded: entity.is_modded || false,
-  factorioprints_id: entity.factorioprints_id,
 });
 
 export async function getBlueprintBookById(id: string): Promise<BlueprintBook | null> {
@@ -37,11 +36,9 @@ export async function getBlueprintBookByHash(hash: string): Promise<BlueprintBoo
 export async function createBlueprintBook(
   blueprintBook: BlueprintBookData,
   extraInfo: {
-    user_id: string | null;
     tags: string[];
     created_at?: number;
     updated_at?: number;
-    factorioprints_id?: string;
   }
 ): Promise<{ insertedId: string; child_tree: ChildTree }> {
   const string = await encodeBlueprint({ blueprint_book: blueprintBook });
@@ -85,11 +82,9 @@ export async function createBlueprintBook(
   }
 
   const result = await BlueprintBookModel().create({
-    user_id: extraInfo.user_id,
     label: blueprintBook.label,
     description: blueprintBook.description,
     blueprint_hash: blueprint_hash,
-    factorioprints_id: extraInfo.factorioprints_id,
     is_modded: false,
     child_tree,
     updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : undefined,

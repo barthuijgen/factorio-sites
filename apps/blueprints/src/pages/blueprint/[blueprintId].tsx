@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NextPage, NextPageContext } from "next";
 import BBCode from "bbcode-to-react";
-import { Button, Grid, Image } from "@chakra-ui/react";
+import { Button, Grid, Image, Box } from "@chakra-ui/react";
 import {
   BlueprintBook,
   Blueprint,
@@ -9,8 +9,9 @@ import {
   getBlueprintBookById,
   getBlueprintById,
   getBlueprintPageById,
-  hasBlueprintImage,
   init,
+  getSessionByToken,
+  isBlueprintPageUserFavorite,
 } from "@factorio-sites/database";
 import { BlueprintStringData, timeLogger } from "@factorio-sites/common-utils";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
@@ -19,6 +20,7 @@ import { Markdown } from "../../components/Markdown";
 import { BookChildTree } from "../../components/BookChildTree";
 import { CopyButton } from "../../components/CopyButton";
 import { ImageEditor } from "../../components/ImageEditor";
+import { getSessionToken } from "@factorio-sites/node-utils";
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash"> }
@@ -30,6 +32,7 @@ interface IndexProps {
   blueprint: Blueprint | null;
   blueprint_book: BlueprintBook | null;
   blueprint_page: BlueprintPage;
+  favorite: boolean;
 }
 
 export const Index: NextPage<IndexProps> = ({
@@ -38,13 +41,24 @@ export const Index: NextPage<IndexProps> = ({
   blueprint,
   blueprint_book,
   blueprint_page,
+  favorite,
 }) => {
   // const [imageZoom, setImageZoom] = useState(false);
   const [blueprintString, setBlueprintString] = useState<string | null>(null);
   const [data, setData] = useState<BlueprintStringData | null>(null);
   const [showJson, setShowJson] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(favorite);
 
   const selectedHash = selected.data.blueprint_hash;
+
+  const onClickFavorite = async () => {
+    const result = await fetch("/api/user/favorite", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ blueprint_page_id: blueprint_page.id }),
+    }).then((res) => res.json());
+    setIsFavorite(result.favorite);
+  };
 
   useEffect(() => {
     fetch(`/api/string/${selectedHash}`)
@@ -107,6 +121,11 @@ export const Index: NextPage<IndexProps> = ({
       gap={6}
     >
       <Panel title={blueprint_page.title} gridColumn="1">
+        <Box>
+          <Button colorScheme="green" onClick={onClickFavorite}>
+            Favorite ({isFavorite ? "yes" : "no"})
+          </Button>
+        </Box>
         {blueprint_book ? (
           <>
             <div>This string contains a blueprint book </div>
@@ -132,7 +151,7 @@ export const Index: NextPage<IndexProps> = ({
         ) : null}
       </Panel>
       <Panel
-        title={image_exists ? undefined : "Image"}
+        title={"Image"}
         gridColumn={chakraResponsive({ mobile: "1", desktop: "2" })}
         gridRow={chakraResponsive({ mobile: "1", desktop: null })}
       >
@@ -285,7 +304,6 @@ export async function getServerSideProps(context: NextPageContext) {
     blueprint = await getBlueprintById(blueprint_page.blueprint_id);
     selected_blueprint = blueprint;
     tl("getBlueprintById");
-    // blueprint_string = await getBlueprintStringByHash(blueprint.blueprint_hash);
   } else if (blueprint_page.blueprint_book_id) {
     blueprint_book = await getBlueprintBookById(blueprint_page.blueprint_book_id);
     if (selected_id && type === "book") {
@@ -318,16 +336,26 @@ export async function getServerSideProps(context: NextPageContext) {
     };
   }
 
-  const image_exists =
-    selected.type === "blueprint" ? await hasBlueprintImage(selected.data.image_hash) : false;
+  // const image_exists =
+  //   selected.type === "blueprint" ? await hasBlueprintImage(selected.data.image_hash) : false;
+
+  let favorite = false;
+  const session_token = getSessionToken(context.req);
+  if (session_token) {
+    const session = await getSessionByToken(session_token);
+    favorite = session
+      ? !!(await isBlueprintPageUserFavorite(session.user.id, blueprint_page.id))
+      : false;
+  }
 
   return {
     props: {
-      image_exists,
+      image_exists: false,
       blueprint,
       blueprint_book,
       selected,
       blueprint_page,
+      favorite,
     } as IndexProps,
   };
 }
