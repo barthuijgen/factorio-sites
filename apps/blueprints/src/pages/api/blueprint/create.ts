@@ -1,23 +1,13 @@
-import { NextApiHandler } from "next";
 import {
-  init,
   createBlueprint,
   createBlueprintPage,
   createBlueprintBook,
-  getSessionByToken,
 } from "@factorio-sites/database";
-import { getSessionToken, parseBlueprintString } from "@factorio-sites/node-utils";
+import { parseBlueprintString } from "@factorio-sites/node-utils";
 import { parseSequelizeError } from "../../../utils/api.utils";
+import { apiHandler } from "../../../utils/api-handler";
 
-const handler: NextApiHandler = async (req, res) => {
-  await init();
-
-  const token = getSessionToken(req);
-  if (!token) {
-    return res.status(401).json({ status: "Not authenticated" });
-  }
-
-  const session = await getSessionByToken(token);
+const handler = apiHandler(async (req, res, { session }) => {
   if (!session) {
     return res.status(401).json({ status: "Not authenticated" });
   }
@@ -66,6 +56,6 @@ const handler: NextApiHandler = async (req, res) => {
   }
 
   res.status(500).json({ status: "Failed to create blueprint" });
-};
+});
 
 export default handler;

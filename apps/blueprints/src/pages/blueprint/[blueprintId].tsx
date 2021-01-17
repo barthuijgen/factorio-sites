@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NextPage, NextPageContext } from "next";
+import { NextPage } from "next";
 import BBCode from "bbcode-to-react";
 import { Button, Grid, Image, Box } from "@chakra-ui/react";
 import {
@@ -9,8 +9,6 @@ import {
   getBlueprintBookById,
   getBlueprintById,
   getBlueprintPageById,
-  init,
-  getSessionByToken,
   isBlueprintPageUserFavorite,
 } from "@factorio-sites/database";
 import { BlueprintStringData, timeLogger } from "@factorio-sites/common-utils";
@@ -20,7 +18,8 @@ import { Markdown } from "../../components/Markdown";
 import { BookChildTree } from "../../components/BookChildTree";
 import { CopyButton } from "../../components/CopyButton";
 import { ImageEditor } from "../../components/ImageEditor";
-import { getSessionToken } from "@factorio-sites/node-utils";
+import { useAuth } from "../../providers/auth";
+import { pageHandler } from "../../utils/page-handler";
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash"> }
@@ -43,6 +42,7 @@ export const Index: NextPage<IndexProps> = ({
   blueprint_page,
   favorite,
 }) => {
+  const auth = useAuth();
   // const [imageZoom, setImageZoom] = useState(false);
   const [blueprintString, setBlueprintString] = useState<string | null>(null);
   const [data, setData] = useState<BlueprintStringData | null>(null);
@@ -121,11 +121,13 @@ export const Index: NextPage<IndexProps> = ({
       gap={6}
     >
       <Panel title={blueprint_page.title} gridColumn="1">
-        <Box>
-          <Button colorScheme="green" onClick={onClickFavorite}>
-            Favorite ({isFavorite ? "yes" : "no"})
-          </Button>
-        </Box>
+        {auth && (
+          <Box>
+            <Button colorScheme="green" onClick={onClickFavorite}>
+              Favorite ({isFavorite ? "yes" : "no"})
+            </Button>
+          </Box>
+        )}
         {blueprint_book ? (
           <>
             <div>This string contains a blueprint book </div>
@@ -271,14 +273,12 @@ export const Index: NextPage<IndexProps> = ({
   );
 };
 
-export async function getServerSideProps(context: NextPageContext) {
-  await init();
-
+export const getServerSideProps = pageHandler(async (context, { session }) => {
   const throwError = (message: string) => {
     if (!blueprint_page && context.res) {
       context.res.statusCode = 404;
       context.res.end(JSON.stringify({ error: message }));
-      return {};
+      return { props: {} };
     }
   };
 
@@ -339,14 +339,9 @@ export async function getServerSideProps(context: NextPageContext) {
   // const image_exists =
   //   selected.type === "blueprint" ? await hasBlueprintImage(selected.data.image_hash) : false;
 
-  let favorite = false;
-  const session_token = getSessionToken(context.req);
-  if (session_token) {
-    const session = await getSessionByToken(session_token);
-    favorite = session
-      ? !!(await isBlueprintPageUserFavorite(session.user.id, blueprint_page.id))
-      : false;
-  }
+  const favorite = session
+    ? !!(await isBlueprintPageUserFavorite(session.user.id, blueprint_page.id))
+    : false;
 
   return {
     props: {
@@ -358,6 +353,6 @@ export async function getServerSideProps(context: NextPageContext) {
       favorite,
     } as IndexProps,
   };
-}
+});
 
 export default Index;

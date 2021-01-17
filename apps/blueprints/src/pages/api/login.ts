@@ -1,13 +1,14 @@
-import { NextApiHandler } from "next";
-import { init, loginUserWithEmail } from "@factorio-sites/database";
+import { loginUserWithEmail } from "@factorio-sites/database";
 import { setUserToken } from "@factorio-sites/node-utils";
+import { apiHandler } from "../../utils/api-handler";
 
-const handler: NextApiHandler = async (req, res) => {
-  await init();
+const handler = apiHandler(async (req, res, { session, ip, useragent }) => {
+  if (session) {
+    return res.status(400).json({ status: "Already logged in" });
+  }
 
   const { email, password } = req.body;
-  const ip = (req.headers["x-forwarded-for"] || (req as any).ip) as string;
-  const useragent = req.headers["user-agent"] as string;
+
   const user = await loginUserWithEmail({ email, password, useragent, ip });
 
   if (user && user.session) {
@@ -16,6 +17,6 @@ const handler: NextApiHandler = async (req, res) => {
   } else {
     res.status(401).json({ status: "Invalid email and password combination" });
   }
-};
+});
 
 export default handler;

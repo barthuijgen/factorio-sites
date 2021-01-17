@@ -1,22 +1,14 @@
-import { NextApiHandler } from "next";
-import { init, getSessionByToken } from "@factorio-sites/database";
-import { deleteSessionToken, getSessionToken } from "@factorio-sites/node-utils";
+import { deleteSessionToken } from "@factorio-sites/node-utils";
+import { apiHandler } from "../../utils/api-handler";
 
-const handler: NextApiHandler = async (req, res) => {
-  await init();
-
-  const token = getSessionToken(req);
-
-  if (token) {
-    const session = await getSessionByToken(token);
-    if (session) {
-      await session.destroy();
-    }
+const handler = apiHandler(async (req, res, { session }) => {
+  if (session) {
+    await session.destroy();
     deleteSessionToken(res);
   }
 
   res.setHeader("Location", req.query.redirect || "/");
   res.status(302).end();
-};
+});
 
 export default handler;

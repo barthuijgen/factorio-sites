@@ -1,14 +1,14 @@
-import { NextApiHandler } from "next";
-import { init, createUserWithEmail, createSession } from "@factorio-sites/database";
+import { createUserWithEmail, createSession } from "@factorio-sites/database";
 import { setUserToken } from "@factorio-sites/node-utils";
 import { parseSequelizeError } from "../../utils/api.utils";
+import { apiHandler } from "../../utils/api-handler";
 
-const handler: NextApiHandler = async (req, res) => {
-  await init();
+const handler = apiHandler(async (req, res, { session, ip, useragent }) => {
+  if (session) {
+    return res.status(400).json({ status: "Already logged in" });
+  }
 
   const { email, username, password, password_confirm } = req.body;
-  const ip = (req.headers["x-forwarded-for"] || (req as any).ip) as string;
-  const useragent = req.headers["user-agent"] as string;
 
   // Validation
   const errors: Record<string, string> = {};
@@ -37,6 +37,6 @@ const handler: NextApiHandler = async (req, res) => {
   }
 
   res.status(401).json({ status: "Failed to register account" });
-};
+});
 
 export default handler;
