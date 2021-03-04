@@ -72,7 +72,7 @@ model blueprint_page {
 model session {
   id            String   @id @default(uuid()) @db.Uuid
   user_id       String   @db.Uuid
-  session_token String   @unique @db.VarChar(255)
+  session_token String   @unique @default(uuid()) @db.Uuid
   useragent     String   @db.VarChar(255)
   ip            String   @db.VarChar(255)
   last_used     DateTime

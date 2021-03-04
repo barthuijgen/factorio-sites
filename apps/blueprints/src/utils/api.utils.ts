@@ -1,18 +1,12 @@
-import { ValidationErrorItem } from "sequelize/types";
-
-export const parseSequelizeError = (reason: any): Record<string, string> | null => {
+export const parseDatabaseError = (reason: any): Record<string, string> | null => {
   const errors: Record<string, string> = {};
+  console.log(reason);
 
-  if (Array.isArray(reason.errors)) {
-    reason.errors.forEach((error: ValidationErrorItem) => {
-      if (error.type === "unique violation") {
-        errors[error.path] = `${error.path} is alraedy taken.`;
-      }
+  if (reason.code === "P2002") {
+    reason.meta.target.forEach((field: string) => {
+      errors[field] = `${field} is already taken`;
     });
-    if (Object.keys(errors).length) {
-      return errors;
-    }
   }
 
-  return null;
+  return Object.keys(errors).length ? errors : null;
 };

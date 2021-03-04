@@ -15,19 +15,19 @@ const mapBlueprintPageEntityToObject = (entity: blueprint_page): BlueprintPage =
 });
 
 export async function getBlueprintPageById(id: string): Promise<BlueprintPage | null> {
-  const result = await prisma().blueprint_page.findUnique({ where: { id } });
+  const result = await prisma.blueprint_page.findUnique({ where: { id } });
   return result ? mapBlueprintPageEntityToObject(result) : null;
 }
 
 export async function getBlueprintPageByUserId(user_id: string): Promise<BlueprintPage[] | null> {
-  const results = await prisma().blueprint_page.findMany({ where: { user_id } });
+  const results = await prisma.blueprint_page.findMany({ where: { user_id } });
   return results ? results.map((result) => mapBlueprintPageEntityToObject(result)) : null;
 }
 
 export async function getBlueprintPageByFactorioprintsId(
   id: string
 ): Promise<BlueprintPage | null> {
-  const result = await prisma().blueprint_page.findFirst({ where: { factorioprints_id: id } });
+  const result = await prisma.blueprint_page.findFirst({ where: { factorioprints_id: id } });
   return result ? mapBlueprintPageEntityToObject(result) : null;
 }
 
@@ -47,7 +47,7 @@ export async function getMostRecentBlueprintPages({
     favorites: "favorite_count",
   };
   const result = (
-    await prisma().$queryRaw<(blueprint_page & { favorite_count: number })[]>(
+    await prisma.$queryRaw<(blueprint_page & { favorite_count: number })[]>(
       `SELECT *, (SELECT COUNT(*) FROM user_favorites where user_favorites.blueprint_page_id = blueprint_page.id) AS favorite_count
        FROM public.blueprint_page
        WHERE blueprint_page.title ILIKE $1
@@ -82,7 +82,7 @@ export async function createBlueprintPage(
     factorioprints_id?: string;
   }
 ) {
-  const page = await prisma().blueprint_page.create({
+  const page = await prisma.blueprint_page.create({
     data: {
       user_id: extraInfo.user_id,
       title: extraInfo.title,

@@ -18,12 +18,12 @@ const mapBlueprintBookEntityToObject = (entity: blueprint_book): BlueprintBook =
 });
 
 export async function getBlueprintBookById(id: string): Promise<BlueprintBook | null> {
-  const result = await prisma().blueprint_book.findUnique({ where: { id } });
+  const result = await prisma.blueprint_book.findUnique({ where: { id } });
   return result ? mapBlueprintBookEntityToObject(result) : null;
 }
 
 export async function getBlueprintBookByHash(hash: string): Promise<BlueprintBook | null> {
-  const result = await prisma().blueprint_book.findUnique({ where: { blueprint_hash: hash } });
+  const result = await prisma.blueprint_book.findUnique({ where: { blueprint_hash: hash } });
   return result ? mapBlueprintBookEntityToObject(result) : null;
 }
 
@@ -75,7 +75,7 @@ export async function createBlueprintBook(
     }
   }
 
-  const result = await prisma().blueprint_book.create({
+  const result = await prisma.blueprint_book.create({
     data: {
       label: blueprintBook.label,
       description: blueprintBook.description,

@@ -67,8 +67,8 @@ export const Index: NextPage = () => {
               <li>Add blueprint tags</li>
               <li>Expand search on tags</li>
               <li>Add tracking of blueprint views</li>
-              <li>Add favorites</li>
-              <li>Add sorting by views/favorites</li>
+              <li css={{ textDecoration: "line-through" }}>Add favorites</li>
+              <li css={{ textDecoration: "line-through" }}>Add sorting by views/favorites</li>
               <li>Add thumbnails</li>
               <li>Add tag fixing moderators</li>
               <li>Improve modded blueprint support</li>

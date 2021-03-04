@@ -20,12 +20,12 @@ const mapBlueprintInstanceToEntry = (entity: BlueprintModel): Blueprint => ({
 });
 
 export async function getBlueprintById(id: string): Promise<Blueprint | null> {
-  const result = await prisma().blueprint.findUnique({ where: { id } });
+  const result = await prisma.blueprint.findUnique({ where: { id } });
   return result ? mapBlueprintInstanceToEntry(result) : null;
 }
 
 export async function getBlueprintByHash(hash: string): Promise<Blueprint | null> {
-  const result = await prisma().blueprint.findUnique({ where: { blueprint_hash: hash } });
+  const result = await prisma.blueprint.findUnique({ where: { blueprint_hash: hash } });
   return result ? mapBlueprintInstanceToEntry(result) : null;
 }
 
@@ -51,7 +51,7 @@ export async function createBlueprint(
 
   // Write blueprint details to datastore
 
-  const result = await prisma().blueprint.create({
+  const result = await prisma.blueprint.create({
     data: {
       label: blueprint.label,
       description: blueprint.description,

@@ -1,6 +1,8 @@
 import { AuthContextProps } from "../../../providers/auth";
-import { parseSequelizeError } from "../../../utils/api.utils";
+import { parseDatabaseError } from "../../../utils/api.utils";
 import { apiHandler } from "../../../utils/api-handler";
+import { user } from "@prisma/client";
+import { prisma } from "@factorio-sites/database";
 
 const handler = apiHandler(async (req, res, { session }) => {
   if (req.method !== "POST") return res.status(400).json({ error: "method must be POST" });
@@ -8,20 +10,23 @@ const handler = apiHandler(async (req, res, { session }) => {
   const { username, email } = req.body;
 
   if (session) {
-    const user = session.user;
+    let user = session.user;
+    const update: Partial<user> = {};
+
     if (username) {
-      user.set("username", username);
+      update.username = username;
     }
     if (email) {
-      user.set("email", email);
-    } else if (user.get("email") && user.get("steam_id")) {
+      update.email = email;
+    } else if (user.email && user.steam_id) {
       // User currently has email but wants to delete it, allow if steam_id exists
-      user.set("email", null);
+      update.email = null;
     }
+
     try {
-      await user.save();
+      user = await prisma.user.update({ where: { id: user.id }, data: update });
     } catch (reason) {
-      const insert_errors = parseSequelizeError(reason);
+      const insert_errors = parseDatabaseError(reason);
       if (insert_errors) {
         return res.status(400).json({ errors: insert_errors });
       }
@@ -29,10 +34,10 @@ const handler = apiHandler(async (req, res, { session }) => {
 
     return res.status(200).json({
       auth: {
-        user_id: session.user.get("id"),
-        username: session.user.get("username"),
-        email: session.user.get("email"),
-        steam_id: session.user.get("steam_id"),
+        user_id: user.id,
+        username: user.username,
+        email: user.email,
+        steam_id: user.steam_id,
       } as AuthContextProps,
     });
   }

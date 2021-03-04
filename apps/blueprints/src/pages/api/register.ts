@@ -1,6 +1,6 @@
 import { createUserWithEmail, createSession } from "@factorio-sites/database";
 import { setUserToken } from "@factorio-sites/node-utils";
-import { parseSequelizeError } from "../../utils/api.utils";
+import { parseDatabaseError } from "../../utils/api.utils";
 import { apiHandler } from "../../utils/api-handler";
 
 const handler = apiHandler(async (req, res, { session, ip, useragent }) => {
@@ -30,7 +30,7 @@ const handler = apiHandler(async (req, res, { session, ip, useragent }) => {
     setUserToken(res, session.session_token);
     return res.status(201).json({ success: true });
   } catch (reason) {
-    const insert_errors = parseSequelizeError(reason);
+    const insert_errors = parseDatabaseError(reason);
     if (insert_errors) {
       return res.status(400).json({ errors: insert_errors });
     }

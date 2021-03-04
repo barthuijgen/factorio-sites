@@ -12,7 +12,7 @@ const handler = apiHandler(async (req, res, { session }) => {
     const existing = await isBlueprintPageUserFavorite(user.id, blueprint_page_id);
 
     if (existing) {
-      await prisma().user_favorites.delete({
+      await prisma.user_favorites.delete({
         where: {
           user_id_blueprint_page_id: {
             user_id: existing.user_id,

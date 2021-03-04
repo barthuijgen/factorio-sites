@@ -1,13 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { getEnvOrThrow, getSecretOrThrow } from "../env.util";
 
+export let prisma: PrismaClient;
+
 const _init = async () => {
-  if (_prisma) return _prisma;
+  if (prisma) return prisma;
 
   const databasePassword = getEnvOrThrow("POSTGRES_PASSWORD");
 
-  const prisma = new PrismaClient({
-    log: ["query", "info", "warn", "error"],
+  const prismaClient = new PrismaClient({
+    log: ["warn", "error"],
     datasources: {
       db: {
         url: `postgresql://${getEnvOrThrow("POSTGRES_USER")}:${await getSecretOrThrow(
@@ -17,24 +19,20 @@ const _init = async () => {
     },
   });
 
-  await prisma.$connect();
+  // const x = await prismaClient.user.create({ data: { username: 1 } });
 
-  return prisma;
+  await prismaClient.$connect();
+
+  return prismaClient;
 };
 
 const promise = _init()
   .then((result) => {
-    _prisma = result;
+    prisma = result;
     return result;
   })
   .catch((reason) => {
     console.log("Database failed to init!", reason);
   });
 
-let _prisma: PrismaClient;
-
-export const init = async () => {
-  return promise;
-};
-
-export const prisma = () => _prisma;
+export const init = async () => promise;

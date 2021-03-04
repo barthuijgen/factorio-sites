@@ -28,7 +28,7 @@ export const UserBlueprintCreate: NextPage = () => {
   const auth = useAuth();
   const router = useRouter();
 
-  if (!auth) {
+  if (!auth && typeof window !== "undefined") {
     router.push("/");
   }
 

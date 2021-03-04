@@ -39,7 +39,7 @@ export const ImageEditor: React.FC<{ string: string }> = ({ string }) => {
       if (!editorLoaded || !FBE || !editor) return;
 
       const bpOrBook = await FBE.getBlueprintOrBookFromSource(string);
-      const blueprint = bpOrBook instanceof FBE.Book ? bpOrBook.getBlueprint() : bpOrBook;
+      const blueprint = bpOrBook instanceof FBE.Book ? bpOrBook.selectBlueprint(0) : bpOrBook;
 
       console.log({ blueprint });
 

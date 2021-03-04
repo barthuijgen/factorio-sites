@@ -1,10 +1,9 @@
 import * as bcrypt from "bcrypt";
+import { session, user } from "@prisma/client";
 import { prisma } from "../postgres/database";
-import { SessionInstance } from "../postgres/models/Session";
-import { UserInstance } from "../postgres/models/User";
 
 export const getUserById = async (id: string) => {
-  const user = await prisma().user.findUnique({ where: { id } });
+  const user = await prisma.user.findUnique({ where: { id } });
   return user ? user : null;
 };
 
@@ -15,7 +14,7 @@ export const createUserWithEmail = async (
   ip: string
 ) => {
   const hash = await bcrypt.hash(password, 10);
-  return prisma().user.create({
+  return prisma.user.create({
     data: {
       email,
       username,
@@ -27,7 +26,7 @@ export const createUserWithEmail = async (
 };
 
 export const createUserWithSteam = async (steam_id: string, username: string, ip: string) => {
-  return prisma().user.create({
+  return prisma.user.create({
     data: {
       steam_id,
       username,
@@ -46,30 +45,29 @@ export const loginUserWithEmail = async ({
   password: string;
   useragent: string;
   ip: string;
-}): Promise<(UserInstance & { session: SessionInstance }) | null> => {
-  const user = await prisma().user.findUnique({ where: { email } });
-  if (!user) {
+}): Promise<(user & { session: session }) | null> => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user || !user.password) {
     return null;
   }
   const password_valid = await bcrypt.compare(password, user.password);
   if (password_valid) {
-    await user.update({
-      last_login_ip: ip,
-      last_login_at: new Date(),
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { last_login_ip: ip, last_login_at: new Date() },
     });
     const session = await createSession(user, useragent, ip);
-    (user as any).session = session;
-    return user as any;
+    return Object.assign(user, { session });
   }
   return null;
 };
 
 export const loginUserWithSteam = async (steam_id: string, ip: string) => {
-  const user = await prisma().user.findUnique({ where: { steam_id } });
+  const user = await prisma.user.findUnique({ where: { steam_id } });
   if (!user) {
     return false;
   }
-  await prisma().user.update({
+  await prisma.user.update({
     where: { steam_id },
     data: {
       last_login_ip: ip,
@@ -79,9 +77,10 @@ export const loginUserWithSteam = async (steam_id: string, ip: string) => {
   return user;
 };
 
-export const createSession = async (user: UserInstance, useragent: string, ip: string) => {
-  return prisma().session.create({
-    datta: {
+export const createSession = async (user: user, useragent: string, ip: string) => {
+  return prisma.session.create({
+    data: {
+      last_used: new Date(),
       user_id: user.id,
       useragent,
       ip,
@@ -90,7 +89,7 @@ export const createSession = async (user: UserInstance, useragent: string, ip: s
 };
 
 export const getSessionByToken = async (token: string) => {
-  return await prisma().session.findUnique({
+  return await prisma.session.findUnique({
     where: { session_token: token },
     include: {
       user: true,
@@ -99,12 +98,12 @@ export const getSessionByToken = async (token: string) => {
 };
 
 export const isBlueprintPageUserFavorite = async (user_id: string, blueprint_page_id: string) => {
-  const { user_favorites } = prisma();
+  const { user_favorites } = prisma;
   return user_favorites.findFirst({ where: { user_id, blueprint_page_id } });
 };
 
 export const createUserFavorite = async (user_id: string, blueprint_page_id: string) => {
-  const { user_favorites } = prisma();
+  const { user_favorites } = prisma;
   return user_favorites.create({
     data: {
       user_id,
