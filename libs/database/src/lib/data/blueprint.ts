@@ -1,14 +1,13 @@
 import { BlueprintData, getBlueprintContentForImageHash } from "@factorio-sites/common-utils";
 import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
-// import { getBlueprintImageRequestTopic } from "../gcp-pubsub";
+import { blueprint as BlueprintModel } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
-import { BlueprintModel } from "../postgres/database";
-import { BlueprintInstance } from "../postgres/models/Blueprint";
+import { prisma } from "../postgres/database";
 import { Blueprint } from "../types";
 
 // const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
 
-const mapBlueprintInstanceToEntry = (entity: BlueprintInstance): Blueprint => ({
+const mapBlueprintInstanceToEntry = (entity: BlueprintModel): Blueprint => ({
   id: entity.id,
   blueprint_hash: entity.blueprint_hash,
   image_hash: entity.image_hash,
@@ -21,18 +20,12 @@ const mapBlueprintInstanceToEntry = (entity: BlueprintInstance): Blueprint => ({
 });
 
 export async function getBlueprintById(id: string): Promise<Blueprint | null> {
-  const result = await BlueprintModel()
-    .findByPk(id)
-    .catch(() => null);
+  const result = await prisma().blueprint.findUnique({ where: { id } });
   return result ? mapBlueprintInstanceToEntry(result) : null;
 }
 
 export async function getBlueprintByHash(hash: string): Promise<Blueprint | null> {
-  const result = await BlueprintModel()
-    .findOne({
-      where: { blueprint_hash: hash },
-    })
-    .catch(() => null);
+  const result = await prisma().blueprint.findUnique({ where: { blueprint_hash: hash } });
   return result ? mapBlueprintInstanceToEntry(result) : null;
 }
 
@@ -57,16 +50,19 @@ export async function createBlueprint(
   await saveBlueprintString(blueprint_hash, string);
 
   // Write blueprint details to datastore
-  const result = await BlueprintModel().create({
-    label: blueprint.label,
-    description: blueprint.description,
-    blueprint_hash: blueprint_hash,
-    image_hash: image_hash,
-    tags: extraInfo.tags,
-    game_version: `${blueprint.version}`,
-    image_version: 1,
-    updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : undefined,
-    created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : undefined,
+
+  const result = await prisma().blueprint.create({
+    data: {
+      label: blueprint.label,
+      description: blueprint.description,
+      blueprint_hash: blueprint_hash,
+      image_hash: image_hash,
+      tags: extraInfo.tags,
+      game_version: `${blueprint.version}`,
+      image_version: 1,
+      updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
+      created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
+    },
   });
 
   console.log(`Created Blueprint ${result.id}`);

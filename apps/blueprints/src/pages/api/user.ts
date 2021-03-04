@@ -5,10 +5,10 @@ const handler = apiHandler(async (_, res, { session }) => {
   if (session) {
     return res.status(200).json({
       auth: {
-        user_id: session.user.get("id"),
-        username: session.user.get("username"),
-        email: session.user.get("email"),
-        steam_id: session.user.get("steam_id"),
+        user_id: session.user.id,
+        username: session.user.username,
+        email: session.user.email,
+        steam_id: session.user.steam_id,
       } as AuthContextProps,
     });
   }

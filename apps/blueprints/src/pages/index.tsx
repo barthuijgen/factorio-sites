@@ -1,52 +1,12 @@
 import React from "react";
 import { NextPage, NextPageContext } from "next";
-import Link from "next/link";
-import { css } from "@emotion/react";
 import { BlueprintPage, getMostRecentBlueprintPages, init } from "@factorio-sites/database";
-import { SimpleGrid, Box, RadioGroup, Stack, Radio, Text } from "@chakra-ui/react";
+import { SimpleGrid, Box, RadioGroup, Stack, Radio } from "@chakra-ui/react";
 import { Panel } from "../components/Panel";
 import { Pagination } from "../components/Pagination";
 import { useRouterQueryToHref } from "../hooks/query.hook";
 import { useRouter } from "next/router";
-import { MdFavorite } from "react-icons/md";
-
-const linkStyles = css`
-  width: 100%;
-  margin: 5px 0;
-  a {
-    display: block;
-    padding: 5px;
-    color: #fff;
-  }
-  &:hover {
-    cursor: pointer;
-    background: #ccc;
-  }
-`;
-
-const formatDate = (datenum: number) => {
-  const date = new Date(datenum * 1000);
-  return date.toLocaleString();
-};
-
-const BlueprintComponent: React.FC<{ blueprint: BlueprintPage }> = ({ blueprint }) => (
-  <div css={linkStyles}>
-    <Link href={`/blueprint/${blueprint.id}`} passHref>
-      <a>
-        <Box css={{ display: "flex", justifyContent: "space-between" }}>
-          <Text>{blueprint.title}</Text>
-          <Box css={{ display: "flex" }}>
-            <Text css={{ display: "flex", alignItems: "center", marginRight: "2rem" }}>
-              <MdFavorite css={{ marginRight: "0.5rem" }} />
-              {blueprint.favorite_count}
-            </Text>
-            <Text>{formatDate(blueprint.updated_at)}</Text>
-          </Box>
-        </Box>
-      </a>
-    </Link>
-  </div>
-);
+import { BlueprintLink } from "../components/BlueprintLink";
 
 interface IndexProps {
   totalItems: number;
@@ -88,7 +48,7 @@ export const Index: NextPage<IndexProps> = ({
         </Box>
         <Box>
           {blueprints.map((bp) => (
-            <BlueprintComponent key={bp.id} blueprint={bp} />
+            <BlueprintLink key={bp.id} blueprint={bp} />
           ))}
           <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />
         </Box>

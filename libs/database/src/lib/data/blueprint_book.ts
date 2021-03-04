@@ -1,35 +1,29 @@
 import { BlueprintBookData } from "@factorio-sites/common-utils";
 import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
+import { blueprint_book } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
-import { BlueprintBookModel } from "../postgres/database";
-import { BlueprintBookInstance } from "../postgres/models/BlueprintBook";
+import { prisma } from "../postgres/database";
 import { BlueprintBook, ChildTree } from "../types";
 import { createBlueprint } from "./blueprint";
 
-const mapBlueprintBookEntityToObject = (entity: BlueprintBookInstance): BlueprintBook => ({
+const mapBlueprintBookEntityToObject = (entity: blueprint_book): BlueprintBook => ({
   id: entity.id,
-  child_tree: entity.child_tree ? entity.child_tree : [],
+  child_tree: entity.child_tree ? (entity.child_tree as any) : [],
   blueprint_hash: entity.blueprint_hash,
-  label: entity.label,
-  description: entity.description,
+  label: entity.label || "",
+  description: entity.description || "",
   created_at: entity.created_at && entity.created_at.getTime() / 1000,
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   is_modded: entity.is_modded || false,
 });
 
 export async function getBlueprintBookById(id: string): Promise<BlueprintBook | null> {
-  const result = await BlueprintBookModel()
-    .findByPk(id)
-    .catch(() => null);
+  const result = await prisma().blueprint_book.findUnique({ where: { id } });
   return result ? mapBlueprintBookEntityToObject(result) : null;
 }
 
 export async function getBlueprintBookByHash(hash: string): Promise<BlueprintBook | null> {
-  const result = await BlueprintBookModel()
-    .findOne({
-      where: { blueprint_hash: hash },
-    })
-    .catch(() => null);
+  const result = await prisma().blueprint_book.findUnique({ where: { blueprint_hash: hash } });
   return result ? mapBlueprintBookEntityToObject(result) : null;
 }
 
@@ -81,14 +75,16 @@ export async function createBlueprintBook(
     }
   }
 
-  const result = await BlueprintBookModel().create({
-    label: blueprintBook.label,
-    description: blueprintBook.description,
-    blueprint_hash: blueprint_hash,
-    is_modded: false,
-    child_tree,
-    updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : undefined,
-    created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : undefined,
+  const result = await prisma().blueprint_book.create({
+    data: {
+      label: blueprintBook.label,
+      description: blueprintBook.description,
+      blueprint_hash: blueprint_hash,
+      is_modded: false,
+      child_tree: child_tree as any,
+      updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
+      created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
+    },
   });
 
   console.log(`Created Blueprint book ${result.id}`);

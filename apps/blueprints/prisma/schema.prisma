@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum enum_user_role {
+  user
+  moderator
+  admin
+}
+
+model blueprint {
+  id             String          @id @default(uuid()) @db.Uuid
+  label          String?         @db.VarChar(255)
+  description    String?
+  game_version   String?         @db.VarChar(255)
+  blueprint_hash String          @unique @db.VarChar(40)
+  image_hash     String          @db.VarChar(40)
+  image_version  Int             @default(1)
+  tags           String[]        @db.VarChar(255)
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  blueprint_page blueprint_page?
+}
+
+model blueprint_book {
+  id             String          @id @default(uuid()) @db.Uuid
+  label          String?         @db.VarChar(255)
+  description    String?
+  child_tree     Json            @db.Json
+  blueprint_hash String          @unique @db.VarChar(40)
+  is_modded      Boolean
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  blueprint_page blueprint_page?
+}
+
+model blueprint_book_blueprints {
+  blueprint_book_id String @db.Uuid
+  blueprint_id      String @db.Uuid
+
+  @@id([blueprint_book_id, blueprint_id])
+}
+
+model blueprint_book_books {
+  blueprint_book_1_id String @db.Uuid
+  blueprint_book_2_id String @db.Uuid
+
+  @@id([blueprint_book_1_id, blueprint_book_2_id])
+}
+
+model blueprint_page {
+  id                   String           @id @default(uuid()) @db.Uuid
+  user_id              String?          @db.Uuid
+  blueprint_id         String?          @unique @db.Uuid
+  blueprint_book_id    String?          @unique @db.Uuid
+  title                String           @db.VarChar(255)
+  description_markdown String?
+  tags                 String[]         @db.VarChar(255)
+  factorioprints_id    String?          @unique @db.VarChar(255)
+  created_at           DateTime         @default(now())
+  updated_at           DateTime         @updatedAt
+  blueprint_book       blueprint_book?  @relation(fields: [blueprint_book_id], references: [id])
+  blueprint            blueprint?       @relation(fields: [blueprint_id], references: [id])
+  user_favorites       user_favorites[]
+}
+
+model session {
+  id            String   @id @default(uuid()) @db.Uuid
+  user_id       String   @db.Uuid
+  session_token String   @unique @db.VarChar(255)
+  useragent     String   @db.VarChar(255)
+  ip            String   @db.VarChar(255)
+  last_used     DateTime
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  user          user     @relation(fields: [user_id], references: [id])
+}
+
+model user {
+  id                   String           @id @default(uuid()) @db.Uuid
+  email                String?          @unique @db.VarChar(255)
+  username             String           @unique @db.VarChar(255)
+  role                 enum_user_role?  @default(user)
+  steam_id             String?          @unique @db.VarChar(255)
+  password             String?          @db.VarChar(255)
+  password_reset_token String?          @db.Uuid
+  password_reset_at    DateTime?
+  last_password_change DateTime?
+  last_login_at        DateTime?
+  last_login_ip        String           @db.VarChar(255)
+  email_validated      Boolean          @default(false)
+  email_validate_token String?          @db.Uuid
+  created_at           DateTime         @default(now())
+  updated_at           DateTime         @updatedAt
+  session              session[]
+  user_favorites       user_favorites[]
+}
+
+model user_favorites {
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  user_id           String         @db.Uuid
+  blueprint_page_id String         @db.Uuid
+  blueprint_page    blueprint_page @relation(fields: [blueprint_page_id], references: [id])
+  user              user           @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, blueprint_page_id])
+}

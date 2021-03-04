@@ -43,5 +43,5 @@ Thumbs.db
 /credentials
 .env.local
 .local.env
-/.yalc
 local.readme.md
+.yalc
