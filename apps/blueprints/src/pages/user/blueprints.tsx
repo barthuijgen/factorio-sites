@@ -12,6 +12,8 @@ interface UserBlueprintsProps {
 }
 
 export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) => {
+  if (!blueprints) return null;
+
   return (
     <div css={{ margin: "0.7rem" }}>
       <SimpleGrid columns={1} margin="0 auto" maxWidth="800px">
@@ -42,6 +44,10 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
 
 export const getServerSideProps = pageHandler(async (context, { session }) => {
   if (!session) {
+    if (context.res) {
+      context.res.statusCode = 302;
+      context.res.setHeader("Location", "/");
+    }
     return { props: {} };
   }
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import BBCode from "bbcode-to-react";
-import { Button, Grid, Image, Box } from "@chakra-ui/react";
+import { Button, Grid, Image } from "@chakra-ui/react";
 import {
   BlueprintBook,
   Blueprint,
@@ -20,6 +20,8 @@ import { CopyButton } from "../../components/CopyButton";
 import { ImageEditor } from "../../components/ImageEditor";
 import { useAuth } from "../../providers/auth";
 import { pageHandler } from "../../utils/page-handler";
+import styled from "@emotion/styled";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash"> }
@@ -33,6 +35,15 @@ interface IndexProps {
   blueprint_page: BlueprintPage;
   favorite: boolean;
 }
+
+const StyledTable = styled.table`
+  td {
+    border: 1px solid #909090;
+  }
+  td:not(.no-padding) {
+    padding: 5px 10px;
+  }
+`;
 
 export const Index: NextPage<IndexProps> = ({
   image_exists,
@@ -120,53 +131,88 @@ export const Index: NextPage<IndexProps> = ({
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
       gap={6}
     >
-      <Panel title={blueprint_page.title} gridColumn="1">
-        {auth && (
-          <Box>
-            <Button colorScheme="green" onClick={onClickFavorite}>
-              Favorite ({isFavorite ? "yes" : "no"})
-            </Button>
-          </Box>
-        )}
+      <Panel
+        title={
+          <div css={{ position: "relative" }}>
+            <span>{blueprint_page.title}</span>
+            {auth && (
+              <Button
+                colorScheme="green"
+                onClick={onClickFavorite}
+                css={{ position: "absolute", right: "10px", top: "-7px", height: "35px" }}
+              >
+                Favorite {isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
+              </Button>
+            )}
+          </div>
+        }
+        gridColumn="1"
+      >
         {blueprint_book ? (
           <>
             <div>This string contains a blueprint book </div>
             <br />
-            <BookChildTree
-              child_tree={[
-                {
-                  id: blueprint_book.id,
-                  name: blueprint_book.label,
-                  type: "blueprint_book",
-                  children: blueprint_book.child_tree,
-                },
-              ]}
-              base_url={`/blueprint/${blueprint_page.id}`}
-              selected_id={selected.data.id}
-            />
+            <div css={{ maxHeight: "400px", overflow: "auto" }}>
+              <BookChildTree
+                child_tree={[
+                  {
+                    id: blueprint_book.id,
+                    name: blueprint_book.label,
+                    type: "blueprint_book",
+                    children: blueprint_book.child_tree,
+                  },
+                ]}
+                base_url={`/blueprint/${blueprint_page.id}`}
+                selected_id={selected.data.id}
+              />
+            </div>
           </>
         ) : blueprint ? (
-          <>
-            <div>This string contains one blueprint</div>
-            <div>tags: {blueprint.tags.join(", ")}</div>
-          </>
+          <Markdown>{blueprint_page.description_markdown}</Markdown>
         ) : null}
+      </Panel>
+      <Panel title={"Info"}>
+        <StyledTable>
+          <tbody>
+            <tr>
+              <td>User</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>Tags</td>
+              <td>{blueprint_page.tags.join(", ")}</td>
+            </tr>
+            <tr>
+              <td>Last updated</td>
+              <td>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</td>
+            </tr>
+            <tr>
+              <td>Created</td>
+              <td>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</td>
+            </tr>
+            <tr>
+              <td>Favorites</td>
+              <td>{blueprint_page.favorite_count || "0"}</td>
+            </tr>
+          </tbody>
+        </StyledTable>
       </Panel>
       <Panel
         title={"Image"}
         gridColumn={chakraResponsive({ mobile: "1", desktop: "2" })}
-        gridRow={chakraResponsive({ mobile: "1", desktop: null })}
+        gridRow={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
       >
         {/* {renderImage()} */}
         {blueprintString && <ImageEditor string={blueprintString}></ImageEditor>}
       </Panel>
-
-      <Panel
-        title="Description"
-        gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
-      >
-        <Markdown>{blueprint_page.description_markdown}</Markdown>
-      </Panel>
+      {blueprint_book && (
+        <Panel
+          title="Description"
+          gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
+        >
+          <Markdown>{blueprint_page.description_markdown}</Markdown>
+        </Panel>
+      )}
       {selected.type === "blueprint" && data?.blueprint && (
         <Panel
           title={
@@ -179,7 +225,7 @@ export const Index: NextPage<IndexProps> = ({
           }
           gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         >
-          <table>
+          <StyledTable>
             <tbody>
               {Object.entries(
                 data.blueprint.entities.reduce<Record<string, number>>((entities, entity) => {
@@ -194,7 +240,7 @@ export const Index: NextPage<IndexProps> = ({
                 .sort((a, b) => b[1] - a[1])
                 .map(([entry_name, entry]) => (
                   <tr key={entry_name} css={{}}>
-                    <td css={{ border: "1px solid #909090" }}>
+                    <td className="no-padding">
                       <Image
                         alt={entry_name.replace(/-/g, " ")}
                         src={`https://factorioprints.com/icons/${entry_name}.png`}
@@ -203,12 +249,12 @@ export const Index: NextPage<IndexProps> = ({
                         height="32px"
                       />
                     </td>
-                    <td css={{ padding: "5px 10px", border: "1px solid #909090" }}>{entry_name}</td>
-                    <td css={{ padding: "5px 10px", border: "1px solid #909090" }}>{entry}</td>
+                    <td>{entry_name}</td>
+                    <td>{entry}</td>
                   </tr>
                 ))}
             </tbody>
-          </table>
+          </StyledTable>
         </Panel>
       )}
       <Panel title="string" gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}>

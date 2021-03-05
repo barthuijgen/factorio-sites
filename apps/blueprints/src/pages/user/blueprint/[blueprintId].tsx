@@ -30,17 +30,18 @@ import { Panel } from "../../../components/Panel";
 import { validateCreateBlueprintForm } from "../../../utils/validate";
 import { useAuth } from "../../../providers/auth";
 import { ImageEditor } from "../../../components/ImageEditor";
+import { useFbeData } from "../../../hooks/fbe.hook";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
 `;
 
-const TAGS = [
-  { value: "foo", label: "foo" },
-  { value: "bar", label: "bar" },
-  { value: "x", label: "x" },
-  { value: "y", label: "y" },
-];
+// const TAGS = [
+//   { value: "foo", label: "foo" },
+//   { value: "bar", label: "bar" },
+//   { value: "x", label: "x" },
+//   { value: "y", label: "y" },
+// ];
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash">; string: string }
@@ -53,12 +54,22 @@ interface UserBlueprintProps {
 export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, selected }) => {
   const auth = useAuth();
   const router = useRouter();
+  const { data } = useFbeData();
 
   if (!auth) {
     router.push("/");
   }
 
   if (!blueprintPage) return null;
+
+  if (!data) return null;
+
+  const TAGS = Object.keys(data.entities)
+    .filter((key) => !key.startsWith("factorio_logo") && !key.startsWith("crash_site"))
+    .map((key) => {
+      const item = data.entities[key];
+      return { value: item.name, label: item.name.replace(/_/g, " ") };
+    });
 
   return (
     <div css={{ margin: "0.7rem" }}>
@@ -67,16 +78,20 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
           title: blueprintPage.title,
           description: blueprintPage.description_markdown,
           string: selected.string,
-          tags: [],
+          tags: [] as { value: string; label: string }[],
         }}
         validate={validateCreateBlueprintForm}
         onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
           setStatus("");
 
-          const result = await fetch("/api/blueprint/create", {
+          const result = await fetch("/api/blueprint/edit", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify(values),
+            body: JSON.stringify({
+              ...values,
+              id: blueprintPage.id,
+              tags: values.tags.map((tag) => tag.value),
+            }),
           }).then((res) => res.json());
 
           if (result.status) {

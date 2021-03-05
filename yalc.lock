@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@fbe/editor": {
-      "signature": "4394b199f59f3db8ce4aa6b1c9801472",
+      "signature": "77d812874aacc6417c4ac5324c11cddf",
       "file": true,
       "replaced": "./fbe-editor-v1.0.0.tgz"
     }

@@ -16,7 +16,7 @@ export const createUserWithEmail = async (
   const hash = await bcrypt.hash(password, 10);
   return prisma.user.create({
     data: {
-      email,
+      email: email.toLowerCase(),
       username,
       password: hash,
       last_login_ip: ip,
@@ -46,7 +46,10 @@ export const loginUserWithEmail = async ({
   useragent: string;
   ip: string;
 }): Promise<(user & { session: session }) | null> => {
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+
   if (!user || !user.password) {
     return null;
   }

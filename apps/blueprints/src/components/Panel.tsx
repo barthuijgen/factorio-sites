@@ -27,7 +27,7 @@ const boxShadow = `inset 0 0 3px 0 #000, 0 -2px 2px -1px #000, -2px 0 2px -2px #
 0 3px 3px -3px #8f8c8b, 0 2px 2px -2px #8f8c8b, 0 1px 1px -1px #8f8c8b`;
 
 export const Panel: React.FC<
-  BoxProps & { title?: string | ReactNode | null; css?: SerializedStyles }
+  Omit<BoxProps, "title"> & { title?: ReactNode; css?: SerializedStyles }
 > = ({ children, title, css: prop_css, ...props }) => (
   <Box css={prop_css ? [panelStyles, prop_css] : [panelStyles]} {...props}>
     {title ? <h2>{title}</h2> : null}

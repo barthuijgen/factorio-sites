@@ -17,9 +17,10 @@ const handler = apiHandler(async (req, res, { session }) => {
       update.username = username;
     }
     if (email) {
-      update.email = email;
-    } else if (user.email && user.steam_id) {
-      // User currently has email but wants to delete it, allow if steam_id exists
+      update.email = email.toLowerCase();
+    }
+    // User currently has email but wants to delete it, allow if steam_id exists
+    else if (user.email && user.steam_id) {
       update.email = null;
     }
 

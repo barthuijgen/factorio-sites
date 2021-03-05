@@ -46,6 +46,7 @@ export interface BlueprintPage {
   blueprint_book_id: string | null;
   title: string;
   description_markdown: string;
+  tags: string[];
   created_at: number;
   updated_at: number;
   factorioprints_id: string | null;

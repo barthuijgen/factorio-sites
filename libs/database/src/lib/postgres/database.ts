@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { getEnvOrThrow, getSecretOrThrow } from "../env.util";
 
+const globalWithPrisma = globalThis as typeof globalThis & { prisma: PrismaClient };
+
 export let prisma: PrismaClient;
 
 const _init = async () => {
-  if (prisma) return prisma;
+  if (globalWithPrisma.prisma) return globalWithPrisma.prisma;
 
   const databasePassword = getEnvOrThrow("POSTGRES_PASSWORD");
 
@@ -19,8 +21,6 @@ const _init = async () => {
     },
   });
 
-  // const x = await prismaClient.user.create({ data: { username: 1 } });
-
   await prismaClient.$connect();
 
   return prismaClient;
@@ -29,6 +29,9 @@ const _init = async () => {
 const promise = _init()
   .then((result) => {
     prisma = result;
+    if (!globalWithPrisma.prisma) {
+      globalWithPrisma.prisma = prisma;
+    }
     return result;
   })
   .catch((reason) => {
