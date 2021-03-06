@@ -38,4 +38,7 @@ const promise = _init()
     console.log("Database failed to init!", reason);
   });
 
-export const init = async () => promise;
+export const init = async () => {
+  await promise;
+  await prisma.$connect();
+};

@@ -1,12 +1,12 @@
 import React from "react";
 import { NextPage } from "next";
-import { Button, SimpleGrid, Box } from "@chakra-ui/react";
-import { Panel } from "../../components/Panel";
 import Link from "next/link";
+import { Button, SimpleGrid, Box } from "@chakra-ui/react";
+import { getBlueprintPageByUserId } from "@factorio-sites/database";
+import { BlueprintPage } from "@factorio-sites/types";
 import { pageHandler } from "../../utils/page-handler";
-import { BlueprintPage, getBlueprintPageByUserId } from "@factorio-sites/database";
 import { BlueprintLink } from "../../components/BlueprintLink";
-
+import { Panel } from "../../components/Panel";
 interface UserBlueprintsProps {
   blueprints: BlueprintPage[];
 }
@@ -33,7 +33,7 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
           </Box>
           <Box>
             {blueprints.map((bp) => (
-              <BlueprintLink key={bp.id} blueprint={bp} editLink />
+              <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />
             ))}
           </Box>
         </Panel>

@@ -34,12 +34,12 @@ const handler = apiHandler(async (req, res, { session }) => {
     console.log(info);
 
     if (parsed?.data.blueprint) {
-      const { insertedId } = await createBlueprint(parsed.data.blueprint, info);
-      const page = await editBlueprintPage(id, "blueprint", insertedId, info);
+      const result = await createBlueprint(parsed.data.blueprint, info);
+      const page = await editBlueprintPage(id, "blueprint", result.id, info);
       return res.status(200).json({ success: true, id: page.id });
     } else if (parsed?.data.blueprint_book) {
-      const { insertedId } = await createBlueprintBook(parsed.data.blueprint_book, info);
-      const page = await editBlueprintPage(id, "blueprint_book", insertedId, info);
+      const result = await createBlueprintBook(parsed.data.blueprint_book, info);
+      const page = await editBlueprintPage(id, "blueprint_book", result.id, info);
       return res.status(200).json({ success: true, id: page.id });
     }
   } catch (reason) {

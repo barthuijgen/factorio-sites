@@ -7,5 +7,6 @@ module.exports = {
     "<rootDir>/libs/utils",
     "<rootDir>/libs/common-utils",
     "<rootDir>/libs/web-utils",
+    "<rootDir>/libs/types",
   ],
 };

@@ -70,7 +70,7 @@ export const ImageEditor: React.FC<{ string: string }> = ({ string }) => {
 
   return (
     <div>
-      <canvas ref={canvasRef} style={{ width: "100%", height: "auto" }} />
+      <canvas id="pbe" ref={canvasRef} style={{ width: "100%", height: "auto" }} />
       {/* <img src={image} alt="blueprint" style={{ width: "500px" }}></img> */}
     </div>
   );

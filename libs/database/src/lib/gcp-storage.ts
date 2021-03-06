@@ -22,13 +22,30 @@ export async function saveBlueprintString(hash: string, content: string) {
  * BlueprintImage
  */
 
-export async function saveBlueprintImage(hash: string, image: Buffer): Promise<void> {
-  return IMAGE_BUCKET.file(`${hash}.webp`).save(image, {
+type sizeType = "original" | "300";
+
+export async function saveBlueprintImage(
+  hash: string,
+  image: Buffer,
+  type: sizeType = "original"
+): Promise<void> {
+  return IMAGE_BUCKET.file(`${type}/${hash}.webp`).save(image, {
     contentType: "image/webp",
   });
 }
 
-export async function hasBlueprintImage(hash: string): Promise<boolean> {
-  const [result] = await IMAGE_BUCKET.file(`${hash}.webp`).exists();
+export async function hasBlueprintImage(
+  hash: string,
+  type: sizeType = "original"
+): Promise<boolean> {
+  const [result] = await IMAGE_BUCKET.file(`${type}/${hash}.webp`).exists();
+  return result;
+}
+
+export async function getBlueprintByImageHash(
+  hash: string,
+  type: sizeType = "original"
+): Promise<Buffer> {
+  const [result] = await IMAGE_BUCKET.file(`${type}/${hash}.webp`).download();
   return result;
 }

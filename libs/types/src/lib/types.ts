@@ -47,6 +47,7 @@ export interface BlueprintPage {
   title: string;
   description_markdown: string;
   tags: string[];
+  image_hash: string;
   created_at: number;
   updated_at: number;
   factorioprints_id: string | null;

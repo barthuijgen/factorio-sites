@@ -14,11 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { Formik, Field } from "formik";
 import { css } from "@emotion/react";
+import { chakraResponsive } from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
 import { validateCreateBlueprintForm } from "../../utils/validate";
 import { useAuth } from "../../providers/auth";
 import { ImageEditor } from "../../components/ImageEditor";
-import { chakraResponsive } from "@factorio-sites/web-utils";
+import { TagsSelect } from "../../components/TagsSelect";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -35,7 +36,7 @@ export const UserBlueprintCreate: NextPage = () => {
   return (
     <div css={{ margin: "0.7rem" }}>
       <Formik
-        initialValues={{ title: "", description: "", string: "" }}
+        initialValues={{ title: "", description: "", string: "", tags: [] }}
         validate={validateCreateBlueprintForm}
         onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
           setStatus("");
@@ -57,7 +58,7 @@ export const UserBlueprintCreate: NextPage = () => {
           }
         }}
       >
-        {({ isSubmitting, handleSubmit, status, values, errors }) => (
+        {({ isSubmitting, handleSubmit, status, values, errors, setFieldValue }) => (
           <SimpleGrid
             columns={2}
             gap={6}
@@ -97,14 +98,12 @@ export const UserBlueprintCreate: NextPage = () => {
 
                 <Field name="tags">
                   {({ field, meta }: any) => (
-                    <FormControl
-                      id="tags"
-                      //   isRequired
-                      isInvalid={meta.touched && meta.error}
-                      css={FieldStyle}
-                    >
-                      <FormLabel>Tags (coming soon)</FormLabel>
-                      <Input type="text" {...field} disabled />
+                    <FormControl id="tags" isInvalid={meta.touched && meta.error} css={FieldStyle}>
+                      <FormLabel>Tags</FormLabel>
+                      <TagsSelect
+                        value={field.value}
+                        onChange={(tags) => setFieldValue("tags", tags)}
+                      />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
                     </FormControl>
                   )}

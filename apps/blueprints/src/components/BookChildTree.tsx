@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import Link from "next/link";
 import BBCode from "bbcode-to-react";
-import { ChildTree } from "@factorio-sites/database";
+import { ChildTree } from "@factorio-sites/types";
 
 const componentStyles = css`
   .blueprint,

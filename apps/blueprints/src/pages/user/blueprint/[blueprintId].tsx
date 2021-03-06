@@ -14,34 +14,24 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import MultiSelect from "react-multi-select-component";
 import { chakraResponsive } from "@factorio-sites/web-utils";
 import {
-  Blueprint,
-  BlueprintBook,
-  BlueprintPage,
   getBlueprintBookById,
   getBlueprintById,
   getBlueprintPageById,
   getBlueprintStringByHash,
 } from "@factorio-sites/database";
+import { Blueprint, BlueprintBook, BlueprintPage } from "@factorio-sites/types";
 import { pageHandler } from "../../../utils/page-handler";
 import { Panel } from "../../../components/Panel";
 import { validateCreateBlueprintForm } from "../../../utils/validate";
 import { useAuth } from "../../../providers/auth";
 import { ImageEditor } from "../../../components/ImageEditor";
-import { useFbeData } from "../../../hooks/fbe.hook";
+import { TagsSelect } from "../../../components/TagsSelect";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
 `;
-
-// const TAGS = [
-//   { value: "foo", label: "foo" },
-//   { value: "bar", label: "bar" },
-//   { value: "x", label: "x" },
-//   { value: "y", label: "y" },
-// ];
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash">; string: string }
@@ -54,22 +44,12 @@ interface UserBlueprintProps {
 export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, selected }) => {
   const auth = useAuth();
   const router = useRouter();
-  const { data } = useFbeData();
 
   if (!auth) {
     router.push("/");
   }
 
   if (!blueprintPage) return null;
-
-  if (!data) return null;
-
-  const TAGS = Object.keys(data.entities)
-    .filter((key) => !key.startsWith("factorio_logo") && !key.startsWith("crash_site"))
-    .map((key) => {
-      const item = data.entities[key];
-      return { value: item.name, label: item.name.replace(/_/g, " ") };
-    });
 
   return (
     <div css={{ margin: "0.7rem" }}>
@@ -78,7 +58,7 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
           title: blueprintPage.title,
           description: blueprintPage.description_markdown,
           string: selected.string,
-          tags: [] as { value: string; label: string }[],
+          tags: [] as string[],
         }}
         validate={validateCreateBlueprintForm}
         onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
@@ -90,7 +70,6 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
             body: JSON.stringify({
               ...values,
               id: blueprintPage.id,
-              tags: values.tags.map((tag) => tag.value),
             }),
           }).then((res) => res.json());
 
@@ -147,13 +126,9 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                   {({ field, meta }: any) => (
                     <FormControl id="tags" isInvalid={meta.touched && meta.error} css={FieldStyle}>
                       <FormLabel>Tags</FormLabel>
-                      <MultiSelect
-                        css={{ color: "black" }}
-                        options={TAGS}
+                      <TagsSelect
                         value={field.value}
-                        onChange={(value: any) => setFieldValue("tags", value)}
-                        labelledBy="Select"
-                        hasSelectAll={false}
+                        onChange={(tags) => setFieldValue("tags", tags)}
                       />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
                     </FormControl>

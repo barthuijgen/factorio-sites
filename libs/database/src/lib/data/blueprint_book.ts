@@ -3,7 +3,7 @@ import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
 import { blueprint_book } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
 import { prisma } from "../postgres/database";
-import { BlueprintBook, ChildTree } from "../types";
+import { BlueprintBook, ChildTree } from "@factorio-sites/types";
 import { createBlueprint } from "./blueprint";
 
 const mapBlueprintBookEntityToObject = (entity: blueprint_book): BlueprintBook => ({
@@ -34,7 +34,7 @@ export async function createBlueprintBook(
     created_at?: number;
     updated_at?: number;
   }
-): Promise<{ insertedId: string; child_tree: ChildTree }> {
+): Promise<BlueprintBook> {
   const string = await encodeBlueprint({ blueprint_book: blueprintBook });
   const blueprint_hash = hashString(string);
 
@@ -42,7 +42,7 @@ export async function createBlueprintBook(
   if (exists) {
     const book = await getBlueprintBookById(exists.id);
     if (!book) throw Error("this is impossible, just pleasing typescript");
-    return { insertedId: exists.id, child_tree: book.child_tree };
+    return exists;
   }
 
   // Write string to google storage
@@ -59,19 +59,19 @@ export async function createBlueprintBook(
       const result = await createBlueprint(blueprint.blueprint, extraInfo);
       child_tree.push({
         type: "blueprint",
-        id: result.insertedId,
+        id: result.id,
         name: blueprint.blueprint.label,
       });
-      blueprint_ids.push(result.insertedId);
+      blueprint_ids.push(result.id);
     } else if (blueprint.blueprint_book) {
       const result = await createBlueprintBook(blueprint.blueprint_book, extraInfo);
       child_tree.push({
         type: "blueprint_book",
-        id: result.insertedId,
+        id: result.id,
         name: blueprint.blueprint_book.label,
         children: result.child_tree,
       });
-      blueprint_book_ids.push(result.insertedId);
+      blueprint_book_ids.push(result.id);
     }
   }
 
@@ -84,10 +84,20 @@ export async function createBlueprintBook(
       child_tree: child_tree as any,
       updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
       created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
+      blueprint_books: {
+        connect: blueprint_book_ids.map((id) => ({
+          id,
+        })),
+      },
+      blueprints: {
+        connect: blueprint_ids.map((id) => ({
+          id,
+        })),
+      },
     },
   });
 
   console.log(`Created Blueprint book ${result.id}`);
 
-  return { insertedId: result.id, child_tree };
+  return mapBlueprintBookEntityToObject(result);
 }

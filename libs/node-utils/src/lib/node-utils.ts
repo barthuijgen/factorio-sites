@@ -1,9 +1,10 @@
+import { IncomingMessage } from "http";
 import * as crypto from "crypto";
 import * as pako from "pako";
 import * as cookie from "cookie";
-import { BlueprintStringData } from "@factorio-sites/common-utils";
 import { NextApiRequest, NextApiResponse } from "next";
-import { IncomingMessage } from "http";
+import { BlueprintStringData } from "@factorio-sites/common-utils";
+import { ChildTree } from "@factorio-sites/types";
 
 export const parseBlueprintString = async (
   string: string
@@ -67,3 +68,33 @@ export const deleteSessionToken = (res: NextApiResponse) => {
     })
   );
 };
+
+export function getFirstBlueprintFromChildTree(child_tree: ChildTree): string {
+  // First try flat search
+  const result = child_tree.find((child) => child.type === "blueprint");
+  if (result) return result.id;
+
+  // Recusrive search
+  let blueprint_id: string | null = null;
+  child_tree.forEach((child) => {
+    if (child.type === "blueprint_book") {
+      const bp = getFirstBlueprintFromChildTree([child]);
+      if (bp) blueprint_id = bp;
+    }
+  });
+
+  if (!blueprint_id) throw Error("Failed to find blueprint id in child_tree");
+
+  return blueprint_id;
+}
+
+export function jsonReplaceErrors(_: string, value: unknown) {
+  if (value instanceof Error) {
+    return Object.getOwnPropertyNames(value).reduce((error, key) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      error[key] = (value as any)[key];
+      return error;
+    }, {} as Record<string, unknown>);
+  }
+  return value;
+}

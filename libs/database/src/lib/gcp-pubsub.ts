@@ -1,5 +1,4 @@
 import { PubSub, Message } from "@google-cloud/pubsub";
-// export { Message } from "@google-cloud/pubsub";
 
 const pubsub = new PubSub();
 

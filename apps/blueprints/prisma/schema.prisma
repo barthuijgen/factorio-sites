@@ -14,43 +14,33 @@ enum enum_user_role {
 }
 
 model blueprint {
-  id             String          @id @default(uuid()) @db.Uuid
-  label          String?         @db.VarChar(255)
-  description    String?
-  game_version   String?         @db.VarChar(255)
-  blueprint_hash String          @unique @db.VarChar(40)
-  image_hash     String          @db.VarChar(40)
-  image_version  Int             @default(1)
-  tags           String[]        @db.VarChar(255)
-  created_at     DateTime        @default(now())
-  updated_at     DateTime        @updatedAt
-  blueprint_page blueprint_page?
+  id              String           @id @default(uuid()) @db.Uuid
+  label           String?          @db.VarChar(255)
+  description     String?
+  game_version    String?          @db.VarChar(255)
+  blueprint_hash  String           @unique @db.VarChar(40)
+  image_hash      String           @db.VarChar(40)
+  image_version   Int              @default(1)
+  tags            String[]         @db.VarChar(255)
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  blueprint_page  blueprint_page?
+  blueprint_books blueprint_book[]
 }
 
 model blueprint_book {
-  id             String          @id @default(uuid()) @db.Uuid
-  label          String?         @db.VarChar(255)
-  description    String?
-  child_tree     Json            @db.Json
-  blueprint_hash String          @unique @db.VarChar(40)
-  is_modded      Boolean
-  created_at     DateTime        @default(now())
-  updated_at     DateTime        @updatedAt
-  blueprint_page blueprint_page?
-}
-
-model blueprint_book_blueprints {
-  blueprint_book_id String @db.Uuid
-  blueprint_id      String @db.Uuid
-
-  @@id([blueprint_book_id, blueprint_id])
-}
-
-model blueprint_book_books {
-  blueprint_book_1_id String @db.Uuid
-  blueprint_book_2_id String @db.Uuid
-
-  @@id([blueprint_book_1_id, blueprint_book_2_id])
+  id                       String           @id @default(uuid()) @db.Uuid
+  label                    String?          @db.VarChar(255)
+  description              String?
+  child_tree               Json             @db.Json
+  blueprint_hash           String           @unique @db.VarChar(40)
+  is_modded                Boolean
+  created_at               DateTime         @default(now())
+  updated_at               DateTime         @updatedAt
+  blueprint_page           blueprint_page?
+  blueprints               blueprint[]
+  blueprint_books          blueprint_book[] @relation("blueprint_books")
+  blueprint_books_relation blueprint_book[] @relation("blueprint_books")
 }
 
 model blueprint_page {
@@ -61,6 +51,7 @@ model blueprint_page {
   title                String           @db.VarChar(255)
   description_markdown String?
   tags                 String[]         @db.VarChar(255)
+  image_hash           String           @db.VarChar(40)
   factorioprints_id    String?          @unique @db.VarChar(255)
   created_at           DateTime         @default(now())
   updated_at           DateTime         @updatedAt

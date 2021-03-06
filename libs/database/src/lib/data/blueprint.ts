@@ -3,7 +3,7 @@ import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
 import { blueprint as BlueprintModel } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
 import { prisma } from "../postgres/database";
-import { Blueprint } from "../types";
+import { Blueprint } from "@factorio-sites/types";
 
 // const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
 
@@ -36,20 +36,18 @@ export async function createBlueprint(
     created_at?: number;
     updated_at?: number;
   }
-) {
+): Promise<Blueprint> {
   const string = await encodeBlueprint({ blueprint });
   const blueprint_hash = hashString(string);
   const image_hash = hashString(getBlueprintContentForImageHash(blueprint));
 
   const exists = await getBlueprintByHash(blueprint_hash);
   if (exists) {
-    return { insertedId: exists.id };
+    return exists;
   }
 
   // Write string to google storage
   await saveBlueprintString(blueprint_hash, string);
-
-  // Write blueprint details to datastore
 
   const result = await prisma.blueprint.create({
     data: {
@@ -71,5 +69,5 @@ export async function createBlueprint(
   //   blueprintId: result.id,
   // });
 
-  return { insertedId: result.id };
+  return mapBlueprintInstanceToEntry(result);
 }

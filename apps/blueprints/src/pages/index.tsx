@@ -1,12 +1,13 @@
 import React from "react";
 import { NextPage, NextPageContext } from "next";
 import Link from "next/link";
-import { BlueprintPage, searchBlueprintPages, init } from "@factorio-sites/database";
+import { useRouter } from "next/router";
+import { searchBlueprintPages, init } from "@factorio-sites/database";
 import { SimpleGrid, Box, RadioGroup, Stack, Radio } from "@chakra-ui/react";
+import { BlueprintPage } from "@factorio-sites/types";
 import { Panel } from "../components/Panel";
 import { Pagination } from "../components/Pagination";
 import { useRouterQueryToHref } from "../hooks/query.hook";
-import { useRouter } from "next/router";
 import { BlueprintLink } from "../components/BlueprintLink";
 import { TagsSelect } from "../components/TagsSelect";
 import { queryValueAsArray } from "../utils/query.utils";
@@ -67,10 +68,12 @@ export const Index: NextPage<IndexProps> = ({
             </Box>
           )}
         </Box>
-        <Box>
+        <Box css={{ display: "flex" }}>
           {blueprints.map((bp) => (
-            <BlueprintLink key={bp.id} blueprint={bp} />
+            <BlueprintLink key={bp.id} blueprint={bp} type="tile" />
           ))}
+        </Box>
+        <Box>
           <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />
         </Box>
       </Panel>

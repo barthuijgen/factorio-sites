@@ -33,15 +33,6 @@ const handler: NextApiHandler = async (req, res) => {
   if (user) {
     const session = await createSession(user, useragent, ip);
     setUserToken(res, session.session_token);
-
-    // Redirect from in browser to let the cookie be stored
-    // If not, the first render still happens as guest
-    res.setHeader("content-type", "text/html");
-    return res.status(200).end(`
-      <html><head>
-        <meta http-equiv="refresh" content="0;url=${process.env.BASE_URL}" />
-      </head></html>
-    `);
   }
   // First time logging in, make new user
   else {
@@ -54,9 +45,16 @@ const handler: NextApiHandler = async (req, res) => {
 
     const session = await createSession(user, useragent, ip);
     setUserToken(res, session.session_token);
-    res.setHeader("Location", `${process.env.BASE_URL}`);
-    return res.status(302).end();
   }
+
+  // Redirect from in browser to let the cookie be stored
+  // If not, the first render still happens as guest
+  res.setHeader("content-type", "text/html");
+  return res.status(200).end(`
+      <html><head>
+        <meta http-equiv="refresh" content="0;url=${process.env.BASE_URL}" />
+      </head></html>
+    `);
 };
 
 export default handler;

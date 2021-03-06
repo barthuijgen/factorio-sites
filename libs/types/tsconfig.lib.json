@@ -1,8 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "module": "commonjs",
     "outDir": "../../dist/out-tsc",
-    "target": "ES2019",
+    "declaration": true,
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts"],

@@ -38,12 +38,20 @@ export async function saveBlueprintFromFactorioprints(
 
   if (parsed.data.blueprint) {
     console.log("string has one blueprint...");
-    const { insertedId } = await createBlueprint(parsed.data.blueprint, extraInfo);
-    await createBlueprintPage("blueprint", insertedId, extraInfoPage);
+    const result = await createBlueprint(parsed.data.blueprint, extraInfo);
+    await createBlueprintPage("blueprint", result.id, {
+      ...extraInfoPage,
+      firstBlueprintId: result.id,
+      image_hash: "",
+    });
   } else if (parsed.data.blueprint_book) {
     console.log("string has a blueprint book...");
-    const { insertedId } = await createBlueprintBook(parsed.data.blueprint_book, extraInfo);
-    await createBlueprintPage("blueprint_book", insertedId, extraInfoPage);
+    const result = await createBlueprintBook(parsed.data.blueprint_book, extraInfo);
+    await createBlueprintPage("blueprint_book", result.id, {
+      ...extraInfoPage,
+      firstBlueprintId: undefined,
+      image_hash: "",
+    });
   }
 
   return true;

@@ -3,14 +3,12 @@ import { NextPage } from "next";
 import BBCode from "bbcode-to-react";
 import { Button, Grid, Image } from "@chakra-ui/react";
 import {
-  BlueprintBook,
-  Blueprint,
-  BlueprintPage,
   getBlueprintBookById,
   getBlueprintById,
   getBlueprintPageById,
   isBlueprintPageUserFavorite,
 } from "@factorio-sites/database";
+import { BlueprintBook, Blueprint, BlueprintPage } from "@factorio-sites/types";
 import { BlueprintStringData, timeLogger } from "@factorio-sites/common-utils";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
@@ -24,11 +22,10 @@ import styled from "@emotion/styled";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 type Selected =
-  | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash"> }
-  | { type: "blueprint_book"; data: Pick<BlueprintBook, "id" | "blueprint_hash"> };
+  | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash" | "label"> }
+  | { type: "blueprint_book"; data: Pick<BlueprintBook, "id" | "blueprint_hash" | "label"> };
 
 interface IndexProps {
-  image_exists: boolean;
   selected: Selected;
   blueprint: Blueprint | null;
   blueprint_book: BlueprintBook | null;
@@ -46,7 +43,6 @@ const StyledTable = styled.table`
 `;
 
 export const Index: NextPage<IndexProps> = ({
-  image_exists,
   selected,
   blueprint,
   blueprint_book,
@@ -90,7 +86,6 @@ export const Index: NextPage<IndexProps> = ({
 
   useEffect(() => {
     console.log({
-      image_exists,
       selected,
       blueprint,
       blueprint_book,
@@ -149,24 +144,20 @@ export const Index: NextPage<IndexProps> = ({
         gridColumn="1"
       >
         {blueprint_book ? (
-          <>
-            <div>This string contains a blueprint book </div>
-            <br />
-            <div css={{ maxHeight: "400px", overflow: "auto" }}>
-              <BookChildTree
-                child_tree={[
-                  {
-                    id: blueprint_book.id,
-                    name: blueprint_book.label,
-                    type: "blueprint_book",
-                    children: blueprint_book.child_tree,
-                  },
-                ]}
-                base_url={`/blueprint/${blueprint_page.id}`}
-                selected_id={selected.data.id}
-              />
-            </div>
-          </>
+          <div css={{ maxHeight: "400px", overflow: "auto" }}>
+            <BookChildTree
+              child_tree={[
+                {
+                  id: blueprint_book.id,
+                  name: blueprint_book.label,
+                  type: "blueprint_book",
+                  children: blueprint_book.child_tree,
+                },
+              ]}
+              base_url={`/blueprint/${blueprint_page.id}`}
+              selected_id={selected.data.id}
+            />
+          </div>
         ) : blueprint ? (
           <Markdown>{blueprint_page.description_markdown}</Markdown>
         ) : null}
@@ -216,12 +207,10 @@ export const Index: NextPage<IndexProps> = ({
       {selected.type === "blueprint" && data?.blueprint && (
         <Panel
           title={
-            (
-              <span>
-                Entities for{" "}
-                {data.blueprint.label ? BBCode.toReact(data.blueprint.label) : "blueprint"}
-              </span>
-            ) as any
+            <span>
+              Entities for{" "}
+              {data.blueprint.label ? BBCode.toReact(data.blueprint.label) : "blueprint"}
+            </span>
           }
           gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         >
@@ -257,7 +246,10 @@ export const Index: NextPage<IndexProps> = ({
           </StyledTable>
         </Panel>
       )}
-      <Panel title="string" gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}>
+      <Panel
+        title={`string for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
+        gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
+      >
         <>
           {blueprintString && <CopyButton content={blueprintString} marginBottom="0.5rem" />}
           <textarea
@@ -370,6 +362,7 @@ export const getServerSideProps = pageHandler(async (context, { session }) => {
         id: selected_blueprint.id,
         blueprint_hash: selected_blueprint.blueprint_hash,
         image_hash: selected_blueprint.image_hash,
+        label: selected_blueprint.label,
       },
     };
   } else if (selected_blueprint_book) {
@@ -378,12 +371,10 @@ export const getServerSideProps = pageHandler(async (context, { session }) => {
       data: {
         id: selected_blueprint_book.id,
         blueprint_hash: selected_blueprint_book.blueprint_hash,
+        label: selected_blueprint_book.label,
       },
     };
   }
-
-  // const image_exists =
-  //   selected.type === "blueprint" ? await hasBlueprintImage(selected.data.image_hash) : false;
 
   const favorite = session
     ? !!(await isBlueprintPageUserFavorite(session.user.id, blueprint_page.id))
@@ -391,7 +382,6 @@ export const getServerSideProps = pageHandler(async (context, { session }) => {
 
   return {
     props: {
-      image_exists: false,
       blueprint,
       blueprint_book,
       selected,

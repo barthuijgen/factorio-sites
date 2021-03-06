@@ -5,8 +5,10 @@ import {
   getBlueprintById,
   getBlueprintStringByHash,
   hasBlueprintImage,
-  Blueprint,
 } from "@factorio-sites/database";
+import { Blueprint } from "@factorio-sites/types";
+
+const DISABLED = true;
 
 const getOneMessage = async (): Promise<Blueprint> => {
   const topic = getBlueprintImageRequestTopic();
@@ -43,6 +45,8 @@ const getOneMessage = async (): Promise<Blueprint> => {
 };
 
 const handler: NextApiHandler = async (req, res) => {
+  if (DISABLED) return res.status(400).send("Method not availablee");
+
   // Allow the url to be used in the blueprint editor
   if (
     req.headers.origin &&
