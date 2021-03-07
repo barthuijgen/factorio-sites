@@ -87,7 +87,7 @@ export async function getServerSideProps({ query }: NextPageContext) {
   const perPage = Number(query["per-page"] || "10");
   const order = (query["order"] as string) || "date";
   const tags = query.tags ? String(query.tags).split(",") : undefined;
-  console.log(tags);
+
   const { count, rows } = await searchBlueprintPages({
     page,
     perPage,

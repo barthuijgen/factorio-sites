@@ -13,7 +13,7 @@ interface TagsSelectProps {
 }
 
 export const TagsSelect: React.FC<TagsSelectProps> = ({ value, onChange, className }) => {
-  const { data } = useFbeData();
+  const data = useFbeData();
 
   if (!data) return null;
 

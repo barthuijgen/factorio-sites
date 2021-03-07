@@ -28,7 +28,8 @@ export const apiHandler = (
 ) => async (req: NextApiRequest, res: NextApiResponse) => {
   await init();
 
-  const ip = (req.headers["x-forwarded-for"] || (req as any).ip) as string;
+  const ip_header = (req.headers["x-forwarded-for"] || (req as any).ip) as string;
+  const ip = ip_header ? ip_header.split(",")[0] : "";
   const useragent = req.headers["user-agent"] as string;
 
   const session_token = getSessionToken(req);

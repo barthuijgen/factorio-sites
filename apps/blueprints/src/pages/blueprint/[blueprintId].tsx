@@ -10,7 +10,12 @@ import {
 } from "@factorio-sites/database";
 import { BlueprintBook, Blueprint, BlueprintPage } from "@factorio-sites/types";
 import { BlueprintStringData, timeLogger } from "@factorio-sites/common-utils";
-import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
+import {
+  BlueprintObjectDataWithId,
+  chakraResponsive,
+  mergeBlueprintDataAndChildTree,
+  parseBlueprintStringClient,
+} from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
 import { Markdown } from "../../components/Markdown";
 import { BookChildTree } from "../../components/BookChildTree";
@@ -51,33 +56,49 @@ export const Index: NextPage<IndexProps> = ({
 }) => {
   const auth = useAuth();
   // const [imageZoom, setImageZoom] = useState(false);
-  const [blueprintString, setBlueprintString] = useState<string | null>(null);
-  const [data, setData] = useState<BlueprintStringData | null>(null);
+  const [_mainBlueprintString, setMainBlueprintString] = useState<string | null>(null);
+  const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
+  const [mainData, setMainData] = useState<BlueprintObjectDataWithId | null>(null);
+  const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
   const [showJson, setShowJson] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
 
   const selectedHash = selected.data.blueprint_hash;
 
-  const onClickFavorite = async () => {
-    const result = await fetch("/api/user/favorite", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ blueprint_page_id: blueprint_page.id }),
-    }).then((res) => res.json());
-    setIsFavorite(result.favorite);
-  };
+  useEffect(() => {
+    const hash = blueprint_book ? blueprint_book.blueprint_hash : blueprint?.blueprint_hash;
+    fetch(`/api/string/${hash}`)
+      .then((res) => res.text())
+      .then((string) => {
+        setMainBlueprintString(string);
+        const data = parseBlueprintStringClient(string);
+        console.log("data", data);
+        if (data && blueprint_book?.child_tree) {
+          setMainData(
+            mergeBlueprintDataAndChildTree(data, {
+              id: blueprint_book.id,
+              name: blueprint_book.label,
+              type: "blueprint_book",
+              children: blueprint_book.child_tree,
+            })
+          );
+        }
+      })
+      .catch((reason) => console.error(reason));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedHash]);
 
   useEffect(() => {
     fetch(`/api/string/${selectedHash}`)
       .then((res) => res.text())
       .then((string) => {
         setShowJson(false);
-        setBlueprintString(string);
+        setSelectedBlueprintString(string);
         if (selected.type === "blueprint") {
           const data = parseBlueprintStringClient(string);
-          setData(data);
+          setSelectedData(data);
         } else {
-          setData(null);
+          setSelectedData(null);
         }
       })
       .catch((reason) => console.error(reason));
@@ -91,34 +112,17 @@ export const Index: NextPage<IndexProps> = ({
       blueprint_book,
       blueprint_page,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const renderImage = () => {
-  //   let render: ReactNode;
-  //   if (selected.type === "blueprint_book") {
-  //     render = <div>Can't show image for a book, select a blueprint to the the image</div>;
-  //   } else if (!image_exists) {
-  //     render = <div>The image is not generated yet</div>;
-  //   } else if (imageZoom) {
-  //     render = (
-  //       <FullscreenImage
-  //         close={() => setImageZoom(false)}
-  //         alt="blueprint"
-  //         src={`https://storage.googleapis.com/blueprint-images/${selected.data.image_hash}.webp`}
-  //       />
-  //     );
-  //   } else {
-  //     render = (
-  //       <div onClick={() => setImageZoom(true)}>
-  //         <img
-  //           alt="blueprint"
-  //           src={`https://storage.googleapis.com/blueprint-images/${selected.data.image_hash}.webp`}
-  //         />
-  //       </div>
-  //     );
-  //   }
-  //   return <div css={imageStyle}>{render}</div>;
-  // };
+  const onClickFavorite = async () => {
+    const result = await fetch("/api/user/favorite", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ blueprint_page_id: blueprint_page.id }),
+    }).then((res) => res.json());
+    setIsFavorite(result.favorite);
+  };
 
   return (
     <Grid
@@ -128,7 +132,7 @@ export const Index: NextPage<IndexProps> = ({
     >
       <Panel
         title={
-          <div css={{ position: "relative" }}>
+          <div css={{ position: "relative", width: "100%" }}>
             <span>{blueprint_page.title}</span>
             {auth && (
               <Button
@@ -143,17 +147,18 @@ export const Index: NextPage<IndexProps> = ({
         }
         gridColumn="1"
       >
-        {blueprint_book ? (
+        {blueprint_book && mainData ? (
           <div css={{ maxHeight: "400px", overflow: "auto" }}>
             <BookChildTree
-              child_tree={[
-                {
-                  id: blueprint_book.id,
-                  name: blueprint_book.label,
-                  type: "blueprint_book",
-                  children: blueprint_book.child_tree,
-                },
-              ]}
+              data={mainData}
+              // child_tree={[
+              //   {
+              //     id: blueprint_book.id,
+              //     name: blueprint_book.label,
+              //     type: "blueprint_book",
+              //     children: blueprint_book.child_tree,
+              //   },
+              // ]}
               base_url={`/blueprint/${blueprint_page.id}`}
               selected_id={selected.data.id}
             />
@@ -189,12 +194,21 @@ export const Index: NextPage<IndexProps> = ({
         </StyledTable>
       </Panel>
       <Panel
-        title={"Image"}
+        title={
+          <>
+            <span>Image</span>
+            <img
+              src="/fbe.svg"
+              alt="Factorio blueprint editor"
+              css={{ height: "24px", marginLeft: "10px" }}
+            />
+          </>
+        }
         gridColumn={chakraResponsive({ mobile: "1", desktop: "2" })}
         gridRow={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
       >
         {/* {renderImage()} */}
-        {blueprintString && <ImageEditor string={blueprintString}></ImageEditor>}
+        {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>}
       </Panel>
       {blueprint_book && (
         <Panel
@@ -204,12 +218,14 @@ export const Index: NextPage<IndexProps> = ({
           <Markdown>{blueprint_page.description_markdown}</Markdown>
         </Panel>
       )}
-      {selected.type === "blueprint" && data?.blueprint && (
+      {selected.type === "blueprint" && selectedData?.blueprint && (
         <Panel
           title={
             <span>
               Entities for{" "}
-              {data.blueprint.label ? BBCode.toReact(data.blueprint.label) : "blueprint"}
+              {selectedData.blueprint.label
+                ? BBCode.toReact(selectedData.blueprint.label)
+                : "blueprint"}
             </span>
           }
           gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
@@ -217,14 +233,17 @@ export const Index: NextPage<IndexProps> = ({
           <StyledTable>
             <tbody>
               {Object.entries(
-                data.blueprint.entities.reduce<Record<string, number>>((entities, entity) => {
-                  if (entities[entity.name]) {
-                    entities[entity.name]++;
-                  } else {
-                    entities[entity.name] = 1;
-                  }
-                  return entities;
-                }, {})
+                selectedData.blueprint.entities.reduce<Record<string, number>>(
+                  (entities, entity) => {
+                    if (entities[entity.name]) {
+                      entities[entity.name]++;
+                    } else {
+                      entities[entity.name] = 1;
+                    }
+                    return entities;
+                  },
+                  {}
+                )
               )
                 .sort((a, b) => b[1] - a[1])
                 .map(([entry_name, entry]) => (
@@ -251,9 +270,11 @@ export const Index: NextPage<IndexProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
       >
         <>
-          {blueprintString && <CopyButton content={blueprintString} marginBottom="0.5rem" />}
+          {selectedBlueprintString && (
+            <CopyButton content={selectedBlueprintString} marginBottom="0.5rem" />
+          )}
           <textarea
-            value={blueprintString || "Loading..."}
+            value={selectedBlueprintString || "Loading..."}
             readOnly
             css={{
               width: "100%",
@@ -267,7 +288,7 @@ export const Index: NextPage<IndexProps> = ({
       </Panel>
       <Panel title="json" gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}>
         {showJson ? (
-          !data ? (
+          !selectedData ? (
             <div>Loading...</div>
           ) : (
             <>
@@ -277,14 +298,14 @@ export const Index: NextPage<IndexProps> = ({
                 onClick={() => {
                   setShowJson(false);
                   if (selected.type === "blueprint_book") {
-                    setData(null);
+                    setSelectedData(null);
                   }
                 }}
               >
                 hide
               </Button>
               <pre css={{ maxHeight: "500px", overflowY: "scroll" }}>
-                {JSON.stringify(data, null, 2)}
+                {JSON.stringify(selectedData, null, 2)}
               </pre>
             </>
           )
@@ -298,7 +319,7 @@ export const Index: NextPage<IndexProps> = ({
                   .then((res) => res.text())
                   .then((string) => {
                     const data = parseBlueprintStringClient(string);
-                    setData(data);
+                    setSelectedData(data);
                   });
               }
             }}

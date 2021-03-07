@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 type FBE = typeof import("@fbe/editor");
 type Editor = InstanceType<FBE["Editor"]>;
 
-export const ImageEditor: React.FC<{ string: string }> = ({ string }) => {
+interface ImageEditorProps {
+  string: string;
+}
+
+export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // const [image, setImage] = useState<string | undefined>();
   const FbeRef = useRef<FBE>();
@@ -40,8 +44,6 @@ export const ImageEditor: React.FC<{ string: string }> = ({ string }) => {
 
       const bpOrBook = await FBE.getBlueprintOrBookFromSource(string);
       const blueprint = bpOrBook instanceof FBE.Book ? bpOrBook.selectBlueprint(0) : bpOrBook;
-
-      console.log({ blueprint });
 
       await editor.loadBlueprint(blueprint);
       // await FBE.default.waitForLoader();

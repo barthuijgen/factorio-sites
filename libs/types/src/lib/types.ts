@@ -1,10 +1,10 @@
-interface BlueprintChild {
+export interface BlueprintChild {
   type: "blueprint";
   id: string;
   name: string;
 }
 
-interface BlueprintBookChild {
+export interface BlueprintBookChild {
   type: "blueprint_book";
   id: string;
   name: string;

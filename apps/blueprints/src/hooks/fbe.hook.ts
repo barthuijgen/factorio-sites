@@ -28,21 +28,43 @@ export const useFBE = (canvasRef?: RefObject<HTMLCanvasElement>) => {
   return { FBE, editor };
 };
 
-export const useFbeData = () => {
-  const [FBE, setFBE] = useState<FBE | null>(null);
+interface FactorioData {
+  entities: Record<
+    string,
+    {
+      name: string;
+    }
+  >;
+  fluids: Record<
+    string,
+    {
+      name: string;
+    }
+  >;
+  items: Record<
+    string,
+    {
+      name: string;
+    }
+  >;
+  recipes: Record<
+    string,
+    {
+      name: string;
+    }
+  >;
+}
+
+export const useFbeData = (): FactorioData | null => {
+  const [data, setData] = useState<FactorioData | null>(null);
 
   useEffect(() => {
     (async () => {
-      const _FBE = await import("@fbe/editor");
-      if (!_FBE.FD.items) {
-        await fetch("/api/fbe-proxy/data.json")
-          .then((res) => res.text())
-          .then((modules) => _FBE.FD.loadData(modules));
-      }
-      setFBE(_FBE);
+      const result = await fetch("/api/fbe-proxy/data.json").then((res) => res.json());
+      setData(result);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { data: FBE?.FD };
+  return data;
 };

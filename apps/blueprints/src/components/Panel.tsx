@@ -20,6 +20,8 @@ const panelStyles = css`
     line-height: 1.25;
     margin: 0 0 12px 0;
     font-size: 120%;
+    display: flex;
+    align-items: center;
   }
 `;
 const boxShadow = `inset 0 0 3px 0 #000, 0 -2px 2px -1px #000, -2px 0 2px -2px #28221f,

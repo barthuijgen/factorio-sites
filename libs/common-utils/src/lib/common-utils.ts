@@ -4,10 +4,12 @@ interface Entity {
   position: { x: number; y: number };
 }
 
+export type IconSignalTypes = "item" | "fluid" | "virtual";
+
 export interface BlueprintData {
   entities: Entity[];
   tiles?: { name: string; position: { x: number; y: number } }[];
-  icons: { signal: { type: "item" | "fluid"; name: string } }[];
+  icons: { signal: { type: IconSignalTypes; name: string } }[];
   item: string;
   label: string;
   description?: string;
@@ -17,6 +19,7 @@ export interface BlueprintData {
 export interface BlueprintBookData {
   active_index: number;
   blueprints: Array<{ index: number } & BlueprintStringData>;
+  icons?: { signal: { type: IconSignalTypes; name: string } }[];
   item: string;
   label: string;
   description?: string;
@@ -34,10 +37,17 @@ export interface BlueprintPageData {
   factorioprints_id?: string;
 }
 
-export interface BlueprintStringData {
-  blueprint_book?: BlueprintBookData;
-  blueprint?: BlueprintData;
+interface BlueprintString {
+  blueprint: BlueprintData;
+  blueprint_book?: never;
 }
+
+interface BlueprintBookString {
+  blueprint_book: BlueprintBookData;
+  blueprint?: never;
+}
+
+export type BlueprintStringData = BlueprintString | BlueprintBookString;
 
 export const getBlueprintContentForImageHash = (blueprint: BlueprintData): string => {
   return JSON.stringify({
@@ -70,17 +80,18 @@ export const flattenBlueprintData = (data: BlueprintStringData) => {
   };
 };
 
-export const findBlueprintByPath = (
-  data: BlueprintStringData,
-  path: number[]
-): BlueprintStringData | null => {
-  if (path.length === 0) {
-    return (data.blueprint || data.blueprint_book?.blueprints[0]) as BlueprintStringData;
-  } else if (data.blueprint_book && path.length === 1) {
-    return data.blueprint_book.blueprints[path[0]].blueprint as BlueprintStringData;
-  }
-  return null;
-};
+// export const findBlueprintByPath = (
+//   data: BlueprintStringData,
+//   path: number[]
+// ): BlueprintStringData | null => {
+//   if (path.length === 0) {
+//     return (data.blueprint || data.blueprint_book?.blueprints[0]) as BlueprintStringData;
+//   } else if (data.blueprint_book && path.length === 1) {
+//     const result = data.blueprint_book.blueprints[path[0]].blueprint;
+//     if (result) return result;
+//   }
+//   return null;
+// };
 
 export const findActiveBlueprint = (
   data: BlueprintStringData

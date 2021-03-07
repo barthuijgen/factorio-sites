@@ -3,7 +3,7 @@ import { NextApiHandler } from "next";
 const handler: NextApiHandler = async (req, res) => {
   const path = req.query.proxy ? (req.query.proxy as string[]).join("/") : "";
 
-  console.log("[fbe-proxy]", path);
+  // console.log("[fbe-proxy]", path);
 
   const result = await fetch(
     "https://static-fbe.teoxoy.com/file/factorio-blueprint-editor/" + path

@@ -2,6 +2,22 @@ import React from "react";
 import { NextPage } from "next";
 import { SimpleGrid, Box, Text, Image } from "@chakra-ui/react";
 import { Panel } from "../components/Panel";
+import { css } from "@emotion/react";
+import { IoIosConstruct } from "react-icons/io";
+
+const listCss = css`
+  padding-left: 25px;
+  .strike {
+    text-decoration: line-through;
+  }
+`;
+
+const headerCss = css`
+  margin-top: 1rem;
+  h3 {
+    font-size: 23px;
+  }
+`;
 
 export const Index: NextPage = () => {
   return (
@@ -11,8 +27,17 @@ export const Index: NextPage = () => {
           <Box>
             <h2 css={{ fontSize: "30px" }}>Factorio Blueprints by Barry</h2>
           </Box>
-          <Box>
-            <h3 css={{ fontSize: "30px" }}>Contact</h3>
+          <Box css={headerCss}>
+            <h3 css={{ color: "orange" }}>
+              Work in progress! <IoIosConstruct css={{ display: "inline-block" }} />
+            </h3>
+          </Box>
+          <Text>
+            Currently the website is provided for demo and test purposes, it is very much still a
+            work in progress.
+          </Text>
+          <Box css={headerCss}>
+            <h3>Contact</h3>
           </Box>
           <Box
             css={{
@@ -40,40 +65,53 @@ export const Index: NextPage = () => {
               />
             </a>
           </Box>
-          <Box css={{ marginTop: "2rem" }}>
-            <h3 css={{ fontSize: "25px" }}>Credits</h3>
+          <Box css={headerCss}>
+            <h3>Credits</h3>
           </Box>
           <Box>
             <Text>
-              Factorio Blueprints uses the work of Teoxoy with the{" "}
+              Factorio Blueprints uses the work of Teoxoy with the
               <a
                 href="https://github.com/Teoxoy/factorio-blueprint-editor"
-                css={{ textDecoration: "underline" }}
+                css={{
+                  textDecoration: "underline",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  margin: "0 5px",
+                  verticalAlign: "bottom",
+                }}
               >
+                <img
+                  src="/fbe.svg"
+                  alt="Factorio blueprint editor"
+                  css={{ display: "inline-block", height: "18px" }}
+                />
                 Factorio Blueprints Editor
-              </a>{" "}
+              </a>
               to render it's images
             </Text>
           </Box>
-          <Box css={{ marginTop: "2rem" }}>
-            <h3 css={{ fontSize: "25px" }}>ToDo</h3>
+          <Box css={headerCss}>
+            <h3>Roadmap</h3>
           </Box>
           <Box>
-            <ul css={{ paddingLeft: "25px" }}>
-              <li css={{ textDecoration: "line-through" }}>Add creating new blueprints</li>
-              <li css={{ textDecoration: "line-through" }}>Add search</li>
+            <ul css={listCss}>
+              <li className="strike">Add creating new blueprints</li>
+              <li className="strike">Add search</li>
               <li>Add a landing page on steam sign up to change username before submitting</li>
               <li>Add book preview when creating blueprints</li>
-              <li>Add blueprint tags</li>
-              <li>Expand search on tags</li>
+              <li className="strike">Add blueprint tags</li>
+              <li className="strike">Expand search with tags</li>
               <li>Add tracking of blueprint views</li>
-              <li css={{ textDecoration: "line-through" }}>Add favorites</li>
-              <li css={{ textDecoration: "line-through" }}>Add sorting by views/favorites</li>
-              <li>Add thumbnails</li>
+              <li className="strike">Add favorites</li>
+              <li className="strike">Add sorting by views/favorites</li>
+              <li className="strike">Add thumbnails</li>
+              <li>Change thumbnail generation method to be more reliable</li>
               <li>Add tag fixing moderators</li>
               <li>Improve modded blueprint support</li>
               <li>Add blueprint title icon support</li>
               <li>Add blueprint history</li>
+              <li>Add search filter for blueprint entities/recipes without manual tagging</li>
             </ul>
           </Box>
         </Panel>
