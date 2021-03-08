@@ -71,14 +71,14 @@ export const BookChildTree: React.FC<BookChildTreeProps> = ({ data, base_url, se
                     <span className="label"> {BBCode.toReact(bpData.blueprint.label)}</span>
                   </a>
                 </Link>
-              ) : (
+              ) : bpData.blueprint_book ? (
                 <BookChildTree
                   key={bpData.blueprint_book.id}
                   data={bpData}
                   base_url={base_url}
                   selected_id={selected_id}
                 />
-              );
+              ) : null;
             })}
           </div>
         </div>

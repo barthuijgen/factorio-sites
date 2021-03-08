@@ -24,6 +24,7 @@ import { ImageEditor } from "../../components/ImageEditor";
 import { useAuth } from "../../providers/auth";
 import { pageHandler } from "../../utils/page-handler";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 type Selected =
@@ -37,6 +38,21 @@ interface IndexProps {
   blueprint_page: BlueprintPage;
   favorite: boolean;
 }
+
+const BlueprintStyles = css`
+  .title {
+    position: relative;
+    width: 100%;
+
+    .text {
+      white-space: nowrap;
+      width: 85%;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+`;
 
 const StyledTable = styled.table`
   td {
@@ -86,7 +102,7 @@ export const Index: NextPage<IndexProps> = ({
       })
       .catch((reason) => console.error(reason));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedHash]);
+  }, []);
 
   useEffect(() => {
     fetch(`/api/string/${selectedHash}`)
@@ -126,14 +142,15 @@ export const Index: NextPage<IndexProps> = ({
 
   return (
     <Grid
+      css={BlueprintStyles}
       margin="0.7rem"
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
       gap={6}
     >
       <Panel
         title={
-          <div css={{ position: "relative", width: "100%" }}>
-            <span>{blueprint_page.title}</span>
+          <div className="title">
+            <span className="text">{blueprint_page.title}</span>
             {auth && (
               <Button
                 colorScheme="green"

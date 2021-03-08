@@ -70,8 +70,14 @@ export async function searchBlueprintPages({
     updated_at: new Date(blueprintPage.updated_at),
   }));
 
+  const countResult = await prisma.$queryRaw<{ count: number }[]>`
+      SELECT COUNT(*)
+      FROM public.blueprint_page
+      WHERE blueprint_page.title ILIKE ${query ? `%${query}%` : "%"}
+      ${tagsFragment}`;
+
   return {
-    count: result.length,
+    count: countResult[0].count,
     rows: result.map(mapBlueprintPageEntityToObject),
   };
 }

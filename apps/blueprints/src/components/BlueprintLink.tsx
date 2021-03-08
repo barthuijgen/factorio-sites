@@ -9,6 +9,7 @@ import { useState } from "react";
 const linkStyles = css`
   margin: 5px 10px 5px 0;
   background: #353535;
+  width: 210px;
 
   .block {
     display: flex;
@@ -23,6 +24,12 @@ const linkStyles = css`
 
   .details {
     display: flex;
+  }
+
+  .title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   a {
@@ -76,9 +83,7 @@ export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
             {type === "tile" && (
               <div className="image">
                 {imageError ? (
-                  <div>
-                    Looks like this image can\t load. <button>Try generating it again</button>
-                  </div>
+                  <div>The image is not generated yet, please be patient it will come soon.</div>
                 ) : (
                   <Image
                     loader={({ src }) => src}
@@ -96,7 +101,7 @@ export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
                 <MdFavorite css={{ marginRight: "5px" }} />
                 {blueprint.favorite_count || "0"}
               </Text>
-              <Text>{blueprint.title}</Text>
+              <Text className="title">{blueprint.title}</Text>
             </Box>
             {type === "row" && (
               <Box>

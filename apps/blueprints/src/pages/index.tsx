@@ -68,12 +68,12 @@ export const Index: NextPage<IndexProps> = ({
             </Box>
           )}
         </Box>
-        <Box css={{ display: "flex" }}>
+        <Box css={{ display: "flex", flexWrap: "wrap" }}>
           {blueprints.map((bp) => (
             <BlueprintLink key={bp.id} blueprint={bp} type="tile" />
           ))}
         </Box>
-        <Box>
+        <Box css={{ marginTop: "15px" }}>
           <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />
         </Box>
       </Panel>
@@ -84,7 +84,7 @@ export const Index: NextPage<IndexProps> = ({
 export async function getServerSideProps({ query }: NextPageContext) {
   await init();
   const page = Number(query.page || "1");
-  const perPage = Number(query["per-page"] || "10");
+  const perPage = Number(query["per-page"] || "20");
   const order = (query["order"] as string) || "date";
   const tags = query.tags ? String(query.tags).split(",") : undefined;
 

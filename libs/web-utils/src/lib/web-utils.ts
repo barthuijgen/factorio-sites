@@ -3,6 +3,7 @@ import {
   BlueprintData,
   BlueprintBookData,
   BlueprintStringData,
+  DeconstructionPlannerString,
 } from "@factorio-sites/common-utils";
 import { BlueprintBookChild } from "@factorio-sites/types";
 
@@ -25,17 +26,22 @@ type BlueprintBookWithId = Omit<BlueprintBookData, "blueprints"> & {
   blueprints: Array<{ index: number } & BlueprintObjectDataWithId>;
 };
 
-interface BlueprintDataWithId {
+interface BlueprintStringWithId {
   blueprint: BlueprintWithId;
   blueprint_book?: never;
+  deconstruction_planner?: never;
 }
 
-interface BlueprintBookDataWithId {
+interface BlueprintBookStringWithId {
   blueprint_book: BlueprintBookWithId;
   blueprint?: never;
+  deconstruction_planner?: never;
 }
 
-export type BlueprintObjectDataWithId = BlueprintDataWithId | BlueprintBookDataWithId;
+export type BlueprintObjectDataWithId =
+  | BlueprintStringWithId
+  | BlueprintBookStringWithId
+  | DeconstructionPlannerString;
 
 export const isBlueprintBook = (
   data: BlueprintStringData
@@ -43,7 +49,7 @@ export const isBlueprintBook = (
 
 export const isBlueprintBookWithId = (
   data: BlueprintObjectDataWithId
-): data is BlueprintBookDataWithId => !!data.blueprint_book;
+): data is BlueprintBookStringWithId => !!data.blueprint_book;
 
 export function mergeBlueprintDataAndChildTree(
   data: BlueprintStringData,
@@ -54,9 +60,10 @@ export function mergeBlueprintDataAndChildTree(
     !data.blueprint_book.blueprints ||
     child_tree_item.type !== "blueprint_book"
   ) {
+    console.log(data);
     throw Error("mergeBlueprintDataAndChildTree called with a non-book");
   }
-  data;
+
   return {
     ...data,
     blueprint_book: {
@@ -69,6 +76,9 @@ export function mergeBlueprintDataAndChildTree(
             index: blueprint.index,
             blueprint: { id: child.id, ...blueprint.blueprint },
           };
+        }
+        if (blueprint.deconstruction_planner) {
+          return blueprint;
         } else {
           return mergeBlueprintDataAndChildTree(
             blueprint,

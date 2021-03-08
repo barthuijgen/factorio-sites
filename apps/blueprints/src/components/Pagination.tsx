@@ -34,7 +34,7 @@ export const Pagination: React.FC<BoxProps & PaginationProps> = ({
 }) => (
   <Box>
     {page > 1 && <PaginationLink page={page - 1} />}
-    {!totalPages || (page + 1 < totalPages && <PaginationLink page={page + 1} />)}
-    {totalItems ? <Box css={{ marginTop: "1rem" }}>{totalItems} total items</Box> : null}
+    {!totalPages || (page + 1 <= totalPages && <PaginationLink page={page + 1} />)}
+    {totalItems ? <Box css={{ marginTop: "15px" }}>{totalItems} total items</Box> : null}
   </Box>
 );
