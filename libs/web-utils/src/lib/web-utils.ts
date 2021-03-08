@@ -1,11 +1,12 @@
 import * as pako from "pako";
 import {
-  BlueprintData,
-  BlueprintBookData,
   BlueprintStringData,
-  DeconstructionPlannerString,
-} from "@factorio-sites/common-utils";
-import { BlueprintBookChild } from "@factorio-sites/types";
+  Icon,
+  ChildTreeBlueprint,
+  isBlueprintBook,
+  isBlueprint,
+} from "@factorio-sites/types";
+import { ChildTreeBlueprintBook } from "@factorio-sites/types";
 
 export function parseBlueprintStringClient(source: string): BlueprintStringData | null {
   try {
@@ -20,73 +21,39 @@ export function parseBlueprintStringClient(source: string): BlueprintStringData 
   }
 }
 
-type BlueprintWithId = BlueprintData & { id: string };
-type BlueprintBookWithId = Omit<BlueprintBookData, "blueprints"> & {
-  id: string;
-  blueprints: Array<{ index: number } & BlueprintObjectDataWithId>;
-};
-
-interface BlueprintStringWithId {
-  blueprint: BlueprintWithId;
-  blueprint_book?: never;
-  deconstruction_planner?: never;
+interface ChildTreeBlueprintEnriched extends ChildTreeBlueprint {
+  icons: Icon[];
+}
+export interface ChildTreeBlueprintBookEnriched extends ChildTreeBlueprintBook {
+  icons?: Icon[];
+  children: ChildTreeEnriched;
 }
 
-interface BlueprintBookStringWithId {
-  blueprint_book: BlueprintBookWithId;
-  blueprint?: never;
-  deconstruction_planner?: never;
-}
-
-export type BlueprintObjectDataWithId =
-  | BlueprintStringWithId
-  | BlueprintBookStringWithId
-  | DeconstructionPlannerString;
-
-export const isBlueprintBook = (
-  data: BlueprintStringData
-): data is { blueprint_book: BlueprintBookData } => !!data.blueprint_book;
-
-export const isBlueprintBookWithId = (
-  data: BlueprintObjectDataWithId
-): data is BlueprintBookStringWithId => !!data.blueprint_book;
+export type ChildTreeEnriched = Array<ChildTreeBlueprintEnriched | ChildTreeBlueprintBookEnriched>;
 
 export function mergeBlueprintDataAndChildTree(
   data: BlueprintStringData,
-  child_tree_item: BlueprintBookChild
-): BlueprintObjectDataWithId {
-  if (
-    !data.blueprint_book ||
-    !data.blueprint_book.blueprints ||
-    child_tree_item.type !== "blueprint_book"
-  ) {
-    console.log(data);
-    throw Error("mergeBlueprintDataAndChildTree called with a non-book");
+  child_tree_item: ChildTreeBlueprintBook
+): ChildTreeBlueprintBookEnriched {
+  if (!isBlueprintBook(data)) {
+    throw Error("mergeBlueprintDataAndChildTree called with data without a blueprint_book");
   }
-
   return {
-    ...data,
-    blueprint_book: {
-      ...data.blueprint_book,
-      id: child_tree_item.id,
-      blueprints: data.blueprint_book.blueprints.map<any>((blueprint, index) => {
-        const child = child_tree_item.children[index];
-        if (blueprint.blueprint) {
-          return {
-            index: blueprint.index,
-            blueprint: { id: child.id, ...blueprint.blueprint },
-          };
-        }
-        if (blueprint.deconstruction_planner) {
-          return blueprint;
-        } else {
-          return mergeBlueprintDataAndChildTree(
-            blueprint,
-            child_tree_item.children[index] as BlueprintBookChild
-          );
-        }
-      }),
-    },
+    ...child_tree_item,
+    icons: data.blueprint_book.icons,
+    children: child_tree_item.children.map((child, index) => {
+      const dataChild = data.blueprint_book.blueprints[index];
+      if (child.type === "blueprint" && isBlueprint(dataChild)) {
+        return {
+          ...child,
+          icons: dataChild.blueprint.icons,
+        };
+      } else if (child.type === "blueprint_book" && isBlueprintBook(dataChild)) {
+        return mergeBlueprintDataAndChildTree(dataChild, child);
+      } else {
+        throw Error("Invalid child tree type");
+      }
+    }),
   };
 }
 

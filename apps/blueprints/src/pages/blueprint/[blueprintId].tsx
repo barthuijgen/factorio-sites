@@ -8,10 +8,14 @@ import {
   getBlueprintPageById,
   isBlueprintPageUserFavorite,
 } from "@factorio-sites/database";
-import { BlueprintBook, Blueprint, BlueprintPage } from "@factorio-sites/types";
-import { BlueprintStringData, timeLogger } from "@factorio-sites/common-utils";
 import {
-  BlueprintObjectDataWithId,
+  BlueprintBook,
+  Blueprint,
+  BlueprintPage,
+  BlueprintStringData,
+} from "@factorio-sites/types";
+import { timeLogger } from "@factorio-sites/common-utils";
+import {
   chakraResponsive,
   mergeBlueprintDataAndChildTree,
   parseBlueprintStringClient,
@@ -46,7 +50,7 @@ const BlueprintStyles = css`
 
     .text {
       white-space: nowrap;
-      width: 85%;
+      width: calc(100% - 120px);
       display: inline-block;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -74,7 +78,7 @@ export const Index: NextPage<IndexProps> = ({
   // const [imageZoom, setImageZoom] = useState(false);
   const [_mainBlueprintString, setMainBlueprintString] = useState<string | null>(null);
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
-  const [mainData, setMainData] = useState<BlueprintObjectDataWithId | null>(null);
+  const [mainData, setMainData] = useState<BlueprintStringData | null>(null);
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
   const [showJson, setShowJson] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
@@ -89,15 +93,8 @@ export const Index: NextPage<IndexProps> = ({
         setMainBlueprintString(string);
         const data = parseBlueprintStringClient(string);
         console.log("data", data);
-        if (data && blueprint_book?.child_tree) {
-          setMainData(
-            mergeBlueprintDataAndChildTree(data, {
-              id: blueprint_book.id,
-              name: blueprint_book.label,
-              type: "blueprint_book",
-              children: blueprint_book.child_tree,
-            })
-          );
+        if (data) {
+          setMainData(data);
         }
       })
       .catch((reason) => console.error(reason));
@@ -167,15 +164,12 @@ export const Index: NextPage<IndexProps> = ({
         {blueprint_book && mainData ? (
           <div css={{ maxHeight: "400px", overflow: "auto" }}>
             <BookChildTree
-              data={mainData}
-              // child_tree={[
-              //   {
-              //     id: blueprint_book.id,
-              //     name: blueprint_book.label,
-              //     type: "blueprint_book",
-              //     children: blueprint_book.child_tree,
-              //   },
-              // ]}
+              blueprint_book={mergeBlueprintDataAndChildTree(mainData, {
+                id: blueprint_book.id,
+                name: blueprint_book.label,
+                type: "blueprint_book",
+                children: blueprint_book.child_tree,
+              })}
               base_url={`/blueprint/${blueprint_page.id}`}
               selected_id={selected.data.id}
             />

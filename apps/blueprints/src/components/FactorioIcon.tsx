@@ -1,4 +1,4 @@
-import { IconSignalTypes } from "@factorio-sites/common-utils";
+import { IconSignalTypes } from "@factorio-sites/types";
 
 interface FactorioIconProps {
   type: IconSignalTypes;

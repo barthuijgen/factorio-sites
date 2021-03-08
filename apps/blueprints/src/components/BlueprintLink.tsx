@@ -9,7 +9,6 @@ import { useState } from "react";
 const linkStyles = css`
   margin: 5px 10px 5px 0;
   background: #353535;
-  width: 210px;
 
   .block {
     display: flex;
@@ -44,6 +43,8 @@ const linkStyles = css`
   }
 
   &.tile {
+    width: 210px;
+    height: 232px;
     .block {
       flex-direction: column;
     }
