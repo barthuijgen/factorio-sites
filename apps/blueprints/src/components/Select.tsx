@@ -1,28 +1,21 @@
 import MultiSelect from "react-multi-select-component";
-import { useFbeData } from "../hooks/fbe.hook";
 
 interface Tag {
   value: string;
   label: string;
 }
 
-interface TagsSelectProps {
+interface SelectProps {
+  options: string[];
   value: string[];
   onChange: (tags: string[]) => void;
   className?: string;
 }
 
-export const TagsSelect: React.FC<TagsSelectProps> = ({ value, onChange, className }) => {
-  const data = useFbeData();
-
-  if (!data) return null;
-
-  const TAGS = Object.keys(data.entities)
-    .filter((key) => !key.startsWith("factorio-logo") && !key.startsWith("crash-site"))
-    .map((key) => {
-      const item = data.entities[key];
-      return { value: item.name, label: item.name.replace(/[_-]/g, " ") };
-    });
+export const Select: React.FC<SelectProps> = ({ options, value, onChange, className }) => {
+  const TAGS = options.map((key) => {
+    return { value: key, label: key.replace(/[_-]/g, " ") };
+  });
 
   return (
     <MultiSelect

@@ -41,7 +41,6 @@ export async function saveBlueprintFromFactorioprints(
     const result = await createBlueprint(parsed.data.blueprint, extraInfo);
     await createBlueprintPage("blueprint", result.id, {
       ...extraInfoPage,
-      firstBlueprintId: result.id,
       image_hash: "",
     });
   } else if (parsed.data.blueprint_book) {
@@ -49,7 +48,7 @@ export async function saveBlueprintFromFactorioprints(
     const result = await createBlueprintBook(parsed.data.blueprint_book, extraInfo);
     await createBlueprintPage("blueprint_book", result.id, {
       ...extraInfoPage,
-      firstBlueprintId: undefined,
+      child_tree: result.child_tree,
       image_hash: "",
     });
   }

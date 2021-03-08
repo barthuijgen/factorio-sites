@@ -1,5 +1,5 @@
 import { getBlueprintContentForImageHash } from "@factorio-sites/common-utils";
-import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
+import { blueprintDataToDbData, encodeBlueprint, hashString } from "@factorio-sites/node-utils";
 import { blueprint as BlueprintModel } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
 import { prisma } from "../postgres/database";
@@ -58,6 +58,7 @@ export async function createBlueprint(
       tags: extraInfo.tags,
       game_version: `${blueprint.version}`,
       image_version: 1,
+      data: blueprintDataToDbData(blueprint) as any,
       updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
       created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
     },

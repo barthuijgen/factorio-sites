@@ -7,7 +7,6 @@ const panelStyles = css`
   flex-direction: column;
   padding: 12px;
   background-color: #313031;
-  overflow: hidden;
   box-shadow: inset 3px 0 3px -3px #201815, inset 2px 0 2px -2px #201815,
     inset 1px 0 1px -1px #201815, inset 0 3px 3px -3px #8f8c8b, inset 0 2px 2px -2px #8f8c8b,
     inset 0 1px 1px -1px #8f8c8b, inset -3px 0 3px -3px #201815, inset -2px 0 2px -2px #201815,

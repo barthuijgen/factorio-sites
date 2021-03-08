@@ -52,7 +52,7 @@ const handler = apiHandler(async (req, res, { session }) => {
       const page = await createBlueprintPage("blueprint_book", result.id, {
         ...info,
         image_hash: firstBlueprint.image_hash,
-        firstBlueprintId,
+        child_tree: result.child_tree,
       });
       return res.status(201).json({ success: true, id: page.id });
     }

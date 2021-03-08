@@ -1,16 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NextPage, NextPageContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { searchBlueprintPages, init } from "@factorio-sites/database";
-import { SimpleGrid, Box, RadioGroup, Stack, Radio } from "@chakra-ui/react";
 import { BlueprintPage } from "@factorio-sites/types";
 import { Panel } from "../components/Panel";
 import { Pagination } from "../components/Pagination";
 import { useRouterQueryToHref } from "../hooks/query.hook";
 import { BlueprintLink } from "../components/BlueprintLink";
-import { TagsSelect } from "../components/TagsSelect";
+import { Select } from "../components/Select";
 import { queryValueAsArray } from "../utils/query.utils";
+import { useFbeData } from "../hooks/fbe.hook";
+import {
+  Box,
+  Heading,
+  Flex,
+  Text,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  SimpleGrid,
+  RadioGroup,
+  Stack,
+  Radio,
+} from "@chakra-ui/react";
+import { MdSearch } from "react-icons/md";
 
 interface IndexProps {
   totalItems: number;
@@ -26,7 +40,21 @@ export const Index: NextPage<IndexProps> = ({
   blueprints,
 }) => {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
   const routerQueryToHref = useRouterQueryToHref();
+  const data = useFbeData();
+
+  useEffect(() => {
+    setSearchQuery((router.query.q as string) || "");
+  }, [router.query.q]);
+
+  if (!data) return null;
+
+  const entityOptions = Object.keys(data.entities).filter(
+    (key) => !key.startsWith("factorio-logo") && !key.startsWith("crash-site")
+  );
+  const recipeOptions = Object.keys(data.recipes);
+  const itemOptions = Object.keys(data.items).filter((key) => key.includes("module"));
 
   return (
     <SimpleGrid columns={1} margin="0.7rem">
@@ -34,47 +62,85 @@ export const Index: NextPage<IndexProps> = ({
         <Box
           css={{
             display: "flex",
-            alignItems: "center",
-            borderBottom: "1px solid #b7b7b7",
-            paddingBottom: "0.3rem",
           }}
         >
-          <Box css={{ marginRight: "1rem" }}>Sort order</Box>
-          <Box css={{ marginRight: "1rem" }}>
-            <RadioGroup
-              onChange={(value: string) => router.push(routerQueryToHref({ order: value }))}
-              value={(router.query.order as string) || "date"}
-            >
-              <Stack direction="row">
-                <Radio value="date">Last updated</Radio>
-                <Radio value="favorites">Favorites</Radio>
-              </Stack>
-            </RadioGroup>
-          </Box>
-          <TagsSelect
-            value={queryValueAsArray(router.query.tags)}
-            onChange={(tags) => router.push(routerQueryToHref({ tags }))}
-            css={{ width: "200px", marginRight: "1rem" }}
-          />
-          {router.query.q && (
+          <Box
+            css={{
+              borderRight: "1px solid #b7b7b7",
+              paddingRight: "1rem",
+              marginRight: "1rem",
+              width: "250px",
+            }}
+          >
             <Box>
-              <span>Search term:</span>
-              <span
-                css={{ margin: "0 5px 0 0.5rem", border: "1px solid #ababab", padding: "0px 10px" }}
-              >
-                {router.query.q}
-              </span>
-              <Link href={routerQueryToHref({ q: null })}>x</Link>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none" children={<MdSearch />} />
+                <Input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => {
+                    setSearchQuery(event.target.value);
+                  }}
+                  onKeyUp={(event) => {
+                    if (event.key === "Enter") {
+                      router.push(`/?q=${searchQuery}`);
+                    }
+                  }}
+                />
+              </InputGroup>
             </Box>
-          )}
-        </Box>
-        <Box css={{ display: "flex", flexWrap: "wrap" }}>
-          {blueprints.map((bp) => (
-            <BlueprintLink key={bp.id} blueprint={bp} type="tile" />
-          ))}
-        </Box>
-        <Box css={{ marginTop: "15px" }}>
-          <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />
+            <Box css={{ marginTop: "1rem" }}>
+              <Text css={{ marginRight: "1rem" }}>Sort order</Text>
+              <Box css={{ marginRight: "1rem" }}>
+                <RadioGroup
+                  onChange={(value: string) => router.push(routerQueryToHref({ order: value }))}
+                  value={(router.query.order as string) || "date"}
+                >
+                  <Stack>
+                    <Radio value="date">Last updated</Radio>
+                    <Radio value="favorites">Favorites</Radio>
+                  </Stack>
+                </RadioGroup>
+              </Box>
+            </Box>
+            <Box css={{ marginTop: "1rem" }}>
+              <Text css={{ marginRight: "1rem" }}>Entities</Text>
+              <Select
+                options={entityOptions}
+                value={queryValueAsArray(router.query.entities)}
+                onChange={(entities) => router.push(routerQueryToHref({ entities }))}
+                css={{ width: "200px", marginRight: "1rem" }}
+              />
+            </Box>
+            <Box css={{ marginTop: "1rem" }}>
+              <Text css={{ marginRight: "1rem" }}>Recipes</Text>
+              <Select
+                options={recipeOptions}
+                value={queryValueAsArray(router.query.recipes)}
+                onChange={(recipes) => router.push(routerQueryToHref({ recipes }))}
+                css={{ width: "200px", marginRight: "1rem" }}
+              />
+            </Box>
+            <Box css={{ marginTop: "1rem" }}>
+              <Text css={{ marginRight: "1rem" }}>Items</Text>
+              <Select
+                options={itemOptions}
+                value={queryValueAsArray(router.query.items)}
+                onChange={(items) => router.push(routerQueryToHref({ items }))}
+                css={{ width: "200px", marginRight: "1rem" }}
+              />
+            </Box>
+          </Box>
+          <Box>
+            <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px" }}>
+              {blueprints.map((bp) => (
+                <BlueprintLink key={bp.id} blueprint={bp} type="tile" />
+              ))}
+            </Box>
+            <Box css={{ marginTop: "15px" }}>
+              <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />
+            </Box>
+          </Box>
         </Box>
       </Panel>
     </SimpleGrid>
@@ -87,6 +153,9 @@ export async function getServerSideProps({ query }: NextPageContext) {
   const perPage = Number(query["per-page"] || "20");
   const order = (query["order"] as string) || "date";
   const tags = query.tags ? String(query.tags).split(",") : undefined;
+  const entities = query.entities ? String(query.entities).split(",") : undefined;
+  const items = query.items ? String(query.items).split(",") : undefined;
+  const recipes = query.recipes ? String(query.recipes).split(",") : undefined;
 
   const { count, rows } = await searchBlueprintPages({
     page,
@@ -94,6 +163,9 @@ export async function getServerSideProps({ query }: NextPageContext) {
     query: query.q as string,
     order,
     tags,
+    entities,
+    items,
+    recipes,
   });
 
   return {

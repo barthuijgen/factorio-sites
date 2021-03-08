@@ -3,7 +3,7 @@ import * as crypto from "crypto";
 import * as pako from "pako";
 import * as cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
-import { BlueprintStringData } from "@factorio-sites/types";
+import { BlueprintData, BlueprintStringData, DbBlueprintData } from "@factorio-sites/types";
 import { ChildTree } from "@factorio-sites/types";
 
 export const parseBlueprintString = async (
@@ -69,6 +69,18 @@ export const deleteSessionToken = (res: NextApiResponse) => {
   );
 };
 
+export function getAllBlueprintsFromChildTree(child_tree: ChildTree): string[] {
+  const blueprint_ids: string[] = [];
+  child_tree.forEach((child) => {
+    if (child.type === "blueprint_book") {
+      blueprint_ids.push(...getAllBlueprintsFromChildTree(child.children));
+    } else {
+      blueprint_ids.push(child.id);
+    }
+  });
+  return blueprint_ids;
+}
+
 export function getFirstBlueprintFromChildTree(child_tree: ChildTree): string {
   // First try flat search
   const result = child_tree.find((child) => child.type === "blueprint");
@@ -97,4 +109,35 @@ export function jsonReplaceErrors(_: string, value: unknown) {
     }, {} as Record<string, unknown>);
   }
   return value;
+}
+
+export function blueprintDataToDbData(blueprint: BlueprintData): DbBlueprintData {
+  return {
+    absolute_snapping: blueprint["absolute-snapping"] || false,
+    snap_to_grid: blueprint["snap-to-grid"] || null,
+    entities: blueprint.entities.reduce((entities, entity) => {
+      entities[entity.name] = entities[entity.name] ? entities[entity.name] + 1 : 1;
+      return entities;
+    }, {} as Record<string, number>),
+    icons: blueprint.icons.map((icon) => icon.signal),
+    items: blueprint.entities.reduce((items, entity) => {
+      if (entity.items) {
+        for (const item in entity.items) {
+          items[item] = (items[item] || 0) + entity.items[item];
+        }
+      }
+      return items;
+    }, {} as Record<string, number>),
+    recipes: blueprint.entities.reduce((recipes, entity) => {
+      if (entity.recipe) {
+        recipes[entity.recipe] = (recipes[entity.recipe] || 0) + 1;
+      }
+      return recipes;
+    }, {} as Record<string, number>),
+    tiles:
+      blueprint.tiles?.reduce((tiles, tile) => {
+        tiles[tile.name] = (tiles[tile.name] || 0) + 1;
+        return tiles;
+      }, {} as Record<string, number>) ?? {},
+  };
 }

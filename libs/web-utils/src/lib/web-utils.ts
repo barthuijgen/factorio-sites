@@ -1,10 +1,10 @@
 import * as pako from "pako";
 import {
   BlueprintStringData,
-  BlueprintBookString,
-  FactorioIcon,
+  Icon,
   ChildTreeBlueprint,
-  BlueprintString,
+  isBlueprintBook,
+  isBlueprint,
 } from "@factorio-sites/types";
 import { ChildTreeBlueprintBook } from "@factorio-sites/types";
 
@@ -21,16 +21,11 @@ export function parseBlueprintStringClient(source: string): BlueprintStringData 
   }
 }
 
-export const isBlueprint = (data: BlueprintStringData): data is BlueprintString => !!data.blueprint;
-
-export const isBlueprintBook = (data: BlueprintStringData): data is BlueprintBookString =>
-  !!data.blueprint_book;
-
 interface ChildTreeBlueprintEnriched extends ChildTreeBlueprint {
-  icons: FactorioIcon[];
+  icons: Icon[];
 }
 export interface ChildTreeBlueprintBookEnriched extends ChildTreeBlueprintBook {
-  icons?: FactorioIcon[];
+  icons?: Icon[];
   children: ChildTreeEnriched;
 }
 

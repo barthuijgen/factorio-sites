@@ -8,15 +8,19 @@ export let prisma: PrismaClient;
 const _init = async () => {
   if (globalWithPrisma.prisma) return globalWithPrisma.prisma;
 
-  const databasePassword = getEnvOrThrow("POSTGRES_PASSWORD");
+  const host = getEnvOrThrow("POSTGRES_HOST");
+  const user = getEnvOrThrow("POSTGRES_USER");
+  const database = getEnvOrThrow("POSTGRES_DB");
+  const passwordKey = getEnvOrThrow("POSTGRES_PASSWORD");
+  const password = passwordKey.startsWith("projects/")
+    ? await getSecretOrThrow(passwordKey)
+    : passwordKey;
 
   const prismaClient = new PrismaClient({
     log: ["warn", "error"],
     datasources: {
       db: {
-        url: `postgresql://${getEnvOrThrow("POSTGRES_USER")}:${await getSecretOrThrow(
-          databasePassword
-        )}@${getEnvOrThrow("POSTGRES_HOST")}:5432/${getEnvOrThrow("POSTGRES_DB")}`,
+        url: `postgresql://${user}:${password}@${host}:5432/${database}`,
       },
     },
   });

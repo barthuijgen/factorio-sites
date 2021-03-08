@@ -111,7 +111,9 @@ export const Index: NextPage = () => {
               <li>Improve modded blueprint support</li>
               <li>Add blueprint title icon support</li>
               <li>Add blueprint history</li>
-              <li>Add search filter for blueprint entities/recipes without manual tagging</li>
+              <li className="strike">
+                Add search filter for blueprint entities/recipes without manual tagging
+              </li>
             </ul>
           </Box>
         </Panel>

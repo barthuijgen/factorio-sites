@@ -1,17 +1,46 @@
+interface Filter {
+  count: number;
+  index: number;
+  singal: { type: string; name: string };
+}
 interface Entity {
   entity_number: number;
+  name: string;
+  position: { x: number; y: number };
+  recipe?: string;
+  items?: Record<string, number>;
+  control_behavior?: {
+    filters: Filter[];
+  };
+}
+
+interface Tile {
   name: string;
   position: { x: number; y: number };
 }
 
 export type IconSignalTypes = "item" | "fluid" | "virtual";
-export type FactorioIcon = { index: number; signal: { type: IconSignalTypes; name: string } };
+export type Signal = { type: IconSignalTypes; name: string };
+export type Icon = { index: number; signal: Signal };
+type WithIndex<T> = { index: number } & T;
 
 export interface BlueprintData {
   entities: Entity[];
-  tiles?: { name: string; position: { x: number; y: number } }[];
-  icons: FactorioIcon[];
-  item: string;
+  tiles?: Tile[];
+  icons: Icon[];
+  item: "blueprint";
+  label: string;
+  description?: string;
+  "snap-to-grid": { x: number; y: number };
+  "absolute-snapping": boolean;
+  version: number;
+}
+
+export interface BlueprintBookData {
+  active_index: number;
+  blueprints: WithIndex<BlueprintStringData>[];
+  icons?: Icon[];
+  item: "blueprint-book";
   label: string;
   description?: string;
   version: number;
@@ -25,24 +54,11 @@ export interface DeconstructionPlannerData {
       index: number;
       name: string;
     }[];
-    icons: FactorioIcon[];
+    icons: Icon[];
     tile_selection_mode: number;
   };
   version: number;
 }
-
-export interface BlueprintBookData {
-  active_index: number;
-  blueprints: Array<
-    { index: number; deconstruction_planner?: DeconstructionPlannerData } & BlueprintStringData
-  >;
-  icons?: FactorioIcon[];
-  item: string;
-  label: string;
-  description?: string;
-  version: number;
-}
-
 export interface DeconstructionPlannerString {
   deconstruction_planner: DeconstructionPlannerData;
   blueprint?: never;
@@ -65,3 +81,8 @@ export type BlueprintStringData =
   | BlueprintString
   | BlueprintBookString
   | DeconstructionPlannerString;
+
+export const isBlueprint = (data: BlueprintStringData): data is BlueprintString => !!data.blueprint;
+
+export const isBlueprintBook = (data: BlueprintStringData): data is BlueprintBookString =>
+  !!data.blueprint_book;

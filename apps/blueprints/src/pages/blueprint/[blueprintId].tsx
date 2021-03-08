@@ -50,7 +50,7 @@ const BlueprintStyles = css`
 
     .text {
       white-space: nowrap;
-      width: 85%;
+      width: calc(100% - 120px);
       display: inline-block;
       overflow: hidden;
       text-overflow: ellipsis;

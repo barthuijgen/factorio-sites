@@ -47,24 +47,6 @@ export const Header: React.FC = (props) => {
         </Heading>
       </Flex>
 
-      <Box>
-        <InputGroup css={{ width: "20rem" }}>
-          <InputLeftElement pointerEvents="none" children={<MdSearch />} />
-          <Input
-            type="text"
-            value={searchQuery}
-            onChange={(event) => {
-              setSearchQuery(event.target.value);
-            }}
-            onKeyUp={(event) => {
-              if (event.key === "Enter") {
-                router.push(`/?q=${searchQuery}`);
-              }
-            }}
-          />
-        </InputGroup>
-      </Box>
-
       <Box display={{ base: "block", md: "none" }} onClick={handleToggle}>
         <svg fill="white" width="12px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <title>Menu</title>

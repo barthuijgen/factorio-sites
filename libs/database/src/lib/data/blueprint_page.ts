@@ -2,7 +2,12 @@ import { blueprint_page } from "@prisma/client";
 import { join, raw, sqltag } from "@prisma/client/runtime";
 import { getBlueprintImageRequestTopic } from "../gcp-pubsub";
 import { prisma } from "../postgres/database";
-import { BlueprintPage } from "@factorio-sites/types";
+import { BlueprintPage, ChildTree } from "@factorio-sites/types";
+import { getBlueprintBookById } from "./blueprint_book";
+import {
+  getAllBlueprintsFromChildTree,
+  getFirstBlueprintFromChildTree,
+} from "@factorio-sites/node-utils";
 
 const mapBlueprintPageEntityToObject = (entity: blueprint_page): BlueprintPage => ({
   id: entity.id,
@@ -41,26 +46,50 @@ export async function searchBlueprintPages({
   query,
   order,
   tags,
+  entities,
+  items,
+  recipes,
 }: {
   page: number;
   perPage: number;
   query?: string;
   order: "date" | "favorites" | string;
   tags?: string[];
+  entities?: string[];
+  items?: string[];
+  recipes?: string[];
 }): Promise<{ count: number; rows: BlueprintPage[] }> {
   const orderMap: Record<string, string> = {
-    date: "updated_at",
+    date: "blueprint_page.updated_at",
     favorites: "favorite_count",
   };
 
+  const blueprintDataSearch =
+    entities || items || recipes
+      ? sqltag`LEFT JOIN blueprint ON blueprint.id = ANY(blueprint_page.blueprint_ids) OR blueprint.id = blueprint_page.blueprint_id`
+      : sqltag``;
+  const entitiesFragment = entities
+    ? sqltag`AND blueprint.data -> 'entities' ?& array[${join(entities)}::text]`
+    : sqltag``;
+  const itemsFragment = items
+    ? sqltag`AND blueprint.data -> 'items' ?& array[${join(items)}::text]`
+    : sqltag``;
+  const recipesFragment = recipes
+    ? sqltag`AND blueprint.data -> 'recipes' ?& array[${join(recipes)}::text]`
+    : sqltag``;
   const tagsFragment = tags
     ? sqltag`AND blueprint_page.tags @> array[${join(tags)}::varchar]`
     : sqltag``;
+
   const result = (
     await prisma.$queryRaw<(blueprint_page & { favorite_count: number })[]>`
-      SELECT *, (SELECT COUNT(*) FROM user_favorites where user_favorites.blueprint_page_id = blueprint_page.id) AS favorite_count
+      SELECT DISTINCT blueprint_page.*, (SELECT COUNT(*) FROM user_favorites where user_favorites.blueprint_page_id = blueprint_page.id) AS favorite_count
       FROM public.blueprint_page
+      ${blueprintDataSearch}
       WHERE blueprint_page.title ILIKE ${query ? `%${query}%` : "%"}
+      ${entitiesFragment}
+      ${itemsFragment}
+      ${recipesFragment}
       ${tagsFragment}
       ORDER BY ${raw(orderMap[order] || orderMap.date)} DESC
       LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
@@ -73,7 +102,12 @@ export async function searchBlueprintPages({
   const countResult = await prisma.$queryRaw<{ count: number }[]>`
       SELECT COUNT(*)
       FROM public.blueprint_page
+      ${blueprintDataSearch}
       WHERE blueprint_page.title ILIKE ${query ? `%${query}%` : "%"}
+      ${entitiesFragment}
+      ${itemsFragment}
+      ${recipesFragment}
+      ${tagsFragment}
       ${tagsFragment}`;
 
   return {
@@ -93,7 +127,7 @@ export async function createBlueprintPage(
     image_hash: string;
     created_at?: number;
     updated_at?: number;
-    firstBlueprintId?: string;
+    child_tree?: ChildTree;
     factorioprints_id?: string;
   }
 ) {
@@ -105,6 +139,7 @@ export async function createBlueprintPage(
       factorioprints_id: data.factorioprints_id,
       blueprint_id: type === "blueprint" ? targetId : undefined,
       blueprint_book_id: type === "blueprint_book" ? targetId : undefined,
+      blueprint_ids: data.child_tree ? getAllBlueprintsFromChildTree(data.child_tree) : [],
       tags: data.tags ? data.tags : [],
       image_hash: data.image_hash,
       updated_at: data.updated_at ? new Date(data.updated_at * 1000) : new Date(),
@@ -117,9 +152,10 @@ export async function createBlueprintPage(
     blueprintImageRequestTopic.publishJSON({
       blueprintId: targetId,
     });
-  } else if (data.firstBlueprintId) {
+  } else if (data.child_tree) {
+    const firstBlueprintId = getFirstBlueprintFromChildTree(data.child_tree);
     blueprintImageRequestTopic.publishJSON({
-      blueprintId: data.firstBlueprintId,
+      blueprintId: firstBlueprintId,
     });
   }
 
