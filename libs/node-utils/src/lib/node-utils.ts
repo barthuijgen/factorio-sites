@@ -3,7 +3,7 @@ import * as crypto from "crypto";
 import * as pako from "pako";
 import * as cookie from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
-import { BlueprintStringData } from "@factorio-sites/common-utils";
+import { BlueprintStringData } from "@factorio-sites/types";
 import { ChildTree } from "@factorio-sites/types";
 
 export const parseBlueprintString = async (

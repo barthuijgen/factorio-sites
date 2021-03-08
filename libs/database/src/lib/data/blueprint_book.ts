@@ -1,4 +1,4 @@
-import { BlueprintBookData } from "@factorio-sites/common-utils";
+import { BlueprintBookData } from "@factorio-sites/types";
 import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
 import { blueprint_book } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";

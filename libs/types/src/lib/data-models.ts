@@ -1,17 +1,17 @@
-export interface BlueprintChild {
+export interface ChildTreeBlueprint {
   type: "blueprint";
   id: string;
   name: string;
 }
 
-export interface BlueprintBookChild {
+export interface ChildTreeBlueprintBook {
   type: "blueprint_book";
   id: string;
   name: string;
   children: ChildTree;
 }
 
-export type ChildTree = Array<BlueprintChild | BlueprintBookChild>;
+export type ChildTree = Array<ChildTreeBlueprint | ChildTreeBlueprintBook>;
 
 export interface Blueprint {
   id: string;

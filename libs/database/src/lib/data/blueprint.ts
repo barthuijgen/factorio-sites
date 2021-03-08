@@ -1,9 +1,9 @@
-import { BlueprintData, getBlueprintContentForImageHash } from "@factorio-sites/common-utils";
+import { getBlueprintContentForImageHash } from "@factorio-sites/common-utils";
 import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
 import { blueprint as BlueprintModel } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
 import { prisma } from "../postgres/database";
-import { Blueprint } from "@factorio-sites/types";
+import { Blueprint, BlueprintData } from "@factorio-sites/types";
 
 // const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
 
