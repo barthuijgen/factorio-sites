@@ -35,11 +35,12 @@ export async function subscribeToPubSub() {
     };
 
     try {
-      const data = JSON.parse(message.data.toString());
-      if (!data.blueprintId) return ack("blueprintId not found in message body", false);
+      if (!message.attributes.blueprintId) {
+        return ack("blueprintId not found in message body", false);
+      }
       console.log("------------------------------------------------");
-      console.log("[pubsub] generating image for", data.blueprintId);
-      const blueprint = await getBlueprintById(data.blueprintId);
+      console.log("[pubsub] generating image for", message.attributes.blueprintId);
+      const blueprint = await getBlueprintById(message.attributes.blueprintId);
       if (!blueprint) return ack("Blueprint not found", false);
 
       if (await hasBlueprintImage(blueprint.image_hash)) {
@@ -58,7 +59,7 @@ export async function subscribeToPubSub() {
 
       return ack("[pubsub] image saved", true);
     } catch (reason) {
-      return ack(`[pubsub:error] ${reason}`, false);
+      return ack(`[pubsub:error] ${reason.stack || reason}`, false);
     }
   };
 

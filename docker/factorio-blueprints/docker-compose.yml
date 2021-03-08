@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:13
+    container_name: factorio-blueprints-database
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    env_file:
+      - postgres.env
+    ports:
+      - 5432:5432
+  adminer:
+    image: dpage/pgadmin4:4
+    container_name: factorio-blueprints-database-admin
+    restart: always
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    env_file:
+      - pgadmin.env
+    ports:
+      - 8080:80
+
+volumes:
+  postgres-data:
+  pgadmin-data:

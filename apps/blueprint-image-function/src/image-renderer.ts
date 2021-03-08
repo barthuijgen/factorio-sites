@@ -4,11 +4,11 @@ import * as Puppeteer from "puppeteer";
 let BROWSER: Puppeteer.Browser;
 let PAGE: Puppeteer.Page;
 
-async function getPage() {
+async function getPage(headless: boolean) {
   if (PAGE) return PAGE;
 
   const _browser = await Puppeteer.launch({
-    headless: false,
+    headless,
     args: ["--no-sandbox"],
   });
 
@@ -24,9 +24,9 @@ async function getPage() {
   return _page;
 }
 
-export async function renderImage(blueprint_string: string) {
+export async function renderImage(blueprint_string: string, options?: { headless: boolean }) {
   const tl = timeLogger("localFbeRenderer");
-  const page = await getPage();
+  const page = await getPage(options?.headless ?? true);
 
   tl("Page loaded");
 

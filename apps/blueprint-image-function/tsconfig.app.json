@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
+    "target": "ES2019",
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts"],

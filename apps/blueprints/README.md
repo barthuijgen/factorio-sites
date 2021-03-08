@@ -5,12 +5,13 @@ Make sure `prod.package.json` is up to date on packages from the root `package.j
 ## Deploying
 
 `docker build -t eu.gcr.io/factorio-sites/blueprints --file blueprints.Dockerfile .`
+`docker tag eu.gcr.io/factorio-sites/blueprints eu.gcr.io/factorio-sites/blueprints:dev`
 `docker push eu.gcr.io/factorio-sites/blueprints`
-
-### Testing deployment locally
-
-`docker run --rm -p 3000:3000 eu.gcr.io/factorio-sites/blueprints`
 
 ### windows env
 
-`$env:GOOGLE_APPLICATION_CREDENTIALS="D:\git\factorio-sites\credentials\factorio-sites.json"`
+create a `.env.local` with
+
+```
+GOOGLE_APPLICATION_CREDENTIALS="D:\git\factorio-sites\credentials\factorio-sites.json"
+```

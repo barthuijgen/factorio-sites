@@ -41,3 +41,8 @@ Thumbs.db
 # custom
 /.cache
 /credentials
+.env.local
+.local.env
+.env
+local.readme.md
+.yalc

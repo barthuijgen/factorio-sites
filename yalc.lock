@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@fbe/editor": {
+      "signature": "b0745c6abf139fb06e7e830df0e6ebb9",
+      "file": true,
+      "replaced": "./fbe-editor-v1.0.0.tgz"
+    }
+  }
+}
