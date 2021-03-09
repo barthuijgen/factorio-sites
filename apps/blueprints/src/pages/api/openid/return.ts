@@ -7,6 +7,7 @@ import {
 import { NextApiHandler } from "next";
 import { fetchSteamProfile, steamAuthenticate } from "../../../utils/openid_steam";
 import { setUserToken } from "@factorio-sites/node-utils";
+import { apiHandler } from "../../../utils/api-handler";
 
 export const COOKIE_SESSION_NAME = "session-token";
 export const COOKIE_SESSION_OPTIONS = {
@@ -16,13 +17,11 @@ export const COOKIE_SESSION_OPTIONS = {
   sameSite: "strict" as const,
 };
 
-const handler: NextApiHandler = async (req, res) => {
+const handler: NextApiHandler = apiHandler(async (req, res, { ip, useragent, url }) => {
   console.log({ return_url: req.url });
   if (!req.url) return;
 
-  const steam_id = await steamAuthenticate(req.url);
-  const ip = (req.headers["x-forwarded-for"] || (req as any).ip) as string;
-  const useragent = req.headers["user-agent"] as string;
+  const steam_id = await steamAuthenticate(req.url, url);
   console.log({ steam_id, useragent, ip });
 
   await init();
@@ -52,9 +51,9 @@ const handler: NextApiHandler = async (req, res) => {
   res.setHeader("content-type", "text/html");
   return res.status(200).end(`
       <html><head>
-        <meta http-equiv="refresh" content="0;url=${process.env.BASE_URL}" />
+        <meta http-equiv="refresh" content="0;url=/" />
       </head></html>
     `);
-};
+});
 
 export default handler;

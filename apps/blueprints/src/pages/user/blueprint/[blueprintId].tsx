@@ -167,15 +167,11 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
   );
 };
 
-export const getServerSideProps = pageHandler(async (context, { session }) => {
+export const getServerSideProps = pageHandler(async (context, { session, redirect }) => {
   const blueprintId = context.query.blueprintId ? (context.query.blueprintId as string) : null;
 
   if (!session || !blueprintId) {
-    if (context.res) {
-      context.res.statusCode = 302;
-      context.res.setHeader("Location", "/");
-    }
-    return { props: {} };
+    return redirect("/");
   }
 
   const blueprintPage = await getBlueprintPageById(blueprintId);
