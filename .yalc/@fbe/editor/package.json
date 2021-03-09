@@ -1,6 +1,6 @@
 {
     "name": "@fbe/editor",
-    "version": "1.0.0+c587a9e5",
+    "version": "1.0.0+4ce98ad6",
     "description": "A Factorio blueprint editor and renderer webapp",
     "author": "Teoxoy",
     "license": "MIT",
@@ -22,5 +22,5 @@
         "pathfinding": "^0.4.18",
         "pixi.js": "^6.0.0-rc.2"
     },
-    "yalcSig": "c587a9e5ef80d6439957f927fc0f0429"
+    "yalcSig": "4ce98ad61ee9927a6bee4eb976d9403a"
 }

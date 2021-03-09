@@ -13,6 +13,7 @@ declare class TrainBlueprintError {
     errors: Ajv.ErrorObject[];
     constructor(errors: Ajv.ErrorObject[]);
 }
+declare function decodeToBlueprint(str: string): Promise<Blueprint>;
 declare function encode(bpOrBook: Blueprint | Book): Promise<string>;
 declare function getBlueprintOrBookFromSource(source: string): Promise<Blueprint | Book>;
-export { ModdedBlueprintError, TrainBlueprintError, CorruptedBlueprintStringError, encode, getBlueprintOrBookFromSource, };
+export { ModdedBlueprintError, TrainBlueprintError, CorruptedBlueprintStringError, encode, getBlueprintOrBookFromSource, decodeToBlueprint, };

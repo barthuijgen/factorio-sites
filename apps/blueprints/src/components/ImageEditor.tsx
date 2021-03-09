@@ -50,6 +50,18 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
       editorRef.current = editor;
       setEditorLoaded(true);
     })();
+
+    const resizeFn = () => {
+      if (!canvasRef.current || !editorRef.current) return;
+      canvasRef.current.style.width = "100%";
+      canvasRef.current.style.height = "auto";
+      editorRef.current.setRendererSize(
+        canvasRef.current.offsetWidth,
+        canvasRef.current.offsetHeight
+      );
+    };
+    window.addEventListener("resize", resizeFn, false);
+    return () => window.removeEventListener("resize", resizeFn);
   }, []);
 
   useEffect(() => {
@@ -65,10 +77,9 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
         const editor = editorRef.current;
         if (!editorLoaded || !FBE || !editor) return;
 
-        const bpOrBook = await FBE.getBlueprintOrBookFromSource(string);
-        const blueprint = bpOrBook instanceof FBE.Book ? bpOrBook.selectBlueprint(0) : bpOrBook;
+        const bp = await FBE.decodeToBlueprint(string);
 
-        await editor.loadBlueprint(blueprint);
+        await editor.loadBlueprint(bp);
         // await FBE.default.waitForLoader();
 
         // Wait a little extra, sometimes even after textures are loaded it neeeds a moment to render
@@ -85,20 +96,6 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
       }
     })();
   }, [string, editorLoaded]);
-
-  window.addEventListener(
-    "resize",
-    () => {
-      if (!canvasRef.current || !editorRef.current) return;
-      canvasRef.current.style.width = "100%";
-      canvasRef.current.style.height = "auto";
-      editorRef.current.setRendererSize(
-        canvasRef.current.offsetWidth,
-        canvasRef.current.offsetHeight
-      );
-    },
-    false
-  );
 
   return (
     <div css={editorCss}>

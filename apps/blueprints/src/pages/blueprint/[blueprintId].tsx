@@ -17,6 +17,7 @@ import {
 import { timeLogger } from "@factorio-sites/common-utils";
 import {
   chakraResponsive,
+  ChildTreeBlueprintBookEnriched,
   mergeBlueprintDataAndChildTree,
   parseBlueprintStringClient,
 } from "@factorio-sites/web-utils";
@@ -75,9 +76,10 @@ export const Index: NextPage<IndexProps> = ({
   favorite,
 }) => {
   const auth = useAuth();
-  const [, setMainBlueprintString] = useState<string | null>(null);
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
-  const [mainData, setMainData] = useState<BlueprintStringData | null>(null);
+  const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
+    null
+  );
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
   const [showJson, setShowJson] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
@@ -89,11 +91,17 @@ export const Index: NextPage<IndexProps> = ({
     fetch(`/api/string/${hash}`)
       .then((res) => res.text())
       .then((string) => {
-        setMainBlueprintString(string);
         const data = parseBlueprintStringClient(string);
         console.log("data", data);
-        if (data) {
-          setMainData(data);
+        if (data && blueprint_book) {
+          setBookChildTreeData(
+            mergeBlueprintDataAndChildTree(data, {
+              id: blueprint_book.id,
+              name: blueprint_book.label,
+              type: "blueprint_book",
+              children: blueprint_book.child_tree,
+            })
+          );
         }
       })
       .catch((reason) => console.error(reason));
@@ -160,15 +168,10 @@ export const Index: NextPage<IndexProps> = ({
         }
         gridColumn="1"
       >
-        {blueprint_book && mainData ? (
+        {blueprint_book && bookChildTreeData ? (
           <div css={{ maxHeight: "400px", overflow: "auto" }}>
             <BookChildTree
-              blueprint_book={mergeBlueprintDataAndChildTree(mainData, {
-                id: blueprint_book.id,
-                name: blueprint_book.label,
-                type: "blueprint_book",
-                children: blueprint_book.child_tree,
-              })}
+              blueprint_book={bookChildTreeData}
               base_url={`/blueprint/${blueprint_page.id}`}
               selected_id={selected.data.id}
             />

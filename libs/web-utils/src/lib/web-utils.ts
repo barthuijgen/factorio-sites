@@ -6,20 +6,43 @@ import {
   isBlueprintBook,
   isBlueprint,
   BlueprintBookString,
+  BlueprintString,
 } from "@factorio-sites/types";
 import { ChildTreeBlueprintBook } from "@factorio-sites/types";
+import { Base64 } from "./base64";
 
 export function parseBlueprintStringClient(source: string): BlueprintStringData | null {
   try {
-    const encoded = atob(source.substring(1));
-    const decoded = pako.inflate(encoded);
-    const string = new TextDecoder("utf-8").decode(decoded);
+    const compressed = atob(source.substring(1));
+    const encoded = pako.inflate(compressed);
+    const string = new TextDecoder("utf-8").decode(encoded);
     const data = JSON.parse(string);
     return data;
   } catch (reason) {
     console.log("Failed to parse blueprint string", reason);
     return null;
   }
+}
+
+export function encodeBlueprintClient(data: BlueprintStringData): string {
+  const string = JSON.stringify(data);
+  const encoded = new TextEncoder().encode(string);
+  const compresed = pako.deflate(encoded, { level: 9 });
+  return "0" + Base64.encodeU(compresed as any);
+}
+
+export function getFirstBookFromString(string: string): BlueprintString | null {
+  const data = parseBlueprintStringClient(string);
+  if (!data) return null;
+  if (data.blueprint) return data;
+  else if (data.blueprint_book) {
+    const bpData = data.blueprint_book.blueprints.find((bp) => !!bp.blueprint);
+    if (bpData) {
+      const { index, ...bp } = bpData;
+      return bp as BlueprintString;
+    }
+  }
+  return null;
 }
 
 interface ChildTreeBlueprintEnriched extends ChildTreeBlueprint {
