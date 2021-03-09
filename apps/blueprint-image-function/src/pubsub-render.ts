@@ -11,6 +11,7 @@ import { renderImage } from "./image-renderer";
 
 export async function subscribeToPubSub() {
   const topic = getBlueprintImageRequestTopic();
+  if (!topic) throw Error("PubSub Topic not found");
   const [subscription] = await topic
     .subscription("blueprint-image-function-app", {
       flowControl: { allowExcessMessages: false, maxMessages: 1, maxExtension: 3600 },

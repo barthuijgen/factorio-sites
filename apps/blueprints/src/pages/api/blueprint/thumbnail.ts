@@ -16,9 +16,11 @@ const handler: NextApiHandler = apiHandler(async (req, res) => {
   const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
 
   if (blueprintPage.blueprint_id) {
-    blueprintImageRequestTopic.publishJSON({
-      blueprintId: blueprintPage.blueprint_id,
-    });
+    if (blueprintImageRequestTopic) {
+      blueprintImageRequestTopic.publishJSON({
+        blueprintId: blueprintPage.blueprint_id,
+      });
+    }
     return res.json({ blueprint_id: blueprintPage.blueprint_id });
   } else if (blueprintPage.blueprint_book_id) {
     const blueprintBook = await getBlueprintBookById(blueprintPage.blueprint_book_id);
@@ -26,9 +28,11 @@ const handler: NextApiHandler = apiHandler(async (req, res) => {
     const firstBlueprintId = getFirstBlueprintFromChildTree(blueprintBook.child_tree);
     const firstBlueprint = await getBlueprintById(firstBlueprintId);
     if (!firstBlueprint) throw new ApiError(500, "Failed to find blueprint");
-    blueprintImageRequestTopic.publishJSON({
-      blueprintId: firstBlueprintId,
-    });
+    if (blueprintImageRequestTopic) {
+      blueprintImageRequestTopic.publishJSON({
+        blueprintId: firstBlueprintId,
+      });
+    }
     return res.json({ blueprint_id: firstBlueprintId });
   }
 });

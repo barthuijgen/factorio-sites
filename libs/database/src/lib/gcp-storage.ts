@@ -1,9 +1,10 @@
 import { Storage } from "@google-cloud/storage";
+import { getEnvOrThrow } from "./env.util";
 
 const storage = new Storage();
 
-const BLUEPRINT_BUCKET = storage.bucket("blueprint-strings");
-const IMAGE_BUCKET = storage.bucket("blueprint-images");
+const BLUEPRINT_BUCKET = storage.bucket(getEnvOrThrow("GCP_BLUEPRINT_STRINGS_BUCKET"));
+const IMAGE_BUCKET = storage.bucket(getEnvOrThrow("GCP_BLUEPRINT_IMAGES_BUCKET"));
 
 /*
  * BlueprintString
