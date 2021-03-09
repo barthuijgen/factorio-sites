@@ -42,22 +42,12 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
   );
 };
 
-export const getServerSideProps = pageHandler(async (context, { session }) => {
-  if (!session) {
-    if (context.res) {
-      context.res.statusCode = 302;
-      context.res.setHeader("Location", "/");
-    }
-    return { props: {} };
-  }
+export const getServerSideProps = pageHandler(async (_, { session, redirect }) => {
+  if (!session) return redirect("/");
 
   const blueprints = await getBlueprintPageByUserId(session.user.id);
 
-  return {
-    props: {
-      blueprints,
-    },
-  };
+  return { props: { blueprints } };
 });
 
 export default UserBlueprints;

@@ -147,15 +147,17 @@ export async function createBlueprintPage(
   });
 
   const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
-  if (type === "blueprint") {
-    blueprintImageRequestTopic.publishJSON({
-      blueprintId: targetId,
-    });
-  } else if (data.child_tree) {
-    const firstBlueprintId = getFirstBlueprintFromChildTree(data.child_tree);
-    blueprintImageRequestTopic.publishJSON({
-      blueprintId: firstBlueprintId,
-    });
+  if (blueprintImageRequestTopic) {
+    if (type === "blueprint") {
+      blueprintImageRequestTopic.publishJSON({
+        blueprintId: targetId,
+      });
+    } else if (data.child_tree) {
+      const firstBlueprintId = getFirstBlueprintFromChildTree(data.child_tree);
+      blueprintImageRequestTopic.publishJSON({
+        blueprintId: firstBlueprintId,
+      });
+    }
   }
 
   console.log(`Created Blueprint Page`);

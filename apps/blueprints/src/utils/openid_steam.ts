@@ -6,12 +6,11 @@ import * as OpenID from "openid";
  * https://github.com/LeeviHalme/node-steam-openid/blob/master/index.js
  */
 
-const RETURN_URL = `${process.env.BASE_URL}/api/openid/return`;
-const REALM = process.env.BASE_URL as string;
-const rp = new OpenID.RelyingParty(RETURN_URL, REALM, true, true, []);
-
-export const getSteamRedirectUrl = async (): Promise<string> =>
+export const getSteamRedirectUrl = async (realm_url: string): Promise<string> =>
   new Promise((resolve, reject) => {
+    const RETURN_URL = `${realm_url}/api/openid/return`;
+    const rp = new OpenID.RelyingParty(RETURN_URL, realm_url, true, true, []);
+
     rp.authenticate("https://steamcommunity.com/openid", false, (error, authUrl) => {
       if (error) return reject("Authentication failed: " + error);
       if (!authUrl) return reject("Authentication failed.");
@@ -53,9 +52,12 @@ export const fetchSteamProfile = async (steam_id: string, api_key: string) => {
   }
 };
 
-export const steamAuthenticate = async (url: string): Promise<string> =>
+export const steamAuthenticate = async (return_url: string, realm_url: string): Promise<string> =>
   new Promise((resolve, reject) => {
-    rp.verifyAssertion(url, async (error, result) => {
+    const RETURN_URL = `${realm_url}/api/openid/return`;
+    const rp = new OpenID.RelyingParty(RETURN_URL, realm_url, true, true, []);
+
+    rp.verifyAssertion(return_url, async (error, result) => {
       if (error) {
         return reject(error.message);
       }

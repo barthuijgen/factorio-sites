@@ -10,26 +10,21 @@ import {
   Button,
   Box,
   Text,
-  Image,
 } from "@chakra-ui/react";
 import { Formik, Field } from "formik";
 import { Panel } from "../components/Panel";
 import { css } from "@emotion/react";
 import { validateLoginForm } from "../utils/validate";
-import { useAuth } from "../providers/auth";
 import { useRouter } from "next/router";
+import { SteamLogin } from "../components/SteamLogin";
+import { pageHandler } from "../utils/page-handler";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
 `;
 
 export const Login: NextPage = () => {
-  const auth = useAuth();
   const router = useRouter();
-
-  if (auth) {
-    router.push("/");
-  }
 
   return (
     <div css={{ margin: "0.7rem" }}>
@@ -120,16 +115,16 @@ export const Login: NextPage = () => {
         </Panel>
         <Panel title="Or login with" marginTop="1rem">
           <Box>
-            <Link href="/api/openid/steam">
-              <a>
-                <Image src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/steamworks_docs/english/sits_large_noborder.png" />
-              </a>
-            </Link>
+            <SteamLogin />
           </Box>
         </Panel>
       </SimpleGrid>
     </div>
   );
 };
+
+export const getServerSideProps = pageHandler(async (_, { session, redirect }) => {
+  if (session) return redirect("/");
+});
 
 export default Login;

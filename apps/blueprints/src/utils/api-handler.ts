@@ -8,6 +8,9 @@ interface CustomContext {
   session: Await<ReturnType<typeof getSessionByToken>>;
   ip: string;
   useragent: string;
+  protocol: "http" | "https";
+  host?: string;
+  url: string;
 }
 
 export class ApiError extends Error {
@@ -31,6 +34,9 @@ export const apiHandler = (
   const ip_header = (req.headers["x-forwarded-for"] || (req as any).ip) as string;
   const ip = ip_header ? ip_header.split(",")[0] : "";
   const useragent = req.headers["user-agent"] as string;
+  const protocol = req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+  const host = req.headers.host as string;
+  const url = `${protocol}://${host}`;
 
   const session_token = getSessionToken(req);
   const session = session_token ? await getSessionByToken(session_token) : null;
@@ -39,9 +45,9 @@ export const apiHandler = (
     deleteSessionToken(res);
   }
 
-  return fn(req, res, { session, ip, useragent }).catch((error) => {
+  return fn(req, res, { session, ip, useragent, protocol, host, url }).catch((error) => {
     if (error instanceof ApiError) {
-      res.status(error.status).send(JSON.stringify({ error }));
+      res.status(error.status).send(JSON.stringify({ error }, jsonReplaceErrors));
     } else if (process.env.NODE_ENV === "development") {
       res.status(500).send(JSON.stringify({ error }, jsonReplaceErrors));
     } else {

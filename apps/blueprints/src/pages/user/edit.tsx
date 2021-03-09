@@ -14,6 +14,7 @@ import { css } from "@emotion/react";
 import { Panel } from "../../components/Panel";
 import { validateUserForm } from "../../utils/validate";
 import { useAuth } from "../../providers/auth";
+import { pageHandler } from "../../utils/page-handler";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -22,10 +23,6 @@ const FieldStyle = css`
 export const UserEdit: NextPage = () => {
   const auth = useAuth();
   const router = useRouter();
-
-  if (!auth) {
-    router.push("/");
-  }
 
   return (
     <div css={{ margin: "0.7rem" }}>
@@ -93,5 +90,9 @@ export const UserEdit: NextPage = () => {
     </div>
   );
 };
+
+export const getServerSideProps = pageHandler(async (_, { session, redirect }) => {
+  if (!session) return redirect("/");
+});
 
 export default UserEdit;

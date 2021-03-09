@@ -7,11 +7,13 @@ import {
   hasBlueprintImage,
 } from "@factorio-sites/database";
 import { Blueprint } from "@factorio-sites/types";
+import { apiHandler } from "../../utils/api-handler";
 
 const DISABLED = true;
 
 const getOneMessage = async (): Promise<Blueprint> => {
   const topic = getBlueprintImageRequestTopic();
+  if (!topic) throw Error("Pubsub TOPIC not found");
   const [subscription] = await topic
     .subscription("blueprint-image-function-app", {
       flowControl: { allowExcessMessages: false, maxMessages: 1 },
@@ -44,7 +46,7 @@ const getOneMessage = async (): Promise<Blueprint> => {
   });
 };
 
-const handler: NextApiHandler = async (req, res) => {
+const handler: NextApiHandler = apiHandler(async (req, res) => {
   if (DISABLED) return res.status(400).send("Method not availablee");
 
   // Allow the url to be used in the blueprint editor
@@ -67,6 +69,6 @@ const handler: NextApiHandler = async (req, res) => {
       string: string,
     })
   );
-};
+});
 
 export default handler;
