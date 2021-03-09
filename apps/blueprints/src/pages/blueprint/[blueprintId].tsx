@@ -75,8 +75,7 @@ export const Index: NextPage<IndexProps> = ({
   favorite,
 }) => {
   const auth = useAuth();
-  // const [imageZoom, setImageZoom] = useState(false);
-  const [_mainBlueprintString, setMainBlueprintString] = useState<string | null>(null);
+  const [, setMainBlueprintString] = useState<string | null>(null);
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
   const [mainData, setMainData] = useState<BlueprintStringData | null>(null);
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
@@ -243,35 +242,36 @@ export const Index: NextPage<IndexProps> = ({
         >
           <StyledTable>
             <tbody>
-              {Object.entries(
-                selectedData.blueprint.entities.reduce<Record<string, number>>(
-                  (entities, entity) => {
-                    if (entities[entity.name]) {
-                      entities[entity.name]++;
-                    } else {
-                      entities[entity.name] = 1;
-                    }
-                    return entities;
-                  },
-                  {}
+              {selectedData.blueprint.entities &&
+                Object.entries(
+                  selectedData.blueprint.entities.reduce<Record<string, number>>(
+                    (entities, entity) => {
+                      if (entities[entity.name]) {
+                        entities[entity.name]++;
+                      } else {
+                        entities[entity.name] = 1;
+                      }
+                      return entities;
+                    },
+                    {}
+                  )
                 )
-              )
-                .sort((a, b) => b[1] - a[1])
-                .map(([entry_name, entry]) => (
-                  <tr key={entry_name} css={{}}>
-                    <td className="no-padding">
-                      <Image
-                        alt={entry_name.replace(/-/g, " ")}
-                        src={`https://factorioprints.com/icons/${entry_name}.png`}
-                        fallbackSrc="https://storage.googleapis.com/factorio-blueprints-assets/error-icon.png"
-                        width="32px"
-                        height="32px"
-                      />
-                    </td>
-                    <td>{entry_name}</td>
-                    <td>{entry}</td>
-                  </tr>
-                ))}
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([entry_name, entry]) => (
+                    <tr key={entry_name} css={{}}>
+                      <td className="no-padding">
+                        <Image
+                          alt={entry_name.replace(/-/g, " ")}
+                          src={`https://factorioprints.com/icons/${entry_name}.png`}
+                          fallbackSrc="https://storage.googleapis.com/factorio-blueprints-assets/error-icon.png"
+                          width="32px"
+                          height="32px"
+                        />
+                      </td>
+                      <td>{entry_name}</td>
+                      <td>{entry}</td>
+                    </tr>
+                  ))}
             </tbody>
           </StyledTable>
         </Panel>

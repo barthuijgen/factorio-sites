@@ -5,6 +5,7 @@ import {
   ChildTreeBlueprint,
   isBlueprintBook,
   isBlueprint,
+  BlueprintBookString,
 } from "@factorio-sites/types";
 import { ChildTreeBlueprintBook } from "@factorio-sites/types";
 
@@ -31,6 +32,14 @@ export interface ChildTreeBlueprintBookEnriched extends ChildTreeBlueprintBook {
 
 export type ChildTreeEnriched = Array<ChildTreeBlueprintEnriched | ChildTreeBlueprintBookEnriched>;
 
+export function findBlueprintByName(data: BlueprintBookString, name: string) {
+  return data.blueprint_book.blueprints.find(
+    (bp) =>
+      (bp.blueprint && bp.blueprint.label === name) ||
+      (bp.blueprint_book && bp.blueprint_book.label === name)
+  );
+}
+
 export function mergeBlueprintDataAndChildTree(
   data: BlueprintStringData,
   child_tree_item: ChildTreeBlueprintBook
@@ -41,17 +50,21 @@ export function mergeBlueprintDataAndChildTree(
   return {
     ...child_tree_item,
     icons: data.blueprint_book.icons,
-    children: child_tree_item.children.map((child, index) => {
-      const dataChild = data.blueprint_book.blueprints[index];
-      if (child.type === "blueprint" && isBlueprint(dataChild)) {
+    children: child_tree_item.children.map((child) => {
+      const dataChild = findBlueprintByName(data, child.name);
+      if (child.type === "blueprint" && dataChild && isBlueprint(dataChild)) {
         return {
           ...child,
           icons: dataChild.blueprint.icons,
         };
-      } else if (child.type === "blueprint_book" && isBlueprintBook(dataChild)) {
+      } else if (child.type === "blueprint_book" && dataChild && isBlueprintBook(dataChild)) {
         return mergeBlueprintDataAndChildTree(dataChild, child);
       } else {
-        throw Error("Invalid child tree type");
+        console.error("Invalid child tree type", {
+          parent: child_tree_item,
+          bp_data: data.blueprint_book,
+        });
+        return { ...child, icons: [] } as any;
       }
     }),
   };

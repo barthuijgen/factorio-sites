@@ -70,3 +70,11 @@ const handler = apiHandler(async (req, res, { session }) => {
 });
 
 export default handler;
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "2mb",
+    },
+  },
+};

@@ -100,14 +100,13 @@ export async function searchBlueprintPages({
   }));
 
   const countResult = await prisma.$queryRaw<{ count: number }[]>`
-      SELECT COUNT(*)
+      SELECT COUNT(DISTINCT blueprint_page.id)
       FROM public.blueprint_page
       ${blueprintDataSearch}
       WHERE blueprint_page.title ILIKE ${query ? `%${query}%` : "%"}
       ${entitiesFragment}
       ${itemsFragment}
       ${recipesFragment}
-      ${tagsFragment}
       ${tagsFragment}`;
 
   return {
@@ -184,8 +183,8 @@ export async function editBlueprintPage(
       title: extraInfo.title,
       description_markdown: extraInfo.description_markdown,
       factorioprints_id: extraInfo.factorioprints_id,
-      blueprint_id: type === "blueprint" ? targetId : undefined,
-      blueprint_book_id: type === "blueprint_book" ? targetId : undefined,
+      blueprint_id: type === "blueprint" ? targetId : null,
+      blueprint_book_id: type === "blueprint_book" ? targetId : null,
       tags: extraInfo.tags ? extraInfo.tags : [],
       updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
       created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),

@@ -127,7 +127,7 @@ export const functionPubSubHandler: PubSubHandler = async (message, _context, ca
     await saveBlueprintImage(blueprint.image_hash, min_image, "300");
     log(`Saved image with image hash ${blueprint.image_hash}`);
 
-    await saveBlueprintImage(blueprint.image_hash, image, "original");
+    // await saveBlueprintImage(blueprint.image_hash, image, "original");
 
     callback();
   } catch (reason) {

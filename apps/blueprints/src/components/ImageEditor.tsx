@@ -1,8 +1,27 @@
+import { css } from "@emotion/react";
 import { parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { useEffect, useRef, useState } from "react";
 
 type FBE = typeof import("@fbe/editor");
 type Editor = InstanceType<FBE["Editor"]>;
+
+const editorCss = css`
+  position: relative;
+  .error {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 40px;
+    width: 450px;
+    text-align: center;
+
+    h3 {
+      font-size: 30px;
+    }
+  }
+`;
 
 interface ImageEditorProps {
   string: string;
@@ -13,6 +32,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
   // const [image, setImage] = useState<string | undefined>();
   const FbeRef = useRef<FBE>();
   const editorRef = useRef<Editor>();
+  const [renderError, setRenderError] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
 
   // Load editor async, it does not work server side
@@ -34,25 +54,35 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
 
   useEffect(() => {
     (async () => {
-      if (!parseBlueprintStringClient(string)) {
-        return;
+      try {
+        setRenderError(false);
+
+        if (!parseBlueprintStringClient(string)) {
+          return;
+        }
+
+        const FBE = FbeRef.current;
+        const editor = editorRef.current;
+        if (!editorLoaded || !FBE || !editor) return;
+
+        const bpOrBook = await FBE.getBlueprintOrBookFromSource(string);
+        const blueprint = bpOrBook instanceof FBE.Book ? bpOrBook.selectBlueprint(0) : bpOrBook;
+
+        await editor.loadBlueprint(blueprint);
+        // await FBE.default.waitForLoader();
+
+        // Wait a little extra, sometimes even after textures are loaded it neeeds a moment to render
+        // await new Promise((resolve) => setTimeout(resolve, 10));
+
+        // const picture = await editor.getPicture();
+        // setImage(URL.createObjectURL(picture));
+      } catch (reason) {
+        setRenderError(true);
+        if (Array.isArray(reason.errors)) {
+          return console.error("Blueprint string not supported by FBE", reason.errors);
+        }
+        console.error("Failed to render blueprint", reason);
       }
-
-      const FBE = FbeRef.current;
-      const editor = editorRef.current;
-      if (!editorLoaded || !FBE || !editor) return;
-
-      const bpOrBook = await FBE.getBlueprintOrBookFromSource(string);
-      const blueprint = bpOrBook instanceof FBE.Book ? bpOrBook.selectBlueprint(0) : bpOrBook;
-
-      await editor.loadBlueprint(blueprint);
-      // await FBE.default.waitForLoader();
-
-      // Wait a little extra, sometimes even after textures are loaded it neeeds a moment to render
-      // await new Promise((resolve) => setTimeout(resolve, 10));
-
-      // const picture = await editor.getPicture();
-      // setImage(URL.createObjectURL(picture));
     })();
   }, [string, editorLoaded]);
 
@@ -71,7 +101,16 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
   );
 
   return (
-    <div>
+    <div css={editorCss}>
+      {renderError && (
+        <div className="error">
+          <h3>Failed to render blueprint</h3>
+          <p>
+            This happens when there are modded entities or in some cases blueprint properties that
+            FBE does not yet support
+          </p>
+        </div>
+      )}
       <canvas id="pbe" ref={canvasRef} style={{ width: "100%", height: "auto" }} />
       {/* <img src={image} alt="blueprint" style={{ width: "500px" }}></img> */}
     </div>

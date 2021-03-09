@@ -1,24 +1,39 @@
 import { NextApiHandler } from "next";
 
+const BLOCKED_HEADERS = [
+  "content-encoding",
+  "connection",
+  "server",
+  "transfer-encoding",
+  "vary",
+  "report-to",
+  "nel",
+  "expect-ct",
+  "set-cookie",
+  "cache-control",
+  "expires",
+];
+
 const handler: NextApiHandler = async (req, res) => {
   const path = req.query.proxy ? (req.query.proxy as string[]).join("/") : "";
-
-  // console.log("[fbe-proxy]", path);
 
   const result = await fetch(
     "https://static-fbe.teoxoy.com/file/factorio-blueprint-editor/" + path
   );
 
-  res.setHeader("Access-Control-Allow-Origin", "*");
-
   result.headers.forEach((val, key) => {
     if (
       !res.hasHeader(key) &&
-      !["content-encoding", "connection", "server", "transfer-encoding", "vary"].includes(key)
+      !BLOCKED_HEADERS.includes(key) &&
+      !key.startsWith("x-") &&
+      !key.startsWith("cf-")
     ) {
       res.setHeader(key, val);
     }
   });
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("cache-control", "max-age=108000");
 
   if (result.headers.get("content-type") === "application/octet-stream") {
     const output = Buffer.from(await result.arrayBuffer());

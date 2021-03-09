@@ -6,6 +6,7 @@ module.exports = {
   images: {
     domains: ["storage.googleapis.com"],
   },
+  assetPrefix: process.env.ASSET_PREFIX ? process.env.ASSET_PREFIX : "",
   webpack(config, options) {
     const { dev, isServer } = options;
 

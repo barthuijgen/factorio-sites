@@ -19,7 +19,7 @@ import { Panel } from "../../components/Panel";
 import { validateCreateBlueprintForm } from "../../utils/validate";
 import { useAuth } from "../../providers/auth";
 import { ImageEditor } from "../../components/ImageEditor";
-import { TagsSelect } from "../../components/TagsSelect";
+import { Select } from "../../components/Select";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -99,8 +99,9 @@ export const UserBlueprintCreate: NextPage = () => {
                 <Field name="tags">
                   {({ field, meta }: any) => (
                     <FormControl id="tags" isInvalid={meta.touched && meta.error} css={FieldStyle}>
-                      <FormLabel>Tags</FormLabel>
-                      <TagsSelect
+                      <FormLabel>Tags (WIP)</FormLabel>
+                      <Select
+                        options={[]}
                         value={field.value}
                         onChange={(tags) => setFieldValue("tags", tags)}
                       />

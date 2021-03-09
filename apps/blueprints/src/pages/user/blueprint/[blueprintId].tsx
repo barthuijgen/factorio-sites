@@ -25,9 +25,8 @@ import { Blueprint, BlueprintBook, BlueprintPage } from "@factorio-sites/types";
 import { pageHandler } from "../../../utils/page-handler";
 import { Panel } from "../../../components/Panel";
 import { validateCreateBlueprintForm } from "../../../utils/validate";
-import { useAuth } from "../../../providers/auth";
 import { ImageEditor } from "../../../components/ImageEditor";
-import { TagsSelect } from "../../../components/TagsSelect";
+import { Select } from "../../../components/Select";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -42,12 +41,7 @@ interface UserBlueprintProps {
   selected: Selected;
 }
 export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, selected }) => {
-  const auth = useAuth();
   const router = useRouter();
-
-  if (!auth) {
-    router.push("/");
-  }
 
   if (!blueprintPage) return null;
 
@@ -125,8 +119,9 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                 <Field name="tags">
                   {({ field, meta }: any) => (
                     <FormControl id="tags" isInvalid={meta.touched && meta.error} css={FieldStyle}>
-                      <FormLabel>Tags</FormLabel>
-                      <TagsSelect
+                      <FormLabel>Tags (WIP)</FormLabel>
+                      <Select
+                        options={[]}
                         value={field.value}
                         onChange={(tags) => setFieldValue("tags", tags)}
                       />
@@ -176,6 +171,10 @@ export const getServerSideProps = pageHandler(async (context, { session }) => {
   const blueprintId = context.query.blueprintId ? (context.query.blueprintId as string) : null;
 
   if (!session || !blueprintId) {
+    if (context.res) {
+      context.res.statusCode = 302;
+      context.res.setHeader("Location", "/");
+    }
     return { props: {} };
   }
 
