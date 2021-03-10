@@ -16,6 +16,6 @@ jobs:
           node-version: "14"
       - run: yarn
       - run: yarn db-gen
-      - run: nx lint
-      - run: nx test
-      - run: nx build blueprints
+      - run: yarn nx lint
+      - run: yarn nx test
+      - run: yarn nx build blueprints

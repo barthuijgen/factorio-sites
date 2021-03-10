@@ -7,6 +7,7 @@ const useRouter = jest.spyOn(nextRouter, "useRouter");
 
 describe("Index", () => {
   it("should render successfully", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useRouter.mockImplementationOnce(() => ({ query: {} } as any));
 
     const { baseElement } = render(
