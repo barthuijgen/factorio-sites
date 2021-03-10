@@ -55,7 +55,7 @@ export interface BlueprintPage {
   updated_at: number;
   factorioprints_id: string | null;
   favorite_count?: number;
-  user?: Partial<user>;
+  user?: Pick<user, "id" | "username"> | null;
   // BlueprintPageEntry->BlueprintEntry 1:m
   // BlueprintPageEntry->BlueprintBook 1:m
 }

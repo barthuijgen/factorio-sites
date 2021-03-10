@@ -93,7 +93,7 @@ model user {
   updated_at           DateTime         @updatedAt
   session              session[]
   user_favorites       user_favorites[]
-  blueprint_page       blueprint_page[]
+  blueprint_pages      blueprint_page[]
 }
 
 model user_favorites {

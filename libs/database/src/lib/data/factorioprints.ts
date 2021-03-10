@@ -1,5 +1,4 @@
 import { parseBlueprintString } from "@factorio-sites/node-utils";
-import { user } from "@prisma/client";
 import { createBlueprint } from "./blueprint";
 import { createBlueprintBook } from "./blueprint_book";
 import { createBlueprintPage } from "./blueprint_page";
@@ -12,7 +11,6 @@ interface BlueprintDataFromFactorioprints {
   tags: string[];
   factorioprints_id: string;
   user_id: string;
-  user: user;
 }
 export async function saveBlueprintFromFactorioprints(
   factorioprintData: BlueprintDataFromFactorioprints,
@@ -31,7 +29,6 @@ export async function saveBlueprintFromFactorioprints(
   };
 
   const extraInfoPage = {
-    user: factorioprintData.user,
     user_id: factorioprintData.user_id,
     title: factorioprintData.title,
     description_markdown: factorioprintData.description_markdown,
