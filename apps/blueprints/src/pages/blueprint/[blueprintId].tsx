@@ -220,7 +220,7 @@ export const Index: NextPage<IndexProps> = ({
             {selected.data.blueprint_hash && typeof window !== "undefined" && (
               <CopyButton
                 label="copy url"
-                content={`${window.location.origin}/api/string${selected.data.blueprint_hash}`}
+                content={`${window.location.origin}/api/string/${selected.data.blueprint_hash}`}
                 marginBottom="0.5rem"
               />
             )}

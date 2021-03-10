@@ -11,7 +11,7 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react";
-import { Formik, Field } from "formik";
+import { Formik, Field, FieldProps } from "formik";
 import { Panel } from "../components/Panel";
 import { css } from "@emotion/react";
 import { validateRegisterForm } from "../utils/validate";
@@ -52,11 +52,11 @@ export const Register: NextPage = () => {
             {({ isSubmitting, handleSubmit, errors }) => (
               <form onSubmit={handleSubmit}>
                 <Field name="email">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="email"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Email address</FormLabel>
@@ -68,11 +68,11 @@ export const Register: NextPage = () => {
                 </Field>
 
                 <Field name="username">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="username"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Username</FormLabel>
@@ -83,11 +83,11 @@ export const Register: NextPage = () => {
                 </Field>
 
                 <Field name="password">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="password"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Password</FormLabel>
@@ -98,11 +98,11 @@ export const Register: NextPage = () => {
                 </Field>
 
                 <Field name="password_confirm">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="password_confirm"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Repeat Password</FormLabel>

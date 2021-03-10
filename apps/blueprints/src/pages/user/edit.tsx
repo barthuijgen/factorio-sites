@@ -9,7 +9,7 @@ import {
   SimpleGrid,
   Button,
 } from "@chakra-ui/react";
-import { Formik, Field } from "formik";
+import { Formik, Field, FieldProps } from "formik";
 import { css } from "@emotion/react";
 import { Panel } from "../../components/Panel";
 import { validateUserForm } from "../../utils/validate";
@@ -50,11 +50,11 @@ export const UserEdit: NextPage = () => {
             {({ isSubmitting, handleSubmit }) => (
               <form onSubmit={handleSubmit}>
                 <Field name="email">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="email"
                       isRequired={!auth?.steam_id}
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Email address</FormLabel>
@@ -65,11 +65,11 @@ export const UserEdit: NextPage = () => {
                 </Field>
 
                 <Field name="username">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="username"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Username</FormLabel>

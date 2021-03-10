@@ -39,6 +39,7 @@ const promise = _init()
     return result;
   })
   .catch((reason) => {
+    if (process.env.JEST_WORKER_ID) return;
     console.log("Database failed to init!", reason);
   });
 
