@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
+import Link from "next/link";
 import BBCode from "bbcode-to-react";
 import { Button, Grid, Image } from "@chakra-ui/react";
 import {
   getBlueprintBookById,
   getBlueprintById,
-  getBlueprintPageById,
+  getBlueprintPageWithUserById,
   isBlueprintPageUserFavorite,
 } from "@factorio-sites/database";
 import {
@@ -92,7 +93,7 @@ export const Index: NextPage<IndexProps> = ({
       .then((res) => res.text())
       .then((string) => {
         const data = parseBlueprintStringClient(string);
-        console.log("data", data);
+        // console.log("data", data);
         if (data && blueprint_book) {
           setBookChildTreeData(
             mergeBlueprintDataAndChildTree(data, {
@@ -185,7 +186,15 @@ export const Index: NextPage<IndexProps> = ({
           <tbody>
             <tr>
               <td>User</td>
-              <td>-</td>
+              <td>
+                {blueprint_page.user ? (
+                  <Link href={`/?user=${blueprint_page.user?.id}`}>
+                    <a>{blueprint_page.user?.username}</a>
+                  </Link>
+                ) : (
+                  "-"
+                )}
+              </td>
             </tr>
             <tr>
               <td>Tags</td>
@@ -362,8 +371,8 @@ export const getServerSideProps = pageHandler(async (context, { session }) => {
 
   if (!blueprintId) return throwError("Blueprint ID not found");
 
-  const blueprint_page = await getBlueprintPageById(blueprintId);
-  tl("getBlueprintPageById");
+  const blueprint_page = await getBlueprintPageWithUserById(blueprintId);
+  tl("getBlueprintPageWithUserById");
 
   if (!blueprint_page) return throwError("Blueprint page not found");
 

@@ -31,6 +31,7 @@ const handler = apiHandler(async (req, res, { session }) => {
 
   try {
     const info = {
+      user: session.user,
       user_id: session.user.id,
       title,
       tags: [],

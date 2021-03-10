@@ -60,6 +60,7 @@ model blueprint_page {
   blueprint_book       blueprint_book?  @relation(fields: [blueprint_book_id], references: [id])
   blueprint            blueprint?       @relation(fields: [blueprint_id], references: [id])
   user_favorites       user_favorites[]
+  user                 user?            @relation(fields: [user_id], references: [id])
 }
 
 model session {
@@ -92,6 +93,7 @@ model user {
   updated_at           DateTime         @updatedAt
   session              session[]
   user_favorites       user_favorites[]
+  blueprint_page       blueprint_page[]
 }
 
 model user_favorites {

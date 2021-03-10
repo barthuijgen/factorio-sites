@@ -1,9 +1,9 @@
-import { blueprint_page } from "@prisma/client";
+import { blueprint_page, user } from "@prisma/client";
 import { join, raw, sqltag } from "@prisma/client/runtime";
 import { getBlueprintImageRequestTopic } from "../gcp-pubsub";
 import { prisma } from "../postgres/database";
 import { BlueprintPage, ChildTree } from "@factorio-sites/types";
-import { getBlueprintBookById } from "./blueprint_book";
+// import { getBlueprintBookById } from "./blueprint_book";
 import {
   getAllBlueprintsFromChildTree,
   getFirstBlueprintFromChildTree,
@@ -33,6 +33,18 @@ export async function getBlueprintPageByUserId(user_id: string): Promise<Bluepri
   return results ? results.map((result) => mapBlueprintPageEntityToObject(result)) : null;
 }
 
+export async function getBlueprintPageWithUserById(
+  id: string
+): Promise<(BlueprintPage & { user: Partial<user> }) | null> {
+  const result = await prisma.blueprint_page.findUnique({ where: { id }, include: { user: true } });
+  return result
+    ? {
+        ...mapBlueprintPageEntityToObject(result),
+        user: { id: result.user?.id, username: result.user?.username },
+      }
+    : null;
+}
+
 export async function getBlueprintPageByFactorioprintsId(
   id: string
 ): Promise<BlueprintPage | null> {
@@ -49,6 +61,7 @@ export async function searchBlueprintPages({
   entities,
   items,
   recipes,
+  user,
 }: {
   page: number;
   perPage: number;
@@ -58,6 +71,7 @@ export async function searchBlueprintPages({
   entities?: string[];
   items?: string[];
   recipes?: string[];
+  user?: string;
 }): Promise<{ count: number; rows: BlueprintPage[] }> {
   const orderMap: Record<string, string> = {
     date: "blueprint_page.updated_at",
@@ -80,6 +94,8 @@ export async function searchBlueprintPages({
   const tagsFragment = tags
     ? sqltag`AND blueprint_page.tags @> array[${join(tags)}::varchar]`
     : sqltag``;
+  // TODO it breaks if user_id is invalid UUID
+  const userFragment = user ? sqltag`AND blueprint_page.user_id = ${user}` : sqltag``;
 
   const result = (
     await prisma.$queryRaw<(blueprint_page & { favorite_count: number })[]>`
@@ -91,6 +107,7 @@ export async function searchBlueprintPages({
       ${itemsFragment}
       ${recipesFragment}
       ${tagsFragment}
+      ${userFragment}
       ORDER BY ${raw(orderMap[order] || orderMap.date)} DESC
       LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
   ).map((blueprintPage) => ({
@@ -120,7 +137,8 @@ export async function createBlueprintPage(
   targetId: string,
   data: {
     title: string;
-    user_id: string | null;
+    user_id: string;
+    user: user;
     description_markdown: string;
     tags?: string[];
     image_hash: string;
@@ -130,6 +148,7 @@ export async function createBlueprintPage(
     factorioprints_id?: string;
   }
 ) {
+  console.log("user", data.user);
   const page = await prisma.blueprint_page.create({
     data: {
       user_id: data.user_id,
@@ -170,7 +189,8 @@ export async function editBlueprintPage(
   targetId: string,
   extraInfo: {
     title: string;
-    user_id: string | null;
+    user: user;
+    user_id: string;
     description_markdown: string;
     tags?: string[];
     created_at?: number;

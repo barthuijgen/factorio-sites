@@ -77,7 +77,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
         const editor = editorRef.current;
         if (!editorLoaded || !FBE || !editor) return;
 
-        const bp = await FBE.decodeToBlueprint(string);
+        const bp = await (FBE as any).decodeToBlueprint(string);
 
         await editor.loadBlueprint(bp);
         // await FBE.default.waitForLoader();
