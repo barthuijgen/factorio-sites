@@ -9,7 +9,10 @@ import {
   getFirstBlueprintFromChildTree,
 } from "@factorio-sites/node-utils";
 
-const mapBlueprintPageEntityToObject = (entity: blueprint_page): BlueprintPage => ({
+const mapBlueprintPageEntityToObject = (
+  entity: blueprint_page,
+  user?: { id: string; username: string }
+): BlueprintPage => ({
   id: entity.id,
   blueprint_id: entity.blueprint_id ?? null,
   blueprint_book_id: entity.blueprint_book_id ?? null,
@@ -21,6 +24,7 @@ const mapBlueprintPageEntityToObject = (entity: blueprint_page): BlueprintPage =
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   factorioprints_id: entity.factorioprints_id ?? null,
   favorite_count: (entity as any).favorite_count || null,
+  user: user || null,
 });
 
 export async function getBlueprintPageById(id: string): Promise<BlueprintPage | null> {
@@ -35,14 +39,9 @@ export async function getBlueprintPageByUserId(user_id: string): Promise<Bluepri
 
 export async function getBlueprintPageWithUserById(
   id: string
-): Promise<(BlueprintPage & { user: Pick<user, "id" | "username"> | null }) | null> {
+): Promise<(BlueprintPage & { user: { id: string; username: string } | null }) | null> {
   const result = await prisma.blueprint_page.findUnique({ where: { id }, include: { user: true } });
-  return result
-    ? {
-        ...mapBlueprintPageEntityToObject(result),
-        user: result.user ? { id: result.user.id, username: result.user.username } : null,
-      }
-    : null;
+  return result ? mapBlueprintPageEntityToObject(result, result.user) : null;
 }
 
 export async function getBlueprintPageByFactorioprintsId(
@@ -145,7 +144,7 @@ export async function createBlueprintPage(
   targetId: string,
   data: {
     title: string;
-    user_id: string;
+    user_id?: string;
     description_markdown: string;
     tags?: string[];
     image_hash: string;
@@ -157,7 +156,7 @@ export async function createBlueprintPage(
 ) {
   const page = await prisma.blueprint_page.create({
     data: {
-      user_id: data.user_id,
+      user_id: data.user_id || null,
       title: data.title,
       description_markdown: data.description_markdown,
       factorioprints_id: data.factorioprints_id,
@@ -195,7 +194,7 @@ export async function editBlueprintPage(
   targetId: string,
   extraInfo: {
     title: string;
-    user_id: string;
+    user_id?: string;
     description_markdown: string;
     tags?: string[];
     created_at?: number;
@@ -206,7 +205,7 @@ export async function editBlueprintPage(
   const page = await prisma.blueprint_page.update({
     where: { id: blueprintPageId },
     data: {
-      user_id: extraInfo.user_id,
+      user_id: extraInfo.user_id || null,
       title: extraInfo.title,
       description_markdown: extraInfo.description_markdown,
       factorioprints_id: extraInfo.factorioprints_id,

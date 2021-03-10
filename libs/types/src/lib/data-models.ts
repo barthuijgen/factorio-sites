@@ -1,6 +1,4 @@
 import { Signal } from "./blueprint-string";
-import { user } from "@prisma/client";
-
 export interface ChildTreeBlueprint {
   type: "blueprint";
   id: string;
@@ -55,7 +53,7 @@ export interface BlueprintPage {
   updated_at: number;
   factorioprints_id: string | null;
   favorite_count?: number;
-  user?: Pick<user, "id" | "username"> | null;
+  user: { id: string; username: string } | null;
   // BlueprintPageEntry->BlueprintEntry 1:m
   // BlueprintPageEntry->BlueprintBook 1:m
 }
