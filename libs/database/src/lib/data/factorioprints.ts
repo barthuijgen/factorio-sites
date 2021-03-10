@@ -10,6 +10,7 @@ interface BlueprintDataFromFactorioprints {
   created_at?: number;
   tags: string[];
   factorioprints_id: string;
+  user_id: string;
 }
 export async function saveBlueprintFromFactorioprints(
   factorioprintData: BlueprintDataFromFactorioprints,
@@ -28,7 +29,7 @@ export async function saveBlueprintFromFactorioprints(
   };
 
   const extraInfoPage = {
-    user_id: null,
+    user_id: factorioprintData.user_id,
     title: factorioprintData.title,
     description_markdown: factorioprintData.description_markdown,
     created_at: factorioprintData.created_at,
