@@ -1,7 +1,7 @@
 import { IconSignalTypes } from "@factorio-sites/types";
 
 interface FactorioIconProps {
-  type: IconSignalTypes;
+  type: IconSignalTypes | "signal";
   icon: string;
   size: number;
 }
@@ -12,6 +12,11 @@ function getUrlByType(type: FactorioIconProps["type"], icon: string) {
       return `https://storage.googleapis.com/factorio-blueprints-assets/factorio/graphics/icons/${icon}.png`;
     case "fluid":
       return `https://storage.googleapis.com/factorio-blueprints-assets/factorio/graphics/icons/fluid/${icon}.png`;
+    case "signal":
+      return `https://storage.googleapis.com/factorio-blueprints-assets/factorio/graphics/icons/signal/${icon.replace(
+        /-/,
+        "_"
+      )}.png`;
     case "virtual":
       return null;
     default:

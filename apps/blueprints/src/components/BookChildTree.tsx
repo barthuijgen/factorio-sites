@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
 import Link from "next/link";
-import BBCode from "bbcode-to-react";
-import { FactorioIcon } from "./FactorioIcon";
 import { ChildTreeBlueprintBookEnriched } from "@factorio-sites/web-utils";
+import { FactorioIcon } from "./FactorioIcon";
+import { BBCode } from "./BBCode";
 
 const componentStyles = css`
   .blueprint,
@@ -50,7 +50,9 @@ export const BookChildTree: React.FC<BookChildTreeProps> = ({
                   size={20}
                 />
               ))}
-            <span className="label">{BBCode.toReact(blueprint_book.name || "")}</span>
+            <span className="label">
+              <BBCode code={blueprint_book.name || ""} />
+            </span>
           </a>
         </Link>
         <div css={{ marginLeft: `20px` }}>
@@ -58,15 +60,18 @@ export const BookChildTree: React.FC<BookChildTreeProps> = ({
             return child.type === "blueprint" ? (
               <Link key={child.id} href={`${base_url}?selected=${child.id}`}>
                 <a className={"blueprint" + (selected_id === child.id ? " active" : "")}>
-                  {child.icons.map((icon, index) => (
-                    <FactorioIcon
-                      key={index}
-                      type={icon.signal.type}
-                      icon={icon.signal.name}
-                      size={20}
-                    />
-                  ))}
-                  <span className="label"> {BBCode.toReact(child.name || "")}</span>
+                  {child.icons &&
+                    child.icons.map((icon, index) => (
+                      <FactorioIcon
+                        key={index}
+                        type={icon.signal.type}
+                        icon={icon.signal.name}
+                        size={20}
+                      />
+                    ))}
+                  <span className="label">
+                    <BBCode code={child.name || ""} />
+                  </span>
                 </a>
               </Link>
             ) : child.type === "blueprint_book" ? (

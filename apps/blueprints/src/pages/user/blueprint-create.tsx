@@ -17,21 +17,16 @@ import { css } from "@emotion/react";
 import { chakraResponsive } from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
 import { validateCreateBlueprintForm } from "../../utils/validate";
-import { useAuth } from "../../providers/auth";
 import { ImageEditor } from "../../components/ImageEditor";
-import { TagsSelect } from "../../components/TagsSelect";
+import { Select } from "../../components/Select";
+import { pageHandler } from "../../utils/page-handler";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
 `;
 
 export const UserBlueprintCreate: NextPage = () => {
-  const auth = useAuth();
   const router = useRouter();
-
-  if (!auth && typeof window !== "undefined") {
-    router.push("/");
-  }
 
   return (
     <div css={{ margin: "0.7rem" }}>
@@ -99,8 +94,9 @@ export const UserBlueprintCreate: NextPage = () => {
                 <Field name="tags">
                   {({ field, meta }: any) => (
                     <FormControl id="tags" isInvalid={meta.touched && meta.error} css={FieldStyle}>
-                      <FormLabel>Tags</FormLabel>
-                      <TagsSelect
+                      <FormLabel>Tags (WIP)</FormLabel>
+                      <Select
+                        options={[]}
                         value={field.value}
                         onChange={(tags) => setFieldValue("tags", tags)}
                       />
@@ -145,5 +141,9 @@ export const UserBlueprintCreate: NextPage = () => {
     </div>
   );
 };
+
+export const getServerSideProps = pageHandler(async (_, { session, redirect }) => {
+  if (!session) return redirect("/");
+});
 
 export default UserBlueprintCreate;

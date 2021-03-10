@@ -115,29 +115,32 @@ export function blueprintDataToDbData(blueprint: BlueprintData): DbBlueprintData
   return {
     absolute_snapping: blueprint["absolute-snapping"] || false,
     snap_to_grid: blueprint["snap-to-grid"] || null,
-    entities: blueprint.entities.reduce((entities, entity) => {
-      entities[entity.name] = entities[entity.name] ? entities[entity.name] + 1 : 1;
-      return entities;
-    }, {} as Record<string, number>),
-    icons: blueprint.icons.map((icon) => icon.signal),
-    items: blueprint.entities.reduce((items, entity) => {
-      if (entity.items) {
-        for (const item in entity.items) {
-          items[item] = (items[item] || 0) + entity.items[item];
+    entities:
+      blueprint.entities?.reduce((entities, entity) => {
+        entities[entity.name] = entities[entity.name] ? entities[entity.name] + 1 : 1;
+        return entities;
+      }, {} as Record<string, number>) || {},
+    icons: blueprint.icons?.map((icon) => icon.signal) || [],
+    items:
+      blueprint.entities?.reduce((items, entity) => {
+        if (entity.items) {
+          for (const item in entity.items) {
+            items[item] = (items[item] || 0) + entity.items[item];
+          }
         }
-      }
-      return items;
-    }, {} as Record<string, number>),
-    recipes: blueprint.entities.reduce((recipes, entity) => {
-      if (entity.recipe) {
-        recipes[entity.recipe] = (recipes[entity.recipe] || 0) + 1;
-      }
-      return recipes;
-    }, {} as Record<string, number>),
+        return items;
+      }, {} as Record<string, number>) || {},
+    recipes:
+      blueprint.entities?.reduce((recipes, entity) => {
+        if (entity.recipe) {
+          recipes[entity.recipe] = (recipes[entity.recipe] || 0) + 1;
+        }
+        return recipes;
+      }, {} as Record<string, number>) || {},
     tiles:
       blueprint.tiles?.reduce((tiles, tile) => {
         tiles[tile.name] = (tiles[tile.name] || 0) + 1;
         return tiles;
-      }, {} as Record<string, number>) ?? {},
+      }, {} as Record<string, number>) || {},
   };
 }

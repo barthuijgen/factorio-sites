@@ -68,8 +68,7 @@ export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
   type = "tile",
 }) => {
   const [imageError, setImageError] = useState(false);
-  const onImageError = (error: unknown) => {
-    console.log(error);
+  const onImageError = () => {
     setImageError(true);
   };
 

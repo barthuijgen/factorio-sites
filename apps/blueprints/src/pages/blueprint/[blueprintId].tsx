@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
+import Link from "next/link";
 import BBCode from "bbcode-to-react";
-import { Button, Grid, Image } from "@chakra-ui/react";
+import { Button, Grid, Image, Box } from "@chakra-ui/react";
 import {
   getBlueprintBookById,
   getBlueprintById,
-  getBlueprintPageById,
+  getBlueprintPageWithUserById,
   isBlueprintPageUserFavorite,
 } from "@factorio-sites/database";
 import {
@@ -17,6 +18,7 @@ import {
 import { timeLogger } from "@factorio-sites/common-utils";
 import {
   chakraResponsive,
+  ChildTreeBlueprintBookEnriched,
   mergeBlueprintDataAndChildTree,
   parseBlueprintStringClient,
 } from "@factorio-sites/web-utils";
@@ -75,12 +77,12 @@ export const Index: NextPage<IndexProps> = ({
   favorite,
 }) => {
   const auth = useAuth();
-  // const [imageZoom, setImageZoom] = useState(false);
-  const [_mainBlueprintString, setMainBlueprintString] = useState<string | null>(null);
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
-  const [mainData, setMainData] = useState<BlueprintStringData | null>(null);
+  const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
+    null
+  );
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
-  const [showJson, setShowJson] = useState(false);
+  const [showDetails, setShowDetails] = useState<"string" | "json" | "none">("none");
   const [isFavorite, setIsFavorite] = useState(favorite);
 
   const selectedHash = selected.data.blueprint_hash;
@@ -90,11 +92,16 @@ export const Index: NextPage<IndexProps> = ({
     fetch(`/api/string/${hash}`)
       .then((res) => res.text())
       .then((string) => {
-        setMainBlueprintString(string);
         const data = parseBlueprintStringClient(string);
-        console.log("data", data);
-        if (data) {
-          setMainData(data);
+        if (data && blueprint_book) {
+          setBookChildTreeData(
+            mergeBlueprintDataAndChildTree(data, {
+              id: blueprint_book.id,
+              name: blueprint_book.label,
+              type: "blueprint_book",
+              children: blueprint_book.child_tree,
+            })
+          );
         }
       })
       .catch((reason) => console.error(reason));
@@ -105,7 +112,7 @@ export const Index: NextPage<IndexProps> = ({
     fetch(`/api/string/${selectedHash}`)
       .then((res) => res.text())
       .then((string) => {
-        setShowJson(false);
+        setShowDetails("none");
         setSelectedBlueprintString(string);
         if (selected.type === "blueprint") {
           const data = parseBlueprintStringClient(string);
@@ -161,15 +168,10 @@ export const Index: NextPage<IndexProps> = ({
         }
         gridColumn="1"
       >
-        {blueprint_book && mainData ? (
+        {blueprint_book && bookChildTreeData ? (
           <div css={{ maxHeight: "400px", overflow: "auto" }}>
             <BookChildTree
-              blueprint_book={mergeBlueprintDataAndChildTree(mainData, {
-                id: blueprint_book.id,
-                name: blueprint_book.label,
-                type: "blueprint_book",
-                children: blueprint_book.child_tree,
-              })}
+              blueprint_book={bookChildTreeData}
               base_url={`/blueprint/${blueprint_page.id}`}
               selected_id={selected.data.id}
             />
@@ -179,30 +181,60 @@ export const Index: NextPage<IndexProps> = ({
         ) : null}
       </Panel>
       <Panel title={"Info"}>
-        <StyledTable>
-          <tbody>
-            <tr>
-              <td>User</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>Tags</td>
-              <td>{blueprint_page.tags.join(", ")}</td>
-            </tr>
-            <tr>
-              <td>Last updated</td>
-              <td>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</td>
-            </tr>
-            <tr>
-              <td>Created</td>
-              <td>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</td>
-            </tr>
-            <tr>
-              <td>Favorites</td>
-              <td>{blueprint_page.favorite_count || "0"}</td>
-            </tr>
-          </tbody>
-        </StyledTable>
+        <Box css={{ display: "flex" }}>
+          <Box>
+            <StyledTable>
+              <tbody>
+                <tr>
+                  <td>User</td>
+                  <td>
+                    {blueprint_page.user ? (
+                      <Link href={`/?user=${blueprint_page.user?.id}`}>
+                        <a>{blueprint_page.user?.username}</a>
+                      </Link>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tags</td>
+                  <td>{blueprint_page.tags.join(", ")}</td>
+                </tr>
+                <tr>
+                  <td>Last updated</td>
+                  <td>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</td>
+                </tr>
+                <tr>
+                  <td>Created</td>
+                  <td>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</td>
+                </tr>
+                <tr>
+                  <td>Favorites</td>
+                  <td>{blueprint_page.favorite_count || "0"}</td>
+                </tr>
+              </tbody>
+            </StyledTable>
+          </Box>
+          <Box css={{ marginLeft: "1rem" }}>
+            {selected.data.blueprint_hash && typeof window !== "undefined" && (
+              <CopyButton
+                label="copy url"
+                content={`${window.location.origin}/api/string${selected.data.blueprint_hash}`}
+                marginBottom="0.5rem"
+              />
+            )}
+          </Box>
+          <Box css={{ marginLeft: "1rem" }}>
+            {selectedBlueprintString && (
+              <CopyButton
+                label="copy blueprint"
+                content={selectedBlueprintString}
+                marginBottom="0.5rem"
+              />
+            )}
+          </Box>
+        </Box>
       </Panel>
       <Panel
         title={
@@ -243,89 +275,59 @@ export const Index: NextPage<IndexProps> = ({
         >
           <StyledTable>
             <tbody>
-              {Object.entries(
-                selectedData.blueprint.entities.reduce<Record<string, number>>(
-                  (entities, entity) => {
-                    if (entities[entity.name]) {
-                      entities[entity.name]++;
-                    } else {
-                      entities[entity.name] = 1;
-                    }
-                    return entities;
-                  },
-                  {}
+              {selectedData.blueprint.entities &&
+                Object.entries(
+                  selectedData.blueprint.entities.reduce<Record<string, number>>(
+                    (entities, entity) => {
+                      if (entities[entity.name]) {
+                        entities[entity.name]++;
+                      } else {
+                        entities[entity.name] = 1;
+                      }
+                      return entities;
+                    },
+                    {}
+                  )
                 )
-              )
-                .sort((a, b) => b[1] - a[1])
-                .map(([entry_name, entry]) => (
-                  <tr key={entry_name} css={{}}>
-                    <td className="no-padding">
-                      <Image
-                        alt={entry_name.replace(/-/g, " ")}
-                        src={`https://factorioprints.com/icons/${entry_name}.png`}
-                        fallbackSrc="https://storage.googleapis.com/factorio-blueprints-assets/error-icon.png"
-                        width="32px"
-                        height="32px"
-                      />
-                    </td>
-                    <td>{entry_name}</td>
-                    <td>{entry}</td>
-                  </tr>
-                ))}
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([entry_name, entry]) => (
+                    <tr key={entry_name} css={{}}>
+                      <td className="no-padding">
+                        <Image
+                          alt={entry_name.replace(/-/g, " ")}
+                          src={`https://factorioprints.com/icons/${entry_name}.png`}
+                          fallbackSrc="https://storage.googleapis.com/factorio-blueprints-assets/error-icon.png"
+                          width="32px"
+                          height="32px"
+                        />
+                      </td>
+                      <td>{entry_name}</td>
+                      <td>{entry}</td>
+                    </tr>
+                  ))}
             </tbody>
           </StyledTable>
         </Panel>
       )}
       <Panel
-        title={`string for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
+        title={`data for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
       >
-        <>
-          {selectedBlueprintString && (
-            <CopyButton content={selectedBlueprintString} marginBottom="0.5rem" />
-          )}
-          <textarea
-            value={selectedBlueprintString || "Loading..."}
-            readOnly
-            css={{
-              width: "100%",
-              height: "100px",
-              resize: "none",
-              color: "#fff",
-              backgroundColor: "#414040",
-            }}
-          />
-        </>
-      </Panel>
-      <Panel title="json" gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}>
-        {showJson ? (
-          !selectedData ? (
-            <div>Loading...</div>
-          ) : (
-            <>
-              <Button
-                colorScheme="green"
-                css={{ position: "absolute", right: "65px" }}
-                onClick={() => {
-                  setShowJson(false);
-                  if (selected.type === "blueprint_book") {
-                    setSelectedData(null);
-                  }
-                }}
-              >
-                hide
-              </Button>
-              <pre css={{ maxHeight: "500px", overflowY: "scroll" }}>
-                {JSON.stringify(selectedData, null, 2)}
-              </pre>
-            </>
-          )
-        ) : (
+        <Box>
           <Button
             colorScheme="green"
             onClick={() => {
-              setShowJson(true);
-              if (selected.type === "blueprint_book") {
+              setShowDetails(showDetails === "string" ? "none" : "string");
+            }}
+          >
+            {showDetails === "string" ? "hide" : "show"} string
+          </Button>
+          <Button
+            css={{ marginLeft: "1rem" }}
+            colorScheme="green"
+            onClick={() => {
+              setShowDetails(showDetails === "json" ? "none" : "json");
+              if (!selectedData) {
                 fetch(`/api/string/${selectedHash}`)
                   .then((res) => res.text())
                   .then((string) => {
@@ -335,9 +337,29 @@ export const Index: NextPage<IndexProps> = ({
               }
             }}
           >
-            show
+            {showDetails === "json" ? "hide" : "show"} json
           </Button>
-        )}
+        </Box>
+        <Box css={{ marginTop: "1rem" }}>
+          {showDetails === "string" && (
+            <textarea
+              value={selectedBlueprintString || "Loading..."}
+              readOnly
+              css={{
+                width: "100%",
+                height: "100px",
+                resize: "none",
+                color: "#fff",
+                backgroundColor: "#414040",
+              }}
+            />
+          )}
+          {showDetails === "json" && (
+            <pre css={{ maxHeight: "500px", overflowY: "scroll" }}>
+              {JSON.stringify(selectedData, null, 2)}
+            </pre>
+          )}
+        </Box>
       </Panel>
     </Grid>
   );
@@ -359,8 +381,8 @@ export const getServerSideProps = pageHandler(async (context, { session }) => {
 
   if (!blueprintId) return throwError("Blueprint ID not found");
 
-  const blueprint_page = await getBlueprintPageById(blueprintId);
-  tl("getBlueprintPageById");
+  const blueprint_page = await getBlueprintPageWithUserById(blueprintId);
+  tl("getBlueprintPageWithUserById");
 
   if (!blueprint_page) return throwError("Blueprint page not found");
 

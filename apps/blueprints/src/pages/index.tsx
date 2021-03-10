@@ -156,6 +156,7 @@ export async function getServerSideProps({ query }: NextPageContext) {
   const entities = query.entities ? String(query.entities).split(",") : undefined;
   const items = query.items ? String(query.items).split(",") : undefined;
   const recipes = query.recipes ? String(query.recipes).split(",") : undefined;
+  const user = query.user ? String(query.user) : undefined;
 
   const { count, rows } = await searchBlueprintPages({
     page,
@@ -166,6 +167,7 @@ export async function getServerSideProps({ query }: NextPageContext) {
     entities,
     items,
     recipes,
+    user,
   });
 
   return {

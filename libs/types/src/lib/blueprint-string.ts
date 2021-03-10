@@ -25,7 +25,7 @@ export type Icon = { index: number; signal: Signal };
 type WithIndex<T> = { index: number } & T;
 
 export interface BlueprintData {
-  entities: Entity[];
+  entities?: Entity[];
   tiles?: Tile[];
   icons: Icon[];
   item: "blueprint";
@@ -46,6 +46,20 @@ export interface BlueprintBookData {
   version: number;
 }
 
+export interface UpgradePlannerData {
+  item: "upgrade-planner";
+  label: string;
+  seettings: {
+    description?: string;
+    icons: Icon[];
+    mappers: {
+      index: number;
+      from: { type: string; name: string };
+      to: { type: string; name: string };
+    }[];
+  };
+  version: number;
+}
 export interface DeconstructionPlannerData {
   item: "deconstruction-planner";
   label: string;
@@ -55,31 +69,45 @@ export interface DeconstructionPlannerData {
       name: string;
     }[];
     icons: Icon[];
+    entity_filter_mode?: number;
     tile_selection_mode: number;
+    trees_and_rocks_only?: boolean;
   };
   version: number;
-}
-export interface DeconstructionPlannerString {
-  deconstruction_planner: DeconstructionPlannerData;
-  blueprint?: never;
-  blueprint_book?: never;
 }
 
 export interface BlueprintString {
   blueprint: BlueprintData;
   blueprint_book?: never;
+  upgrade_planner?: never;
   deconstruction_planner?: never;
 }
 
 export interface BlueprintBookString {
-  blueprint_book: BlueprintBookData;
   blueprint?: never;
+  blueprint_book: BlueprintBookData;
+  upgrade_planner?: never;
   deconstruction_planner?: never;
+}
+
+export interface UpgradePlannerString {
+  blueprint?: never;
+  blueprint_book?: never;
+  upgrade_planner: UpgradePlannerData;
+  deconstruction_planner?: never;
+}
+
+export interface DeconstructionPlannerString {
+  blueprint?: never;
+  blueprint_book?: never;
+  upgrade_planner?: never;
+  deconstruction_planner: DeconstructionPlannerData;
 }
 
 export type BlueprintStringData =
   | BlueprintString
   | BlueprintBookString
+  | UpgradePlannerString
   | DeconstructionPlannerString;
 
 export const isBlueprint = (data: BlueprintStringData): data is BlueprintString => !!data.blueprint;

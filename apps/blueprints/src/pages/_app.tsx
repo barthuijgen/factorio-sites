@@ -53,11 +53,9 @@ const BlueprintsApp = ({
       <AuthContext.Provider value={auth.data?.auth || null}>
         <Global styles={globalStyles} />
         <Head>
-          <title>Welcome to blueprints!</title>
-          <link
-            href="https://cdn.factorio.com/assets/fonts/titillium-web.css"
-            rel="stylesheet"
-          ></link>
+          <title>Factorio Blueprints</title>
+          <link rel="shortcut icon" href="/favicon.png" />
+          <link href="https://cdn.factorio.com/assets/fonts/titillium-web.css" rel="stylesheet" />
         </Head>
         <div>
           {!auth.loading && (

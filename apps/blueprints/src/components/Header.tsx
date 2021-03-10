@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Box, Heading, Flex, Text, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Box, Heading, Flex, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "../providers/auth";
-import { MdSearch } from "react-icons/md";
 
 const MenuItem: React.FC<{ href: string }> = ({ children, href }) => (
   <Link href={href} passHref>
@@ -20,12 +19,7 @@ export const Header: React.FC = (props) => {
   const auth = useAuth();
   const router = useRouter();
   const [show, setShow] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const handleToggle = () => setShow(!show);
-
-  useEffect(() => {
-    setSearchQuery((router.query.q as string) || "");
-  }, [router.query.q]);
 
   return (
     <Flex
@@ -46,14 +40,12 @@ export const Header: React.FC = (props) => {
           </Link>
         </Heading>
       </Flex>
-
       <Box display={{ base: "block", md: "none" }} onClick={handleToggle}>
         <svg fill="white" width="12px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <title>Menu</title>
           <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
         </svg>
       </Box>
-
       <Box
         as="nav"
         display={{

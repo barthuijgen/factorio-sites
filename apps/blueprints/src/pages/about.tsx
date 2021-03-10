@@ -96,21 +96,26 @@ export const Index: NextPage = () => {
           </Box>
           <Box>
             <ul css={listCss}>
+              <li>Make a good tags list</li>
+              <li>Add a "copy url" button</li>
+              <li>Fix "auhor" field in blueprint pages and filter blueprints by user</li>
+              <li>Add book preview when creating blueprints</li>
+              <li>Improve modded blueprint support in FBE</li>
+              <li>Improve blueprint title icon (bbcode) support</li>
+              <li>Make entity/recipe/item dropdown be based on blueprint data in the site</li>
+              <li>Add a Wysiwyg editor for descriptions</li>
+              <li>Change thumbnail generation method to be more reliable</li>
+              <li>Add tag fixing moderators role</li>
+              <li>Add a landing page on steam sign up to change username before submitting</li>
+              <li>Add tracking of blueprint views</li>
+              <li>Add blueprint history</li>
               <li className="strike">Add creating new blueprints</li>
               <li className="strike">Add search</li>
-              <li>Add a landing page on steam sign up to change username before submitting</li>
-              <li>Add book preview when creating blueprints</li>
               <li className="strike">Add blueprint tags</li>
               <li className="strike">Expand search with tags</li>
-              <li>Add tracking of blueprint views</li>
               <li className="strike">Add favorites</li>
               <li className="strike">Add sorting by views/favorites</li>
               <li className="strike">Add thumbnails</li>
-              <li>Change thumbnail generation method to be more reliable</li>
-              <li>Add tag fixing moderators</li>
-              <li>Improve modded blueprint support</li>
-              <li>Add blueprint title icon support</li>
-              <li>Add blueprint history</li>
               <li className="strike">
                 Add search filter for blueprint entities/recipes without manual tagging
               </li>

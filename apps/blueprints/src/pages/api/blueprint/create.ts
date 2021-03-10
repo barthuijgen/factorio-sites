@@ -9,6 +9,8 @@ import { parseDatabaseError } from "../../../utils/api.utils";
 import { apiHandler } from "../../../utils/api-handler";
 
 const handler = apiHandler(async (req, res, { session }) => {
+  if (req.method !== "POST") return res.status(400).json({ error: "method must be POST" });
+
   if (!session) {
     return res.status(401).json({ status: "Not authenticated" });
   }
@@ -70,3 +72,11 @@ const handler = apiHandler(async (req, res, { session }) => {
 });
 
 export default handler;
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "2mb",
+    },
+  },
+};
