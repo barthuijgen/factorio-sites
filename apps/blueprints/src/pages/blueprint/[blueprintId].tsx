@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import BBCode from "bbcode-to-react";
-import { Button, Grid, Image } from "@chakra-ui/react";
+import { Button, Grid, Image, Box } from "@chakra-ui/react";
 import {
   getBlueprintBookById,
   getBlueprintById,
@@ -82,7 +82,7 @@ export const Index: NextPage<IndexProps> = ({
     null
   );
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
-  const [showJson, setShowJson] = useState(false);
+  const [showDetails, setShowDetails] = useState<"string" | "json" | "none">("none");
   const [isFavorite, setIsFavorite] = useState(favorite);
 
   const selectedHash = selected.data.blueprint_hash;
@@ -93,7 +93,6 @@ export const Index: NextPage<IndexProps> = ({
       .then((res) => res.text())
       .then((string) => {
         const data = parseBlueprintStringClient(string);
-        // console.log("data", data);
         if (data && blueprint_book) {
           setBookChildTreeData(
             mergeBlueprintDataAndChildTree(data, {
@@ -113,7 +112,7 @@ export const Index: NextPage<IndexProps> = ({
     fetch(`/api/string/${selectedHash}`)
       .then((res) => res.text())
       .then((string) => {
-        setShowJson(false);
+        setShowDetails("none");
         setSelectedBlueprintString(string);
         if (selected.type === "blueprint") {
           const data = parseBlueprintStringClient(string);
@@ -182,38 +181,60 @@ export const Index: NextPage<IndexProps> = ({
         ) : null}
       </Panel>
       <Panel title={"Info"}>
-        <StyledTable>
-          <tbody>
-            <tr>
-              <td>User</td>
-              <td>
-                {blueprint_page.user ? (
-                  <Link href={`/?user=${blueprint_page.user?.id}`}>
-                    <a>{blueprint_page.user?.username}</a>
-                  </Link>
-                ) : (
-                  "-"
-                )}
-              </td>
-            </tr>
-            <tr>
-              <td>Tags</td>
-              <td>{blueprint_page.tags.join(", ")}</td>
-            </tr>
-            <tr>
-              <td>Last updated</td>
-              <td>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</td>
-            </tr>
-            <tr>
-              <td>Created</td>
-              <td>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</td>
-            </tr>
-            <tr>
-              <td>Favorites</td>
-              <td>{blueprint_page.favorite_count || "0"}</td>
-            </tr>
-          </tbody>
-        </StyledTable>
+        <Box css={{ display: "flex" }}>
+          <Box>
+            <StyledTable>
+              <tbody>
+                <tr>
+                  <td>User</td>
+                  <td>
+                    {blueprint_page.user ? (
+                      <Link href={`/?user=${blueprint_page.user?.id}`}>
+                        <a>{blueprint_page.user?.username}</a>
+                      </Link>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tags</td>
+                  <td>{blueprint_page.tags.join(", ")}</td>
+                </tr>
+                <tr>
+                  <td>Last updated</td>
+                  <td>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</td>
+                </tr>
+                <tr>
+                  <td>Created</td>
+                  <td>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</td>
+                </tr>
+                <tr>
+                  <td>Favorites</td>
+                  <td>{blueprint_page.favorite_count || "0"}</td>
+                </tr>
+              </tbody>
+            </StyledTable>
+          </Box>
+          <Box css={{ marginLeft: "1rem" }}>
+            {selected.data.blueprint_hash && typeof window !== "undefined" && (
+              <CopyButton
+                label="copy url"
+                content={`${window.location.origin}/api/string${selected.data.blueprint_hash}`}
+                marginBottom="0.5rem"
+              />
+            )}
+          </Box>
+          <Box css={{ marginLeft: "1rem" }}>
+            {selectedBlueprintString && (
+              <CopyButton
+                label="copy blueprint"
+                content={selectedBlueprintString}
+                marginBottom="0.5rem"
+              />
+            )}
+          </Box>
+        </Box>
       </Panel>
       <Panel
         title={
@@ -289,55 +310,24 @@ export const Index: NextPage<IndexProps> = ({
         </Panel>
       )}
       <Panel
-        title={`string for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
+        title={`data for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
       >
-        <>
-          {selectedBlueprintString && (
-            <CopyButton content={selectedBlueprintString} marginBottom="0.5rem" />
-          )}
-          <textarea
-            value={selectedBlueprintString || "Loading..."}
-            readOnly
-            css={{
-              width: "100%",
-              height: "100px",
-              resize: "none",
-              color: "#fff",
-              backgroundColor: "#414040",
-            }}
-          />
-        </>
-      </Panel>
-      <Panel title="json" gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}>
-        {showJson ? (
-          !selectedData ? (
-            <div>Loading...</div>
-          ) : (
-            <>
-              <Button
-                colorScheme="green"
-                css={{ position: "absolute", right: "65px" }}
-                onClick={() => {
-                  setShowJson(false);
-                  if (selected.type === "blueprint_book") {
-                    setSelectedData(null);
-                  }
-                }}
-              >
-                hide
-              </Button>
-              <pre css={{ maxHeight: "500px", overflowY: "scroll" }}>
-                {JSON.stringify(selectedData, null, 2)}
-              </pre>
-            </>
-          )
-        ) : (
+        <Box>
           <Button
             colorScheme="green"
             onClick={() => {
-              setShowJson(true);
-              if (selected.type === "blueprint_book") {
+              setShowDetails(showDetails === "string" ? "none" : "string");
+            }}
+          >
+            {showDetails === "string" ? "hide" : "show"} string
+          </Button>
+          <Button
+            css={{ marginLeft: "1rem" }}
+            colorScheme="green"
+            onClick={() => {
+              setShowDetails(showDetails === "json" ? "none" : "json");
+              if (!selectedData) {
                 fetch(`/api/string/${selectedHash}`)
                   .then((res) => res.text())
                   .then((string) => {
@@ -347,9 +337,29 @@ export const Index: NextPage<IndexProps> = ({
               }
             }}
           >
-            show
+            {showDetails === "json" ? "hide" : "show"} json
           </Button>
-        )}
+        </Box>
+        <Box css={{ marginTop: "1rem" }}>
+          {showDetails === "string" && (
+            <textarea
+              value={selectedBlueprintString || "Loading..."}
+              readOnly
+              css={{
+                width: "100%",
+                height: "100px",
+                resize: "none",
+                color: "#fff",
+                backgroundColor: "#414040",
+              }}
+            />
+          )}
+          {showDetails === "json" && (
+            <pre css={{ maxHeight: "500px", overflowY: "scroll" }}>
+              {JSON.stringify(selectedData, null, 2)}
+            </pre>
+          )}
+        </Box>
       </Panel>
     </Grid>
   );

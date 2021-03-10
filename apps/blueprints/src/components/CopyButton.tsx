@@ -4,10 +4,9 @@ import { MdCheck, MdClose } from "react-icons/md";
 
 const SUCCESS_ICON_DURATION = 2000;
 
-export const CopyButton: React.FC<Omit<ButtonProps, "children"> & { content: string }> = ({
-  content,
-  ...props
-}) => {
+export const CopyButton: React.FC<
+  Omit<ButtonProps, "children"> & { content: string; label?: string }
+> = ({ content, label, ...props }) => {
   const [loading, setLoading] = useState(false);
   const [icon, setIcon] = useState<"red" | "green" | null>(null);
 
@@ -47,7 +46,7 @@ export const CopyButton: React.FC<Omit<ButtonProps, "children"> & { content: str
           });
       }}
     >
-      copy
+      {label || "copy"}
     </Button>
   );
 };

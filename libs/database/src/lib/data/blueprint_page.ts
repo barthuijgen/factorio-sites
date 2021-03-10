@@ -3,7 +3,6 @@ import { join, raw, sqltag } from "@prisma/client/runtime";
 import { getBlueprintImageRequestTopic } from "../gcp-pubsub";
 import { prisma } from "../postgres/database";
 import { BlueprintPage, ChildTree } from "@factorio-sites/types";
-// import { getBlueprintBookById } from "./blueprint_book";
 import {
   getAllBlueprintsFromChildTree,
   getFirstBlueprintFromChildTree,
@@ -11,7 +10,7 @@ import {
 
 const mapBlueprintPageEntityToObject = (
   entity: blueprint_page,
-  user?: { id: string; username: string }
+  user?: Pick<user, "id" | "username"> | null
 ): BlueprintPage => ({
   id: entity.id,
   blueprint_id: entity.blueprint_id ?? null,
@@ -24,7 +23,7 @@ const mapBlueprintPageEntityToObject = (
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   factorioprints_id: entity.factorioprints_id ?? null,
   favorite_count: (entity as any).favorite_count || null,
-  user: user || null,
+  user: user ? { id: user.id, username: user.username } : null,
 });
 
 export async function getBlueprintPageById(id: string): Promise<BlueprintPage | null> {
@@ -37,9 +36,7 @@ export async function getBlueprintPageByUserId(user_id: string): Promise<Bluepri
   return results ? results.map((result) => mapBlueprintPageEntityToObject(result)) : null;
 }
 
-export async function getBlueprintPageWithUserById(
-  id: string
-): Promise<(BlueprintPage & { user: { id: string; username: string } | null }) | null> {
+export async function getBlueprintPageWithUserById(id: string): Promise<BlueprintPage | null> {
   const result = await prisma.blueprint_page.findUnique({ where: { id }, include: { user: true } });
   return result ? mapBlueprintPageEntityToObject(result, result.user) : null;
 }
@@ -128,7 +125,7 @@ export async function searchBlueprintPages({
 
     return {
       count: countResult[0].count,
-      rows: result.map(mapBlueprintPageEntityToObject),
+      rows: result.map((row) => mapBlueprintPageEntityToObject(row)),
     };
   } catch (err) {
     console.error(err);
