@@ -33,7 +33,7 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
             </Link>
           </Box>
           <Box>
-            {blueprints.length === 0 ? (
+            {blueprints.length !== 0 ? (
               blueprints.map((bp) => (
                 <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />
               ))

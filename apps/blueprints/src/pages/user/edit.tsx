@@ -1,17 +1,11 @@
 import React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  Input,
-  SimpleGrid,
-  Button,
-} from "@chakra-ui/react";
+import { FormControl, FormLabel, FormErrorMessage, Input, SimpleGrid } from "@chakra-ui/react";
 import { Formik, Field, FieldProps } from "formik";
 import { css } from "@emotion/react";
 import { Panel } from "../../components/Panel";
+import Button from "../../components/Button";
 import { validateUserForm } from "../../utils/validate";
 import { useAuth } from "../../providers/auth";
 import { pageHandler } from "../../utils/page-handler";
@@ -79,8 +73,13 @@ export const UserEdit: NextPage = () => {
                   )}
                 </Field>
 
-                <Button type="submit" colorScheme="green" disabled={isSubmitting}>
-                  Save
+                <Button
+                  primary
+                  css={{ width: 80, textAlign: "center" }}
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Save"}
                 </Button>
               </form>
             )}
