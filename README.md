@@ -1,35 +1,56 @@
 # FactorioSites
 
-This project was generated using [Nx](https://nx.dev).
+Mono-repo for [Factorio Blueprints](https://factorioblueprints.tech)s.
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+Factorio Blueprints delivers a platform to easily share blueprints and with minimal effort get the most value from them, with advanced search and real-time rendering of blueprints.
 
-## Development server
+# Links
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+- [Issues & Suggestions](https://github.com/barthuijgen/factorio-sites/issues)
+- [Roadmap](https://github.com/barthuijgen/factorio-sites/projects/1)
 
-## Build
+# Credits
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Factorio Blueprints uses a part of the [Factorio blueprint editor](https://github.com/teoxoy/factorio-blueprint-editor) by [Teoxoy](https://github.com/Teoxoy). Lisenced MIT.
 
-### blueprints app
+This amazing project allows us to render real time high quality images directly when opening any blueprint.
 
-## Running unit tests
+# Want to contribute?
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+## Prerequisites
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+- A postgres database (docker-compose.yml provided)
+- A Google Cloud Platform project
 
-## Running end-to-end tests
+## Setting up the project
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+- Add a `.env.local` file to apps/blueprints/ with the following values
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
+```
+POSTGRES_DB=factorio-blueprints
+POSTGRES_USER=factorio-blueprints
+#POSTGRES_HOST=127.0.0.1
+#POSTGRES_PASSWORD=local
+STEAM_WEB_API_KEY=(optional, for steam login)
+GOOGLE_APPLICATION_CREDENTIALS="full/path/to/json-key-file.json"
+GCP_BLUEPRINT_STRINGS_BUCKET=blueprint-strings
+GCP_BLUEPRINT_IMAGES_BUCKET=blueprint-images
+```
 
-## Understand your workspace
+- Add a `.env` file to apps/blueprints/prisma with a database connection url like
 
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
+```
+DATABASE_URL="postgresql://factorio-blueprints:local@127.0.0.1:5432/factorio-blueprints"
+```
 
-## Further help
+- Run DB migration
 
-Visit the [Nx Documentation](https://nx.dev) to learn more.
+```
+cd apps/blueprints && npx prisma migrate deploy --preview-feature
+```
+
+- Run local app
+
+```
+nx serve
+```

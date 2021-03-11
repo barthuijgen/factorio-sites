@@ -15,7 +15,7 @@ import {
   BlueprintPage,
   BlueprintStringData,
 } from "@factorio-sites/types";
-import { timeLogger } from "@factorio-sites/common-utils";
+import { TAGS_BY_KEY, timeLogger } from "@factorio-sites/common-utils";
 import {
   chakraResponsive,
   ChildTreeBlueprintBookEnriched,
@@ -202,7 +202,11 @@ export const Index: NextPage<IndexProps> = ({
                 </tr>
                 <tr>
                   <td>Tags</td>
-                  <td>{blueprint_page.tags.join(", ")}</td>
+                  <td>
+                    {blueprint_page.tags
+                      .map((tag) => `${TAGS_BY_KEY[tag].category}: ${TAGS_BY_KEY[tag].label}`)
+                      .join(", ")}
+                  </td>
                 </tr>
                 <tr>
                   <td>Last updated</td>

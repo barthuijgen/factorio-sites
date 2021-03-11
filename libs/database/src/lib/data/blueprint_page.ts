@@ -22,7 +22,8 @@ const mapBlueprintPageEntityToObject = (
   created_at: entity.created_at && entity.created_at.getTime() / 1000,
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   factorioprints_id: entity.factorioprints_id ?? null,
-  favorite_count: (entity as any).favorite_count || null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  favorite_count: (entity as any).favorite_count || (entity as any).user_favorites?.length || 0,
   user: user ? { id: user.id, username: user.username } : null,
 });
 
@@ -37,7 +38,12 @@ export async function getBlueprintPageByUserId(user_id: string): Promise<Bluepri
 }
 
 export async function getBlueprintPageWithUserById(id: string): Promise<BlueprintPage | null> {
-  const result = await prisma.blueprint_page.findUnique({ where: { id }, include: { user: true } });
+  // TODO: the user_favorites join is inefficient because it's only for counting
+  // https://github.com/prisma/prisma/issues/5079
+  const result = await prisma.blueprint_page.findUnique({
+    where: { id },
+    include: { user: true, user_favorites: true },
+  });
   return result ? mapBlueprintPageEntityToObject(result, result.user) : null;
 }
 

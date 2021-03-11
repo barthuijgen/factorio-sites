@@ -48,7 +48,6 @@ export const Index: NextPage<IndexProps> = ({
   }, [router.query.q]);
 
   if (!data) return null;
-  console.log(JSON.stringify(router.query, null, 2));
 
   const entityOptions = Object.keys(data.entities).filter(
     (key) => !key.startsWith("factorio-logo") && !key.startsWith("crash-site")
