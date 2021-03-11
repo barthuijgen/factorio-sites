@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createState, useState as useGlobalState } from "@hookstate/core";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const recordMapState = createState<Record<string, any>>({});
 
 export const useFetch = <T>(
@@ -31,6 +32,7 @@ export const useFetch = <T>(
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, skip]);
 
   return { loading, data: data ?? null, error };
