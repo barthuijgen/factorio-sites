@@ -3,6 +3,7 @@ import { getSessionByToken, init } from "@factorio-sites/database";
 import { getSessionToken } from "@factorio-sites/node-utils";
 
 interface GetServerSidePropsReturn {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>;
 }
 

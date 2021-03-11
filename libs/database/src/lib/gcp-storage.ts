@@ -1,22 +1,24 @@
 import { Storage } from "@google-cloud/storage";
-import { getEnvOrThrow } from "./env.util";
+import { getEnv } from "./env.util";
 
 const storage = new Storage();
 
-const BLUEPRINT_BUCKET = storage.bucket(getEnvOrThrow("GCP_BLUEPRINT_STRINGS_BUCKET"));
-const IMAGE_BUCKET = storage.bucket(getEnvOrThrow("GCP_BLUEPRINT_IMAGES_BUCKET"));
+const BLUEPRINT_BUCKET = getEnv("GCP_BLUEPRINT_STRINGS_BUCKET");
+const IMAGE_BUCKET = getEnv("GCP_BLUEPRINT_IMAGES_BUCKET");
 
 /*
  * BlueprintString
  */
 
 export async function getBlueprintStringByHash(hash: string): Promise<string | null> {
-  const [buffer] = await BLUEPRINT_BUCKET.file(hash).download();
+  if (!BLUEPRINT_BUCKET) throw Error("Missing GCP_BLUEPRINT_STRINGS_BUCKET env variable");
+  const [buffer] = await storage.bucket(BLUEPRINT_BUCKET).file(hash).download();
   return buffer ? buffer.toString() : null;
 }
 
 export async function saveBlueprintString(hash: string, content: string) {
-  await BLUEPRINT_BUCKET.file(hash).save(content);
+  if (!BLUEPRINT_BUCKET) throw Error("Missing GCP_BLUEPRINT_STRINGS_BUCKET env variable");
+  await storage.bucket(BLUEPRINT_BUCKET).file(hash).save(content);
 }
 
 /*
@@ -30,7 +32,8 @@ export async function saveBlueprintImage(
   image: Buffer,
   type: sizeType = "original"
 ): Promise<void> {
-  return IMAGE_BUCKET.file(`${type}/${hash}.webp`).save(image, {
+  if (!IMAGE_BUCKET) throw Error("Missing GCP_BLUEPRINT_IMAGES_BUCKET env variable");
+  return storage.bucket(IMAGE_BUCKET).file(`${type}/${hash}.webp`).save(image, {
     contentType: "image/webp",
   });
 }
@@ -39,7 +42,8 @@ export async function hasBlueprintImage(
   hash: string,
   type: sizeType = "original"
 ): Promise<boolean> {
-  const [result] = await IMAGE_BUCKET.file(`${type}/${hash}.webp`).exists();
+  if (!IMAGE_BUCKET) throw Error("Missing GCP_BLUEPRINT_IMAGES_BUCKET env variable");
+  const [result] = await storage.bucket(IMAGE_BUCKET).file(`${type}/${hash}.webp`).exists();
   return result;
 }
 
@@ -47,6 +51,7 @@ export async function getBlueprintByImageHash(
   hash: string,
   type: sizeType = "original"
 ): Promise<Buffer> {
-  const [result] = await IMAGE_BUCKET.file(`${type}/${hash}.webp`).download();
+  if (!IMAGE_BUCKET) throw Error("Missing GCP_BLUEPRINT_IMAGES_BUCKET env variable");
+  const [result] = await storage.bucket(IMAGE_BUCKET).file(`${type}/${hash}.webp`).download();
   return result;
 }
