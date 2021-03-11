@@ -28,7 +28,7 @@
     "db-gen": "npx prisma generate --schema=./apps/blueprints/prisma/schema.prisma"
   },
   "dependencies": {
-    "@chakra-ui/react": "1.3.3",
+    "@chakra-ui/react": "1.3.4",
     "@emotion/react": "11.1.5",
     "@emotion/server": "11.0.0",
     "@emotion/styled": "11.1.5",
