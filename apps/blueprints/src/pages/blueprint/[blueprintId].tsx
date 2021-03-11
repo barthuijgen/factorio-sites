@@ -70,6 +70,29 @@ const StyledTable = styled.table`
   }
 `;
 
+const StyledDescriptionList = styled.dl`
+  display: flex;
+
+  dt {
+    width: 65%;
+    font-weight: 600;
+  }
+
+  dd {
+    width: 35%;
+    text-align: right;
+  }
+`;
+
+const StyledHr = styled.hr`
+  margin-left: -64px;
+  margin-right: -64px;
+  border: none;
+  height: 2px;
+  margin: 12px auto;
+  box-shadow: inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e;
+`;
+
 export const Index: NextPage<IndexProps> = ({
   selected,
   blueprint,
@@ -150,8 +173,20 @@ export const Index: NextPage<IndexProps> = ({
       css={BlueprintStyles}
       margin="0.7rem"
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
+      gridRow="1 / span 2"
       gap={6}
     >
+      {blueprint_book && bookChildTreeData && (
+        <Panel gridColumn="1">
+          <div css={{ maxHeight: "360px", overflow: "auto" }}>
+            <BookChildTree
+              blueprint_book={bookChildTreeData}
+              base_url={`/blueprint/${blueprint_page.id}`}
+              selected_id={selected.data.id}
+            />
+          </div>
+        </Panel>
+      )}
       <Panel
         title={
           <div className="title">
@@ -163,77 +198,34 @@ export const Index: NextPage<IndexProps> = ({
               >
                 Favorite
                 <span className="icon" css={{ marginLeft: 5 }}>
-                  {isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
+                  {isFavorite ? <AiFillHeart color="#fe5a5a" /> : <AiOutlineHeart />}
                 </span>
               </Button>
             )}
           </div>
         }
-        gridColumn="1"
-      >
-        {blueprint_book && bookChildTreeData ? (
-          <div css={{ maxHeight: "400px", overflow: "auto" }}>
-            <BookChildTree
-              blueprint_book={bookChildTreeData}
-              base_url={`/blueprint/${blueprint_page.id}`}
-              selected_id={selected.data.id}
-            />
-          </div>
-        ) : blueprint ? (
-          <Markdown>{blueprint_page.description_markdown}</Markdown>
-        ) : null}
-      </Panel>
-      <Panel title={"Info"}>
-        <Box css={{ display: "flex" }}>
-          <Box>
-            <StyledTable>
-              <tbody>
-                <tr>
-                  <td>User</td>
-                  <td>
-                    {blueprint_page.user ? (
-                      <Link href={`/?user=${blueprint_page.user?.id}`}>
-                        <a>{blueprint_page.user?.username}</a>
-                      </Link>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Tags</td>
-                  <td>{blueprint_page.tags.join(", ")}</td>
-                </tr>
-                <tr>
-                  <td>Last updated</td>
-                  <td>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</td>
-                </tr>
-                <tr>
-                  <td>Created</td>
-                  <td>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</td>
-                </tr>
-                <tr>
-                  <td>Favorites</td>
-                  <td>{blueprint_page.favorite_count || "0"}</td>
-                </tr>
-              </tbody>
-            </StyledTable>
-          </Box>
-          <Box primary css={{ marginLeft: "1rem" }}>
+        bottom={
+          <div css={{ display: "flex", justifyContent: "flex-end" }}>
             {selectedBlueprintString && (
-              <CopyButton primary label="Copy Blueprint" content={selectedBlueprintString} />
+              <CopyButton
+                css={{ marginRight: 16 }}
+                label="Copy Blueprint"
+                content={selectedBlueprintString}
+              />
             )}
-          </Box>
-          <Box css={{ marginLeft: "1rem" }}>
             {selected.data.blueprint_hash && typeof window !== "undefined" && (
               <CopyButton
                 label="Copy URL"
                 content={`${window.location.origin}/api/string/${selected.data.blueprint_hash}`}
               />
             )}
-          </Box>
-        </Box>
+          </div>
+        }
+        gridColumn="1"
+      >
+        <Markdown>{blueprint_page.description_markdown}</Markdown>
       </Panel>
+
       <Panel
         title={
           <>
@@ -245,22 +237,53 @@ export const Index: NextPage<IndexProps> = ({
             />
           </>
         }
-        gridColumn={chakraResponsive({ mobile: "1", desktop: "2" })}
-        gridRow={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
+        gridColumn={chakraResponsive({
+          mobile: "1",
+          desktop: "2",
+        })}
+        gridRow={`1 / span ${selected.type === "blueprint_book" ? 2 : 3}`}
       >
-        {/* {renderImage()} */}
         {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>}
       </Panel>
-      {blueprint_book && (
-        <Panel
-          title="Description"
-          gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
-        >
-          <Markdown>{blueprint_page.description_markdown}</Markdown>
-        </Panel>
-      )}
+      <Panel title={"Info"}>
+        <Box>
+          <StyledDescriptionList>
+            <dt>User:</dt>
+            <dd>
+              {blueprint_page.user ? (
+                <Link href={`/?user=${blueprint_page.user?.id}`}>
+                  <a>{blueprint_page.user?.username}</a>
+                </Link>
+              ) : (
+                "-"
+              )}
+            </dd>
+          </StyledDescriptionList>
+          <StyledHr />
+          <StyledDescriptionList>
+            <dt>Last updated:</dt>
+            <dd>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</dd>
+          </StyledDescriptionList>
+          <StyledHr />
+          <StyledDescriptionList>
+            <dt>Created:</dt>
+            <dd>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</dd>
+          </StyledDescriptionList>
+          <StyledHr />
+          <StyledDescriptionList>
+            <dt>Favorites:</dt>
+            <dd>{blueprint_page.favorite_count || "0"}</dd>
+          </StyledDescriptionList>
+          <StyledHr />
+          <StyledDescriptionList>
+            <dt>Tags</dt>
+            <dd>{blueprint_page.tags.join(", ") || "-"}</dd>
+          </StyledDescriptionList>
+        </Box>
+      </Panel>
       {selected.type === "blueprint" && selectedData?.blueprint && (
         <Panel
+          gridColumn="1"
           title={
             <span>
               Entities for{" "}
@@ -269,7 +292,6 @@ export const Index: NextPage<IndexProps> = ({
                 : "blueprint"}
             </span>
           }
-          gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         >
           <StyledTable>
             <tbody>
@@ -307,9 +329,13 @@ export const Index: NextPage<IndexProps> = ({
           </StyledTable>
         </Panel>
       )}
+
       <Panel
         title={`data for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
-        gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
+        gridColumn={chakraResponsive({
+          mobile: "1",
+          desktop: selected.type === "blueprint" && selectedData?.blueprint ? "2" : "1 / span 2",
+        })}
       >
         <Box>
           <Button
