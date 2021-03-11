@@ -6,6 +6,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    target_branch: develop
+    target-branch: develop
     ignore:
       - dependency-name: "@fbe/editor"
