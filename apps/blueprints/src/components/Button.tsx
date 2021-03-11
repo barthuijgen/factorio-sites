@@ -43,6 +43,8 @@ const StyledButton = styled.button`
 
   &.danger {
     background-color: #fe5a5a;
+    box-shadow: inset 8px 0 4px -8px #000, inset -8px 0 4px -8px #000, inset 0 10px 2px -8px #fda1a1,
+      inset 0 10px 2px -8px #8b0101, inset 0 -9px 2px -8px #000, 0 0 4px 0 #000;
   }
 
   &:hover {
