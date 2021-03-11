@@ -6,15 +6,15 @@ interface Tag {
 }
 
 interface SelectProps {
-  options: string[];
+  options: Array<string | { value: string; label: string }>;
   value: string[];
   onChange: (tags: string[]) => void;
   className?: string;
 }
 
 export const Select: React.FC<SelectProps> = ({ options, value, onChange, className }) => {
-  const TAGS = options.map((key) => {
-    return { value: key, label: key.replace(/[_-]/g, " ") };
+  const TAGS = options.map((tag) => {
+    return typeof tag === "string" ? { value: tag, label: tag.replace(/[_-]/g, " ") } : tag;
   });
 
   return (

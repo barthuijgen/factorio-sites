@@ -60,7 +60,7 @@ export async function createBlueprintBook(
       child_tree.push({
         type: "blueprint",
         id: result.id,
-        name: blueprint.blueprint.label,
+        name: blueprint.blueprint.label || "",
       });
       blueprint_ids.push(result.id);
     } else if (blueprint.blueprint_book) {

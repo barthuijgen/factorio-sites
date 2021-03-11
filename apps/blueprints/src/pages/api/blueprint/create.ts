@@ -15,7 +15,7 @@ const handler = apiHandler(async (req, res, { session }) => {
     return res.status(401).json({ status: "Not authenticated" });
   }
 
-  const { title, description, string } = req.body;
+  const { title, description, string, tags } = req.body;
 
   const parsed = await parseBlueprintString(string).catch(() => null);
 
@@ -35,7 +35,7 @@ const handler = apiHandler(async (req, res, { session }) => {
     const info = {
       user_id: session.user.id,
       title,
-      tags: [],
+      tags: Array.isArray(tags) ? tags : [],
       description_markdown: description,
     };
 
