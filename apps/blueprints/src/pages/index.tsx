@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { NextPage, NextPageContext } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { searchBlueprintPages, init } from "@factorio-sites/database";
 import { BlueprintPage } from "@factorio-sites/types";
@@ -13,8 +12,6 @@ import { queryValueAsArray } from "../utils/query.utils";
 import { useFbeData } from "../hooks/fbe.hook";
 import {
   Box,
-  Heading,
-  Flex,
   Text,
   Input,
   InputGroup,

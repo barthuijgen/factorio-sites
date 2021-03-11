@@ -1,7 +1,7 @@
 import React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { Formik, Field } from "formik";
+import { Formik, Field, FieldProps } from "formik";
 import { css } from "@emotion/react";
 import {
   FormControl,
@@ -87,11 +87,11 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
             <Panel title="Create new blueprint">
               <form onSubmit={handleSubmit}>
                 <Field name="title">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="title"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Title</FormLabel>
@@ -102,11 +102,11 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                 </Field>
 
                 <Field name="description">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="description"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Description</FormLabel>
@@ -117,8 +117,12 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                 </Field>
 
                 <Field name="tags">
-                  {({ field, meta }: any) => (
-                    <FormControl id="tags" isInvalid={meta.touched && meta.error} css={FieldStyle}>
+                  {({ field, meta }: FieldProps) => (
+                    <FormControl
+                      id="tags"
+                      isInvalid={meta.touched && !!meta.error}
+                      css={FieldStyle}
+                    >
                       <FormLabel>Tags (WIP)</FormLabel>
                       <Select
                         options={[]}
@@ -131,11 +135,11 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                 </Field>
 
                 <Field name="string">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="string"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Blueprint string</FormLabel>
