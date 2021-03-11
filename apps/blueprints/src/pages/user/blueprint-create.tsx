@@ -15,6 +15,7 @@ import {
 import { Formik, Field, FieldProps } from "formik";
 import { css } from "@emotion/react";
 import { chakraResponsive } from "@factorio-sites/web-utils";
+import { TAGS } from "@factorio-sites/common-utils";
 import { Panel } from "../../components/Panel";
 import { validateCreateBlueprintForm } from "../../utils/validate";
 import { ImageEditor } from "../../components/ImageEditor";
@@ -27,6 +28,11 @@ const FieldStyle = css`
 
 export const UserBlueprintCreate: NextPage = () => {
   const router = useRouter();
+
+  const tagsOptions = TAGS.map((tag) => ({
+    label: `${tag.category}: ${tag.label}`,
+    value: tag.value,
+  }));
 
   return (
     <div css={{ margin: "0.7rem" }}>
@@ -98,9 +104,9 @@ export const UserBlueprintCreate: NextPage = () => {
                       isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
-                      <FormLabel>Tags (WIP)</FormLabel>
+                      <FormLabel>Tags</FormLabel>
                       <Select
-                        options={[]}
+                        options={tagsOptions}
                         value={field.value}
                         onChange={(tags) => setFieldValue("tags", tags)}
                       />

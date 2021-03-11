@@ -20,8 +20,10 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  Checkbox,
 } from "@chakra-ui/react";
 import { MdSearch } from "react-icons/md";
+import { TAGS } from "@factorio-sites/common-utils";
 
 interface IndexProps {
   totalItems: number;
@@ -46,12 +48,17 @@ export const Index: NextPage<IndexProps> = ({
   }, [router.query.q]);
 
   if (!data) return null;
+  console.log(JSON.stringify(router.query, null, 2));
 
   const entityOptions = Object.keys(data.entities).filter(
     (key) => !key.startsWith("factorio-logo") && !key.startsWith("crash-site")
   );
   const recipeOptions = Object.keys(data.recipes);
   const itemOptions = Object.keys(data.items).filter((key) => key.includes("module"));
+  const tagsOptions = TAGS.map((tag) => ({
+    label: `${tag.category}: ${tag.label}`,
+    value: tag.value,
+  }));
 
   return (
     <SimpleGrid columns={1} margin="0.7rem">
@@ -101,6 +108,29 @@ export const Index: NextPage<IndexProps> = ({
               </Box>
             </Box>
             <Box css={{ marginTop: "1rem" }}>
+              <Text css={{ marginRight: "1rem" }}>Search mode</Text>
+              <Box css={{ marginRight: "1rem" }}>
+                <RadioGroup
+                  onChange={(value: string) => router.push(routerQueryToHref({ mode: value }))}
+                  value={(router.query.mode as string) || "and"}
+                >
+                  <Stack>
+                    <Radio value="and">AND</Radio>
+                    <Radio value="or">OR</Radio>
+                  </Stack>
+                </RadioGroup>
+              </Box>
+            </Box>
+            <Box css={{ marginTop: "1rem" }}>
+              <Text css={{ marginRight: "1rem" }}>Tags</Text>
+              <Select
+                options={tagsOptions}
+                value={queryValueAsArray(router.query.tags)}
+                onChange={(tags) => router.push(routerQueryToHref({ tags }))}
+                css={{ width: "200px", marginRight: "1rem" }}
+              />
+            </Box>
+            <Box css={{ marginTop: "1rem" }}>
               <Text css={{ marginRight: "1rem" }}>Entities</Text>
               <Select
                 options={entityOptions}
@@ -125,6 +155,16 @@ export const Index: NextPage<IndexProps> = ({
                 value={queryValueAsArray(router.query.items)}
                 onChange={(items) => router.push(routerQueryToHref({ items }))}
                 css={{ width: "200px", marginRight: "1rem" }}
+              />
+            </Box>
+            <Box css={{ marginTop: "1rem", display: "flex", alignItems: "center" }}>
+              <Text css={{ marginRight: "1rem", display: "inline-block" }}>Snaps to grid</Text>
+              <Checkbox
+                value="true"
+                onChange={(ev) =>
+                  router.push(routerQueryToHref({ absolute_snapping: String(ev.target.checked) }))
+                }
+                isChecked={router.query.absolute_snapping === "true"}
               />
             </Box>
           </Box>
@@ -154,17 +194,23 @@ export async function getServerSideProps({ query }: NextPageContext) {
   const items = query.items ? String(query.items).split(",") : undefined;
   const recipes = query.recipes ? String(query.recipes).split(",") : undefined;
   const user = query.user ? String(query.user) : undefined;
+  const absolute_snapping = query.absolute_snapping
+    ? String(query.absolute_snapping) === "true"
+    : false;
+  const mode = String(query.mode).toUpperCase() === "OR" ? "OR" : "AND";
 
   const { count, rows } = await searchBlueprintPages({
     page,
     perPage,
     query: query.q as string,
     order,
+    mode,
     tags,
     entities,
     items,
     recipes,
     user,
+    absolute_snapping,
   });
 
   return {

@@ -27,6 +27,7 @@ import { Panel } from "../../../components/Panel";
 import { validateCreateBlueprintForm } from "../../../utils/validate";
 import { ImageEditor } from "../../../components/ImageEditor";
 import { Select } from "../../../components/Select";
+import { TAGS } from "@factorio-sites/common-utils";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -45,6 +46,11 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
 
   if (!blueprintPage) return null;
 
+  const tagsOptions = TAGS.map((tag) => ({
+    label: `${tag.category}: ${tag.label}`,
+    value: tag.value,
+  }));
+
   return (
     <div css={{ margin: "0.7rem" }}>
       <Formik
@@ -52,7 +58,7 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
           title: blueprintPage.title,
           description: blueprintPage.description_markdown,
           string: selected.string,
-          tags: [] as string[],
+          tags: blueprintPage.tags || ([] as string[]),
         }}
         validate={validateCreateBlueprintForm}
         onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
@@ -123,9 +129,9 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                       isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
-                      <FormLabel>Tags (WIP)</FormLabel>
+                      <FormLabel>Tags</FormLabel>
                       <Select
-                        options={[]}
+                        options={tagsOptions}
                         value={field.value}
                         onChange={(tags) => setFieldValue("tags", tags)}
                       />
