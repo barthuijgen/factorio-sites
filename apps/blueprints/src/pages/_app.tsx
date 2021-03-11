@@ -26,6 +26,10 @@ const globalStyles = css`
     min-height: 100%;
     font-family: titillium web, sans-serif;
   }
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
 `;
 
 if (typeof window !== "undefined") {
