@@ -20,7 +20,7 @@ export const getSteamRedirectUrl = async (realm_url: string): Promise<string> =>
 
 export const fetchSteamProfile = async (steam_id: string, api_key: string) => {
   try {
-    const response = await phin<{ response: { players: any } }>({
+    const response = await phin<{ response: { players?: Record<string, string>[] } }>({
       url: `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${api_key}&steamids=${steam_id}`,
       parse: "json",
     });

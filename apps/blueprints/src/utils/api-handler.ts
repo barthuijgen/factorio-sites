@@ -27,10 +27,11 @@ export class ApiError extends Error {
 }
 
 export const apiHandler = (
-  fn: (req: NextApiRequest, res: NextApiResponse, ctx: CustomContext) => Promise<any>
+  fn: (req: NextApiRequest, res: NextApiResponse, ctx: CustomContext) => Promise<void>
 ) => async (req: NextApiRequest, res: NextApiResponse) => {
   await init();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ip_header = (req.headers["x-forwarded-for"] || (req as any).ip) as string;
   const ip = ip_header ? ip_header.split(",")[0] : "";
   const useragent = req.headers["user-agent"] as string;

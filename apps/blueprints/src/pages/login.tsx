@@ -11,7 +11,7 @@ import {
   Box,
   Text,
 } from "@chakra-ui/react";
-import { Formik, Field } from "formik";
+import { Formik, Field, FieldProps } from "formik";
 import { Panel } from "../components/Panel";
 import { css } from "@emotion/react";
 import { validateLoginForm } from "../utils/validate";
@@ -56,11 +56,11 @@ export const Login: NextPage = () => {
             {({ isSubmitting, handleSubmit, status }) => (
               <form onSubmit={handleSubmit}>
                 <Field name="email">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="email"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Email address</FormLabel>
@@ -71,11 +71,11 @@ export const Login: NextPage = () => {
                 </Field>
 
                 <Field name="password">
-                  {({ field, meta }: any) => (
+                  {({ field, meta }: FieldProps) => (
                     <FormControl
                       id="password"
                       isRequired
-                      isInvalid={meta.touched && meta.error}
+                      isInvalid={meta.touched && !!meta.error}
                       css={FieldStyle}
                     >
                       <FormLabel>Password</FormLabel>

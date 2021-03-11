@@ -34,11 +34,13 @@ export const FullscreenImage: React.FC<FullscreenImageProps> = ({ alt, src, clos
     <div
       css={elementStyle}
       onClick={(e) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if ((e as any).target.nodeName.toUpperCase() !== "IMG") {
           close();
         }
       }}
       onTouchEnd={(e) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if ((e as any).target.nodeName.toUpperCase() !== "IMG") {
           close();
         }
