@@ -1,12 +1,13 @@
 import React from "react";
 import { NextPage } from "next";
 import Link from "next/link";
-import { Button, SimpleGrid, Box } from "@chakra-ui/react";
+import { SimpleGrid, Box } from "@chakra-ui/react";
 import { getBlueprintPageByUserId } from "@factorio-sites/database";
 import { BlueprintPage } from "@factorio-sites/types";
 import { pageHandler } from "../../utils/page-handler";
 import { BlueprintLink } from "../../components/BlueprintLink";
 import { Panel } from "../../components/Panel";
+import Button from "../../components/Button";
 interface UserBlueprintsProps {
   blueprints: BlueprintPage[];
 }
@@ -27,14 +28,25 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
           >
             <Link href="/user/blueprint-create">
               <a>
-                <Button colorScheme="green">create blueprint</Button>
+                <Button primary>Create Blueprint</Button>
               </a>
             </Link>
           </Box>
           <Box>
-            {blueprints.map((bp) => (
-              <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />
-            ))}
+            {blueprints.length === 0 ? (
+              blueprints.map((bp) => (
+                <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />
+              ))
+            ) : (
+              <p
+                className="empty"
+                css={{
+                  marginTop: 10,
+                }}
+              >
+                You don't have any blueprints yet
+              </p>
+            )}
           </Box>
         </Panel>
       </SimpleGrid>

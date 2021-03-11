@@ -7,7 +7,6 @@ import {
   FormErrorMessage,
   Input,
   SimpleGrid,
-  Button,
   Box,
   Text,
   Textarea,
@@ -19,6 +18,7 @@ import { Panel } from "../../components/Panel";
 import { validateCreateBlueprintForm } from "../../utils/validate";
 import { ImageEditor } from "../../components/ImageEditor";
 import { Select } from "../../components/Select";
+import Button from "../../components/Button";
 import { pageHandler } from "../../utils/page-handler";
 
 const FieldStyle = css`
@@ -125,7 +125,7 @@ export const UserBlueprintCreate: NextPage = () => {
                 </Field>
 
                 <Box css={{ display: "flex", alignItems: "center" }}>
-                  <Button type="submit" colorScheme="green" disabled={isSubmitting}>
+                  <Button primary type="submit" disabled={isSubmitting}>
                     Submit
                   </Button>
                   {status && <Text css={{ marginLeft: "1rem", color: "red" }}>{status}</Text>}
