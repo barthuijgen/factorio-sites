@@ -22,6 +22,6 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn --prefer-offline
       - run: yarn db-gen
-      - run: yarn nx lint
-      - run: yarn nx test
+      - run: nx run-many --all --target=lint
+      - run: nx run-many --all --target=test "--ci"
       - run: yarn nx build blueprints
