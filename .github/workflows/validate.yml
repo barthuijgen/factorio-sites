@@ -1,0 +1,24 @@
+name: Nx validate CI
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: yarn
+      - run: yarn db-gen
+      - run: yarn nx lint
+      - run: yarn nx test
+      - run: yarn nx build blueprints

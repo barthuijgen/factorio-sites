@@ -4,7 +4,7 @@ import { FactorioIcon } from "./FactorioIcon";
 class ImgTag extends Tag {
   toReact() {
     const content = this.getContent(true);
-    const img = (this.params as any).img;
+    const img = (this.params as Record<string, string>).img;
     const [type, item] = img.split("/");
     if (type === "item") {
       return (
@@ -21,7 +21,7 @@ class ImgTag extends Tag {
 class ItemTag extends Tag {
   toReact() {
     const content = this.getContent(true);
-    const item = (this.params as any).item;
+    const item = (this.params as Record<string, string>).item;
     if (item) {
       return (
         <>
@@ -36,7 +36,7 @@ class ItemTag extends Tag {
 
 class VirtualSignalTag extends Tag {
   toReact() {
-    const signal = (this.params as any)["virtual-signal"];
+    const signal = (this.params as Record<string, string>)["virtual-signal"];
     const content = this.getContent(true);
     if (signal) {
       return (
@@ -50,9 +50,9 @@ class VirtualSignalTag extends Tag {
   }
 }
 
-parser.registerTag("img", ImgTag as any);
-parser.registerTag("item", ItemTag as any);
-parser.registerTag("virtual-signal", VirtualSignalTag as any);
+parser.registerTag("img", ImgTag as typeof Tag);
+parser.registerTag("item", ItemTag as typeof Tag);
+parser.registerTag("virtual-signal", VirtualSignalTag as typeof Tag);
 
 export const BBCode: React.FC<{ code: string }> = ({ code }) => {
   return <>{parser.toReact(code)}</>;
