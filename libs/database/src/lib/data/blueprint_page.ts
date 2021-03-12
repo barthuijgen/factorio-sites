@@ -1,5 +1,5 @@
 import { blueprint_page, user } from "@prisma/client";
-import { join, raw, sqltag } from "@prisma/client/runtime";
+import { join, raw, Sql, sqltag } from "@prisma/client/runtime";
 import { getBlueprintImageRequestTopic } from "../gcp-pubsub";
 import { prisma } from "../postgres/database";
 import { BlueprintPage, ChildTree } from "@factorio-sites/types";
@@ -22,7 +22,8 @@ const mapBlueprintPageEntityToObject = (
   created_at: entity.created_at && entity.created_at.getTime() / 1000,
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   factorioprints_id: entity.factorioprints_id ?? null,
-  favorite_count: (entity as any).favorite_count || null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  favorite_count: (entity as any).favorite_count || (entity as any).user_favorites?.length || 0,
   user: user ? { id: user.id, username: user.username } : null,
 });
 
@@ -37,7 +38,12 @@ export async function getBlueprintPageByUserId(user_id: string): Promise<Bluepri
 }
 
 export async function getBlueprintPageWithUserById(id: string): Promise<BlueprintPage | null> {
-  const result = await prisma.blueprint_page.findUnique({ where: { id }, include: { user: true } });
+  // TODO: the user_favorites join is inefficient because it's only for counting
+  // https://github.com/prisma/prisma/issues/5079
+  const result = await prisma.blueprint_page.findUnique({
+    where: { id },
+    include: { user: true, user_favorites: true },
+  });
   return result ? mapBlueprintPageEntityToObject(result, result.user) : null;
 }
 
@@ -53,57 +59,78 @@ export async function searchBlueprintPages({
   perPage = 10,
   query,
   order,
+  mode = "AND",
   tags,
   entities,
   items,
   recipes,
   user,
+  absolute_snapping,
 }: {
   page: number;
   perPage: number;
   query?: string;
   order: "date" | "favorites" | string;
+  mode: "AND" | "OR";
   tags?: string[];
   entities?: string[];
   items?: string[];
   recipes?: string[];
   user?: string;
+  absolute_snapping?: boolean;
 }): Promise<{ count: number; rows: BlueprintPage[] }> {
   const orderMap: Record<string, string> = {
     date: "blueprint_page.updated_at",
     favorites: "favorite_count",
   };
 
-  const blueprintDataSearch =
-    entities || items || recipes
-      ? sqltag`LEFT JOIN blueprint ON blueprint.id = ANY(blueprint_page.blueprint_ids) OR blueprint.id = blueprint_page.blueprint_id`
-      : sqltag``;
-  const entitiesFragment = entities
-    ? sqltag`AND blueprint.data -> 'entities' ?& array[${join(entities)}::text]`
+  const conditionals: Sql[] = [];
+  const joins: Sql[] = [];
+  let requires_blueprint_join = false;
+
+  if (query) {
+    conditionals.push(sqltag`blueprint_page.title ILIKE ${`%${query}%`}`);
+  }
+  if (entities) {
+    conditionals.push(sqltag`blueprint.data -> 'entities' ?& array[${join(entities)}::text]`);
+    requires_blueprint_join = true;
+  }
+  if (items) {
+    conditionals.push(sqltag`blueprint.data -> 'items' ?& array[${join(items)}::text]`);
+    requires_blueprint_join = true;
+  }
+  if (recipes) {
+    conditionals.push(sqltag`blueprint.data -> 'recipes' ?& array[${join(recipes)}::text]`);
+    requires_blueprint_join = true;
+  }
+  if (tags) {
+    conditionals.push(sqltag`blueprint_page.tags @> array[${join(tags)}::varchar]`);
+  }
+  if (user) {
+    conditionals.push(sqltag`blueprint_page.user_id = ${user}`);
+  }
+  if (absolute_snapping) {
+    conditionals.push(sqltag`(blueprint.data -> 'absolute_snapping')::boolean = true`);
+    requires_blueprint_join = true;
+  }
+  if (requires_blueprint_join) {
+    joins.push(
+      sqltag`LEFT JOIN blueprint ON blueprint.id = ANY(blueprint_page.blueprint_ids) OR blueprint.id = blueprint_page.blueprint_id`
+    );
+  }
+
+  const joinsFragment = joins.length ? sqltag`${join(joins)}` : sqltag``;
+  const conditionalFragment = conditionals.length
+    ? sqltag`WHERE ${join(conditionals, ` ${mode} `)}`
     : sqltag``;
-  const itemsFragment = items
-    ? sqltag`AND blueprint.data -> 'items' ?& array[${join(items)}::text]`
-    : sqltag``;
-  const recipesFragment = recipes
-    ? sqltag`AND blueprint.data -> 'recipes' ?& array[${join(recipes)}::text]`
-    : sqltag``;
-  const tagsFragment = tags
-    ? sqltag`AND blueprint_page.tags @> array[${join(tags)}::varchar]`
-    : sqltag``;
-  const userFragment = user ? sqltag`AND blueprint_page.user_id = ${user}` : sqltag``;
 
   try {
     const result = (
       await prisma.$queryRaw<(blueprint_page & { favorite_count: number })[]>`
         SELECT DISTINCT blueprint_page.*, (SELECT COUNT(*) FROM user_favorites where user_favorites.blueprint_page_id = blueprint_page.id) AS favorite_count
         FROM public.blueprint_page
-        ${blueprintDataSearch}
-        WHERE blueprint_page.title ILIKE ${query ? `%${query}%` : "%"}
-        ${entitiesFragment}
-        ${itemsFragment}
-        ${recipesFragment}
-        ${tagsFragment}
-        ${userFragment}
+        ${joinsFragment}
+        ${conditionalFragment}
         ORDER BY ${raw(orderMap[order] || orderMap.date)} DESC
         LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
     ).map((blueprintPage) => ({
@@ -115,13 +142,8 @@ export async function searchBlueprintPages({
     const countResult = await prisma.$queryRaw<{ count: number }[]>`
         SELECT COUNT(DISTINCT blueprint_page.id)
         FROM public.blueprint_page
-        ${blueprintDataSearch}
-        WHERE blueprint_page.title ILIKE ${query ? `%${query}%` : "%"}
-        ${entitiesFragment}
-        ${itemsFragment}
-        ${recipesFragment}
-        ${tagsFragment}
-        ${userFragment}`;
+        ${joinsFragment}
+        ${conditionalFragment}`;
 
     return {
       count: countResult[0].count,

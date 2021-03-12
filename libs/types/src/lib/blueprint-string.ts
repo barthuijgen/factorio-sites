@@ -29,10 +29,14 @@ export interface BlueprintData {
   tiles?: Tile[];
   icons: Icon[];
   item: "blueprint";
-  label: string;
+  label?: string;
   description?: string;
-  "snap-to-grid": { x: number; y: number };
-  "absolute-snapping": boolean;
+  /** Mode 'absolute' if 'absolute-snapping' is also present, otherwise 'relative */
+  "snap-to-grid"?: { x: number; y: number };
+  /** if true 'snap-to-grid' is also present */
+  "absolute-snapping"?: boolean;
+  /** can only exist in 'absolute' mode. changes offset to the game grid */
+  "position-relative-to-grid"?: { x: number; y: number };
   version: number;
 }
 

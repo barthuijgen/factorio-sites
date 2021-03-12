@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import BBCode from "bbcode-to-react";
-import { Button, Grid, Image, Box } from "@chakra-ui/react";
+import { Grid, Image, Box } from "@chakra-ui/react";
 import {
   getBlueprintBookById,
   getBlueprintById,
@@ -15,7 +15,7 @@ import {
   BlueprintPage,
   BlueprintStringData,
 } from "@factorio-sites/types";
-import { timeLogger } from "@factorio-sites/common-utils";
+import { TAGS_BY_KEY, timeLogger } from "@factorio-sites/common-utils";
 import {
   chakraResponsive,
   ChildTreeBlueprintBookEnriched,
@@ -32,6 +32,7 @@ import { pageHandler } from "../../utils/page-handler";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { Button } from "../../components/Button";
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash" | "label"> }
@@ -59,7 +60,6 @@ const BlueprintStyles = css`
     }
   }
 `;
-
 const StyledTable = styled.table`
   td {
     border: 1px solid #909090;
@@ -147,7 +147,6 @@ export const Index: NextPage<IndexProps> = ({
   return (
     <Grid
       css={BlueprintStyles}
-      margin="0.7rem"
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
       gap={6}
     >
@@ -157,11 +156,13 @@ export const Index: NextPage<IndexProps> = ({
             <span className="text">{blueprint_page.title}</span>
             {auth && (
               <Button
-                colorScheme="green"
                 onClick={onClickFavorite}
-                css={{ position: "absolute", right: "10px", top: "-7px", height: "35px" }}
+                css={{ display: "inline-flex", float: "right", fontSize: "initial" }}
               >
-                Favorite {isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
+                Favorite
+                <span className="icon" css={{ marginLeft: "5px" }}>
+                  {isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
+                </span>
               </Button>
             )}
           </div>
@@ -199,7 +200,11 @@ export const Index: NextPage<IndexProps> = ({
                 </tr>
                 <tr>
                   <td>Tags</td>
-                  <td>{blueprint_page.tags.join(", ")}</td>
+                  <td>
+                    {blueprint_page.tags
+                      .map((tag) => `${TAGS_BY_KEY[tag].category}: ${TAGS_BY_KEY[tag].label}`)
+                      .join(", ")}
+                  </td>
                 </tr>
                 <tr>
                   <td>Last updated</td>
@@ -216,21 +221,16 @@ export const Index: NextPage<IndexProps> = ({
               </tbody>
             </StyledTable>
           </Box>
-          <Box css={{ marginLeft: "1rem" }}>
-            {selected.data.blueprint_hash && typeof window !== "undefined" && (
-              <CopyButton
-                label="copy url"
-                content={`${window.location.origin}/api/string/${selected.data.blueprint_hash}`}
-                marginBottom="0.5rem"
-              />
+          <Box primary css={{ marginLeft: "1rem" }}>
+            {selectedBlueprintString && (
+              <CopyButton primary label="Copy Blueprint" content={selectedBlueprintString} />
             )}
           </Box>
           <Box css={{ marginLeft: "1rem" }}>
-            {selectedBlueprintString && (
+            {selected.data.blueprint_hash && typeof window !== "undefined" && (
               <CopyButton
-                label="copy blueprint"
-                content={selectedBlueprintString}
-                marginBottom="0.5rem"
+                label="Copy URL"
+                content={`${window.location.origin}/api/string/${selected.data.blueprint_hash}`}
               />
             )}
           </Box>
@@ -315,16 +315,14 @@ export const Index: NextPage<IndexProps> = ({
       >
         <Box>
           <Button
-            colorScheme="green"
             onClick={() => {
               setShowDetails(showDetails === "string" ? "none" : "string");
             }}
           >
-            {showDetails === "string" ? "hide" : "show"} string
+            {showDetails === "string" ? "Hide" : "Show"} string
           </Button>
           <Button
             css={{ marginLeft: "1rem" }}
-            colorScheme="green"
             onClick={() => {
               setShowDetails(showDetails === "json" ? "none" : "json");
               if (!selectedData) {
@@ -337,7 +335,7 @@ export const Index: NextPage<IndexProps> = ({
               }
             }}
           >
-            {showDetails === "json" ? "hide" : "show"} json
+            {showDetails === "json" ? "Hide" : "Show"} json
           </Button>
         </Box>
         <Box css={{ marginTop: "1rem" }}>

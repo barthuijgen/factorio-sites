@@ -1,6 +1,6 @@
 import { BlueprintBookData } from "@factorio-sites/types";
 import { encodeBlueprint, hashString } from "@factorio-sites/node-utils";
-import { blueprint_book } from "@prisma/client";
+import { blueprint_book, Prisma } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
 import { prisma } from "../postgres/database";
 import { BlueprintBook, ChildTree } from "@factorio-sites/types";
@@ -8,7 +8,7 @@ import { createBlueprint } from "./blueprint";
 
 const mapBlueprintBookEntityToObject = (entity: blueprint_book): BlueprintBook => ({
   id: entity.id,
-  child_tree: entity.child_tree ? (entity.child_tree as any) : [],
+  child_tree: entity.child_tree ? ((entity.child_tree as unknown) as ChildTree) : [],
   blueprint_hash: entity.blueprint_hash,
   label: entity.label || "",
   description: entity.description || "",
@@ -60,7 +60,7 @@ export async function createBlueprintBook(
       child_tree.push({
         type: "blueprint",
         id: result.id,
-        name: blueprint.blueprint.label,
+        name: blueprint.blueprint.label || "",
       });
       blueprint_ids.push(result.id);
     } else if (blueprint.blueprint_book) {
@@ -81,7 +81,7 @@ export async function createBlueprintBook(
       description: blueprintBook.description,
       blueprint_hash: blueprint_hash,
       is_modded: false,
-      child_tree: child_tree as any,
+      child_tree: (child_tree as unknown) as Prisma.InputJsonObject,
       updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
       created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
       blueprint_books: {

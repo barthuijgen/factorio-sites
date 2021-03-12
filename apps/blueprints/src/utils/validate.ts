@@ -86,6 +86,10 @@ export const validateCreateBlueprintForm = (values: CreateBlueprintValues) => {
   errors.description = validateRequired(values.description);
   errors.string = validateRequired(values.string);
 
+  if (values.string) {
+    console.log(parseBlueprintStringClient(values.string));
+  }
+
   // If string is set also validate it to be parsable
   if (!errors.string && !parseBlueprintStringClient(values.string)) {
     errors.string = "Not recognised as a blueprint string";

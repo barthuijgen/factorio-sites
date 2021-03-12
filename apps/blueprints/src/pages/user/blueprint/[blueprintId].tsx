@@ -9,7 +9,6 @@ import {
   FormErrorMessage,
   Input,
   SimpleGrid,
-  Button,
   Box,
   Text,
   Textarea,
@@ -22,11 +21,13 @@ import {
   getBlueprintStringByHash,
 } from "@factorio-sites/database";
 import { Blueprint, BlueprintBook, BlueprintPage } from "@factorio-sites/types";
+import { TAGS } from "@factorio-sites/common-utils";
 import { pageHandler } from "../../../utils/page-handler";
 import { Panel } from "../../../components/Panel";
 import { validateCreateBlueprintForm } from "../../../utils/validate";
 import { ImageEditor } from "../../../components/ImageEditor";
 import { Select } from "../../../components/Select";
+import { Button } from "../../../components/Button";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -45,129 +46,128 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
 
   if (!blueprintPage) return null;
 
+  const tagsOptions = TAGS.map((tag) => ({
+    label: `${tag.category}: ${tag.label}`,
+    value: tag.value,
+  }));
+
   return (
-    <div css={{ margin: "0.7rem" }}>
-      <Formik
-        initialValues={{
-          title: blueprintPage.title,
-          description: blueprintPage.description_markdown,
-          string: selected.string,
-          tags: [] as string[],
-        }}
-        validate={validateCreateBlueprintForm}
-        onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
-          setStatus("");
+    <Formik
+      initialValues={{
+        title: blueprintPage.title,
+        description: blueprintPage.description_markdown,
+        string: selected.string,
+        tags: blueprintPage.tags || ([] as string[]),
+      }}
+      validate={validateCreateBlueprintForm}
+      onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
+        setStatus("");
 
-          const result = await fetch("/api/blueprint/edit", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({
-              ...values,
-              id: blueprintPage.id,
-            }),
-          }).then((res) => res.json());
+        const result = await fetch("/api/blueprint/edit", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            ...values,
+            id: blueprintPage.id,
+          }),
+        }).then((res) => res.json());
 
-          if (result.status) {
-            setSubmitting(false);
-            setStatus(result.status);
-          } else if (result.errors) {
-            setSubmitting(false);
-            setErrors(result.errors);
-          } else if (result.success) {
-            router.push(`/blueprint/${result.id}`);
-          }
-        }}
-      >
-        {({ isSubmitting, handleSubmit, status, values, errors, setFieldValue }) => (
-          <SimpleGrid
-            columns={2}
-            gap={6}
-            templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
-          >
-            <Panel title="Create new blueprint">
-              <form onSubmit={handleSubmit}>
-                <Field name="title">
-                  {({ field, meta }: FieldProps) => (
-                    <FormControl
-                      id="title"
-                      isRequired
-                      isInvalid={meta.touched && !!meta.error}
-                      css={FieldStyle}
-                    >
-                      <FormLabel>Title</FormLabel>
-                      <Input type="text" {...field} />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-
-                <Field name="description">
-                  {({ field, meta }: FieldProps) => (
-                    <FormControl
-                      id="description"
-                      isRequired
-                      isInvalid={meta.touched && !!meta.error}
-                      css={FieldStyle}
-                    >
-                      <FormLabel>Description</FormLabel>
-                      <Textarea {...field} />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-
-                <Field name="tags">
-                  {({ field, meta }: FieldProps) => (
-                    <FormControl
-                      id="tags"
-                      isInvalid={meta.touched && !!meta.error}
-                      css={FieldStyle}
-                    >
-                      <FormLabel>Tags (WIP)</FormLabel>
-                      <Select
-                        options={[]}
-                        value={field.value}
-                        onChange={(tags) => setFieldValue("tags", tags)}
-                      />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-
-                <Field name="string">
-                  {({ field, meta }: FieldProps) => (
-                    <FormControl
-                      id="string"
-                      isRequired
-                      isInvalid={meta.touched && !!meta.error}
-                      css={FieldStyle}
-                    >
-                      <FormLabel>Blueprint string</FormLabel>
-                      <Input type="text" {...field} />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
-
-                <Box css={{ display: "flex", alignItems: "center" }}>
-                  <Button type="submit" colorScheme="green" disabled={isSubmitting}>
-                    Submit
-                  </Button>
-                  {status && <Text css={{ marginLeft: "1rem", color: "red" }}>{status}</Text>}
-                </Box>
-              </form>
-            </Panel>
-            <Panel title="Preview">
-              <Box>
-                {values.string && !errors.string && (
-                  <ImageEditor string={values.string}></ImageEditor>
+        if (result.status) {
+          setSubmitting(false);
+          setStatus(result.status);
+        } else if (result.errors) {
+          setSubmitting(false);
+          setErrors(result.errors);
+        } else if (result.success) {
+          router.push(`/blueprint/${result.id}`);
+        }
+      }}
+    >
+      {({ isSubmitting, handleSubmit, status, values, errors, setFieldValue }) => (
+        <SimpleGrid
+          columns={2}
+          gap={6}
+          templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
+        >
+          <Panel title="Create new blueprint">
+            <form onSubmit={handleSubmit}>
+              <Field name="title">
+                {({ field, meta }: FieldProps) => (
+                  <FormControl
+                    id="title"
+                    isRequired
+                    isInvalid={meta.touched && !!meta.error}
+                    css={FieldStyle}
+                  >
+                    <FormLabel>Title</FormLabel>
+                    <Input type="text" {...field} />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
                 )}
+              </Field>
+
+              <Field name="description">
+                {({ field, meta }: FieldProps) => (
+                  <FormControl
+                    id="description"
+                    isRequired
+                    isInvalid={meta.touched && !!meta.error}
+                    css={FieldStyle}
+                  >
+                    <FormLabel>Description</FormLabel>
+                    <Textarea {...field} />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              <Field name="tags">
+                {({ field, meta }: FieldProps) => (
+                  <FormControl id="tags" isInvalid={meta.touched && !!meta.error} css={FieldStyle}>
+                    <FormLabel>Tags</FormLabel>
+                    <Select
+                      options={tagsOptions}
+                      value={field.value}
+                      onChange={(tags) => setFieldValue("tags", tags)}
+                    />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              <Field name="string">
+                {({ field, meta }: FieldProps) => (
+                  <FormControl
+                    id="string"
+                    isRequired
+                    isInvalid={meta.touched && !!meta.error}
+                    css={FieldStyle}
+                  >
+                    <FormLabel>Blueprint string</FormLabel>
+                    <Input type="text" {...field} />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              <Box css={{ display: "flex", alignItems: "center" }}>
+                <Button primary type="submit" disabled={isSubmitting}>
+                  Submit
+                </Button>
+                {status && <Text css={{ marginLeft: "1rem", color: "red" }}>{status}</Text>}
               </Box>
-            </Panel>
-          </SimpleGrid>
-        )}
-      </Formik>
-    </div>
+            </form>
+          </Panel>
+          <Panel title="Preview">
+            <Box>
+              {values.string && !errors.string && (
+                <ImageEditor string={values.string}></ImageEditor>
+              )}
+            </Box>
+          </Panel>
+        </SimpleGrid>
+      )}
+    </Formik>
   );
 };
 

@@ -20,8 +20,32 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  Checkbox,
 } from "@chakra-ui/react";
+import { css } from "@emotion/react";
 import { MdSearch } from "react-icons/md";
+import { TAGS } from "@factorio-sites/common-utils";
+
+const pageCss = css({
+  display: "flex",
+});
+const sidebarCss = css({
+  borderRight: "1px solid #b7b7b7",
+  paddingRight: "1rem",
+  marginRight: "1rem",
+  width: "233px",
+});
+const SidebarRow = css({
+  marginTop: "1rem",
+});
+const sidebarCheckbox = css(SidebarRow, {
+  display: "flex",
+  alignItems: "center",
+  p: {
+    marginRight: "1rem",
+    display: "inline-block",
+  },
+});
 
 interface IndexProps {
   totalItems: number;
@@ -52,23 +76,16 @@ export const Index: NextPage<IndexProps> = ({
   );
   const recipeOptions = Object.keys(data.recipes);
   const itemOptions = Object.keys(data.items).filter((key) => key.includes("module"));
+  const tagsOptions = TAGS.map((tag) => ({
+    label: `${tag.category}: ${tag.label}`,
+    value: tag.value,
+  }));
 
   return (
-    <SimpleGrid columns={1} margin="0.7rem">
+    <SimpleGrid columns={1}>
       <Panel title="Blueprints">
-        <Box
-          css={{
-            display: "flex",
-          }}
-        >
-          <Box
-            css={{
-              borderRight: "1px solid #b7b7b7",
-              paddingRight: "1rem",
-              marginRight: "1rem",
-              width: "250px",
-            }}
-          >
+        <Box css={pageCss}>
+          <Box css={sidebarCss}>
             <Box>
               <InputGroup>
                 <InputLeftElement pointerEvents="none" children={<MdSearch />} />
@@ -86,9 +103,9 @@ export const Index: NextPage<IndexProps> = ({
                 />
               </InputGroup>
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Sort order</Text>
-              <Box css={{ marginRight: "1rem" }}>
+            <Box css={SidebarRow}>
+              <Text>Sort order</Text>
+              <Box>
                 <RadioGroup
                   onChange={(value: string) => router.push(routerQueryToHref({ order: value }))}
                   value={(router.query.order as string) || "date"}
@@ -100,8 +117,31 @@ export const Index: NextPage<IndexProps> = ({
                 </RadioGroup>
               </Box>
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Entities</Text>
+            <Box css={SidebarRow}>
+              <Text>Search mode</Text>
+              <Box>
+                <RadioGroup
+                  onChange={(value: string) => router.push(routerQueryToHref({ mode: value }))}
+                  value={(router.query.mode as string) || "and"}
+                >
+                  <Stack>
+                    <Radio value="and">AND</Radio>
+                    <Radio value="or">OR</Radio>
+                  </Stack>
+                </RadioGroup>
+              </Box>
+            </Box>
+            <Box css={SidebarRow}>
+              <Text>Tags</Text>
+              <Select
+                options={tagsOptions}
+                value={queryValueAsArray(router.query.tags)}
+                onChange={(tags) => router.push(routerQueryToHref({ tags }))}
+                css={{ width: "200px", marginRight: "1rem" }}
+              />
+            </Box>
+            <Box css={SidebarRow}>
+              <Text>Entities</Text>
               <Select
                 options={entityOptions}
                 value={queryValueAsArray(router.query.entities)}
@@ -109,8 +149,8 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Recipes</Text>
+            <Box css={SidebarRow}>
+              <Text>Recipes</Text>
               <Select
                 options={recipeOptions}
                 value={queryValueAsArray(router.query.recipes)}
@@ -118,8 +158,8 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Items</Text>
+            <Box css={SidebarRow}>
+              <Text>Items</Text>
               <Select
                 options={itemOptions}
                 value={queryValueAsArray(router.query.items)}
@@ -127,12 +167,24 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
+            <Box css={sidebarCheckbox}>
+              <Text>Snaps to grid</Text>
+              <Checkbox
+                value="true"
+                onChange={(ev) =>
+                  router.push(routerQueryToHref({ absolute_snapping: String(ev.target.checked) }))
+                }
+                isChecked={router.query.absolute_snapping === "true"}
+              />
+            </Box>
           </Box>
-          <Box>
-            <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px" }}>
-              {blueprints.map((bp) => (
-                <BlueprintLink key={bp.id} blueprint={bp} type="tile" />
-              ))}
+          <Box css={{ display: "flex", flexDirection: "column" }}>
+            <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px", flexGrow: 1 }}>
+              {blueprints.length ? (
+                blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} type="tile" />)
+              ) : (
+                <p css={{ marginTop: "10px" }}>No results found</p>
+              )}
             </Box>
             <Box css={{ marginTop: "15px" }}>
               <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />
@@ -154,17 +206,23 @@ export async function getServerSideProps({ query }: NextPageContext) {
   const items = query.items ? String(query.items).split(",") : undefined;
   const recipes = query.recipes ? String(query.recipes).split(",") : undefined;
   const user = query.user ? String(query.user) : undefined;
+  const absolute_snapping = query.absolute_snapping
+    ? String(query.absolute_snapping) === "true"
+    : false;
+  const mode = String(query.mode).toUpperCase() === "OR" ? "OR" : "AND";
 
   const { count, rows } = await searchBlueprintPages({
     page,
     perPage,
     query: query.q as string,
     order,
+    mode,
     tags,
     entities,
     items,
     recipes,
     user,
+    absolute_snapping,
   });
 
   return {
