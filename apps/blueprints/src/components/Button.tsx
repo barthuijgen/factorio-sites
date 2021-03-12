@@ -8,7 +8,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const Button: React.FC<ButtonProps> = ({ primary, className, children, ...props }) => {
   return (
-    <StyledButton className={clsx("button", { primary }, className)} {...props}>
+    <StyledButton className={clsx({ primary }, className)} {...props}>
       {children}
     </StyledButton>
   );
@@ -17,12 +17,10 @@ export const Button: React.FC<ButtonProps> = ({ primary, className, children, ..
 const StyledButton = styled.button`
   background-color: #8e8e8e;
   padding: 10px 12px;
-  font-size: 100%;
   text-align: left;
   color: #000;
   font-weight: 600;
   display: inline-block;
-  vertical-align: baseline;
   border: none;
   line-height: 100%;
   vertical-align: middle;

@@ -162,7 +162,7 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ display: "inline-flex", float: "right", fontSize: "initial" }}
               >
                 Favorite
-                <span className="icon" css={{ marginLeft: 5 }}>
+                <span className="icon" css={{ marginLeft: "5px" }}>
                   {isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
                 </span>
               </Button>

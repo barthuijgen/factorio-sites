@@ -38,7 +38,7 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
                 <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />
               ))
             ) : (
-              <p css={{ marginTop: 10 }}>No results found</p>
+              <p css={{ marginTop: "10px" }}>You don't have any blueprints yet</p>
             )}
           </Box>
         </Panel>
