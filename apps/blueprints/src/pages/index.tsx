@@ -38,13 +38,12 @@ const sidebarCss = css({
 const SidebarRow = css({
   marginTop: "1rem",
 });
-const sidebarCheckbox = css({
-  ...SidebarRow,
+const sidebarCheckbox = css(SidebarRow, {
   display: "flex",
   alignItems: "center",
   p: {
     marginRight: "1rem",
-    display: "inline-bloc",
+    display: "inline-block",
   },
 });
 
