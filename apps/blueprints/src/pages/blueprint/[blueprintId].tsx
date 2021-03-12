@@ -60,7 +60,6 @@ const BlueprintStyles = css`
     }
   }
 `;
-
 const StyledTable = styled.table`
   td {
     border: 1px solid #909090;
@@ -148,7 +147,6 @@ export const Index: NextPage<IndexProps> = ({
   return (
     <Grid
       css={BlueprintStyles}
-      margin="0.7rem"
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
       gap={6}
     >
