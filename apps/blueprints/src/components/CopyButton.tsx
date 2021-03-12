@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
-import { Button, ButtonProps } from "@chakra-ui/react";
 import { MdCheck, MdClose } from "react-icons/md";
+import { IoMdClipboard } from "react-icons/io";
+import { Button, ButtonProps } from "../components/Button";
 
 const SUCCESS_ICON_DURATION = 2000;
 
@@ -8,44 +9,45 @@ export const CopyButton: React.FC<
   Omit<ButtonProps, "children"> & { content: string; label?: string }
 > = ({ content, label, ...props }) => {
   const [loading, setLoading] = useState(false);
-  const [icon, setIcon] = useState<"red" | "green" | null>(null);
+  const [iconType, setIconType] = useState<"success" | "error" | null>(null);
 
-  const iconProps = useMemo(() => {
-    if (icon === "green") {
-      return {
-        colorScheme: "green",
-        leftIcon: <MdCheck />,
-      };
-    } else if (icon === "red") {
-      return {
-        colorScheme: "red",
-        leftIcon: <MdClose />,
-      };
-    } else {
-      return { colorScheme: "green" };
+  const icon = useMemo(() => {
+    switch (iconType) {
+      case "success":
+        return <MdCheck />;
+      case "error":
+        return <MdClose />;
+      default:
+        return <IoMdClipboard />;
     }
-  }, [icon]);
+  }, [iconType]);
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      await navigator.clipboard.writeText(content);
+      setIconType("success");
+      setTimeout(() => setIconType(null), SUCCESS_ICON_DURATION);
+      setLoading(false);
+    } catch (err) {
+      setIconType("error");
+      setLoading(false);
+    }
+  };
 
   return (
     <Button
-      {...props}
-      isLoading={loading}
-      {...iconProps}
-      onClick={() => {
-        setLoading(true);
-        navigator.clipboard
-          .writeText(content)
-          .then(() => {
-            setLoading(false);
-            setIcon("green");
-            setTimeout(() => setIcon(null), SUCCESS_ICON_DURATION);
-          })
-          .catch(() => {
-            setLoading(false);
-            setIcon("red");
-          });
+      css={{
+        display: "inline-flex",
+        minWidth: "128px",
       }}
+      disabled={loading}
+      {...props}
+      onClick={handleClick}
     >
+      <span className="icon" css={{ marginRight: "5px" }}>
+        {icon}
+      </span>
       {label || "copy"}
     </Button>
   );

@@ -72,7 +72,7 @@ export const Index: NextPage<IndexProps> = ({
               borderRight: "1px solid #b7b7b7",
               paddingRight: "1rem",
               marginRight: "1rem",
-              width: "250px",
+              width: "213px",
             }}
           >
             <Box>
@@ -167,11 +167,13 @@ export const Index: NextPage<IndexProps> = ({
               />
             </Box>
           </Box>
-          <Box>
-            <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px" }}>
-              {blueprints.map((bp) => (
-                <BlueprintLink key={bp.id} blueprint={bp} type="tile" />
-              ))}
+          <Box css={{ display: "flex", flexDirection: "column" }}>
+            <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px", flexGrow: 1 }}>
+              {blueprints.length ? (
+                blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} type="tile" />)
+              ) : (
+                <p css={{ marginTop: "10px" }}>No results found</p>
+              )}
             </Box>
             <Box css={{ marginTop: "15px" }}>
               <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />

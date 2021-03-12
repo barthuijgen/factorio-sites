@@ -9,7 +9,6 @@ import {
   FormErrorMessage,
   Input,
   SimpleGrid,
-  Button,
   Box,
   Text,
   Textarea,
@@ -22,12 +21,13 @@ import {
   getBlueprintStringByHash,
 } from "@factorio-sites/database";
 import { Blueprint, BlueprintBook, BlueprintPage } from "@factorio-sites/types";
+import { TAGS } from "@factorio-sites/common-utils";
 import { pageHandler } from "../../../utils/page-handler";
 import { Panel } from "../../../components/Panel";
 import { validateCreateBlueprintForm } from "../../../utils/validate";
 import { ImageEditor } from "../../../components/ImageEditor";
 import { Select } from "../../../components/Select";
-import { TAGS } from "@factorio-sites/common-utils";
+import { Button } from "../../../components/Button";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -156,7 +156,7 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                 </Field>
 
                 <Box css={{ display: "flex", alignItems: "center" }}>
-                  <Button type="submit" colorScheme="green" disabled={isSubmitting}>
+                  <Button primary type="submit" disabled={isSubmitting}>
                     Submit
                   </Button>
                   {status && <Text css={{ marginLeft: "1rem", color: "red" }}>{status}</Text>}
