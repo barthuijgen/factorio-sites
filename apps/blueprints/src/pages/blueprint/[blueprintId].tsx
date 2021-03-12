@@ -32,7 +32,7 @@ import { pageHandler } from "../../utils/page-handler";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import Button from "../../components/Button";
+import { Button } from "../../components/Button";
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash" | "label"> }

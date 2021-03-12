@@ -5,7 +5,7 @@ import { FormControl, FormLabel, FormErrorMessage, Input, SimpleGrid } from "@ch
 import { Formik, Field, FieldProps } from "formik";
 import { css } from "@emotion/react";
 import { Panel } from "../../components/Panel";
-import Button from "../../components/Button";
+import { Button } from "../../components/Button";
 import { validateUserForm } from "../../utils/validate";
 import { useAuth } from "../../providers/auth";
 import { pageHandler } from "../../utils/page-handler";

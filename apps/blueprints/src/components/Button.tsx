@@ -6,15 +6,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   primary?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ primary, className, children, ...props }) => {
+export const Button: React.FC<ButtonProps> = ({ primary, className, children, ...props }) => {
   return (
     <StyledButton className={clsx("button", { primary }, className)} {...props}>
       {children}
     </StyledButton>
   );
 };
-
-export default Button;
 
 const StyledButton = styled.button`
   background-color: #8e8e8e;

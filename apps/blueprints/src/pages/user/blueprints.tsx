@@ -7,7 +7,7 @@ import { BlueprintPage } from "@factorio-sites/types";
 import { pageHandler } from "../../utils/page-handler";
 import { BlueprintLink } from "../../components/BlueprintLink";
 import { Panel } from "../../components/Panel";
-import Button from "../../components/Button";
+import { Button } from "../../components/Button";
 interface UserBlueprintsProps {
   blueprints: BlueprintPage[];
 }
@@ -38,14 +38,7 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
                 <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />
               ))
             ) : (
-              <p
-                className="empty"
-                css={{
-                  marginTop: 10,
-                }}
-              >
-                You don't have any blueprints yet
-              </p>
+              <p css={{ marginTop: 10 }}>No results found</p>
             )}
           </Box>
         </Panel>

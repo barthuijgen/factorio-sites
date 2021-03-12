@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { MdCheck, MdClose } from "react-icons/md";
-import Button, { ButtonProps } from "../components/Button";
+import { Button, ButtonProps } from "../components/Button";
 
 const SUCCESS_ICON_DURATION = 2000;
 
@@ -29,6 +29,7 @@ export const CopyButton: React.FC<
       setTimeout(() => setIconType(null), SUCCESS_ICON_DURATION);
       setLoading(false);
     } catch (err) {
+      setIconType("error");
       setLoading(false);
     }
   };
@@ -38,7 +39,7 @@ export const CopyButton: React.FC<
       css={{
         display: "inline-flex",
         justifyContent: "space-between",
-        minWidth: 128,
+        minWidth: "128px",
         textAlign: "center",
       }}
       disabled={loading}

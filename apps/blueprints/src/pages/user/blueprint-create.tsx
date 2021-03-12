@@ -19,7 +19,7 @@ import { Panel } from "../../components/Panel";
 import { validateCreateBlueprintForm } from "../../utils/validate";
 import { ImageEditor } from "../../components/ImageEditor";
 import { Select } from "../../components/Select";
-import Button from "../../components/Button";
+import { Button } from "../../components/Button";
 import { pageHandler } from "../../utils/page-handler";
 
 const FieldStyle = css`
