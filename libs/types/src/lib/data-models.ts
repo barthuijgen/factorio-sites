@@ -52,7 +52,7 @@ export interface BlueprintPage {
   created_at: number;
   updated_at: number;
   factorioprints_id: string | null;
-  favorite_count?: number;
+  favorite_count: number;
   user: { id: string; username: string } | null;
   // BlueprintPageEntry->BlueprintEntry 1:m
   // BlueprintPageEntry->BlueprintBook 1:m

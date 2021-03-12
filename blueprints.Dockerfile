@@ -14,7 +14,7 @@ RUN yarn
 COPY . .
 
 RUN yarn run db-gen
-RUN yarn nx build blueprints
+RUN yarn nx build blueprints --prod
 
 FROM node:14-slim
 

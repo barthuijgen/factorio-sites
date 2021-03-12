@@ -24,6 +24,7 @@ interface Res {
   send(body: string): void;
 }
 /** message body for pubsub triggered function */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Message = Record<string, any>;
 /** context for pubsub triggered function */
 interface Context {
