@@ -24,7 +24,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - run: yarn --prefer-offline
+      - run: yarn
       - run: yarn db-gen
       - run: yarn nx build blueprints
       - name: Set up Cloud SDK
