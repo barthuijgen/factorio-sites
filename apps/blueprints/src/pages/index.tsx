@@ -51,7 +51,10 @@ interface IndexProps {
   totalItems: number;
   currentPage: number;
   totalPages: number;
-  blueprints: BlueprintPage[];
+  blueprints: Pick<
+    BlueprintPage,
+    "id" | "image_hash" | "favorite_count" | "title" | "updated_at"
+  >[];
 }
 
 export const Index: NextPage<IndexProps> = ({
@@ -230,8 +233,14 @@ export async function getServerSideProps({ query }: NextPageContext) {
       totalItems: count,
       currentPage: page,
       totalPages: Math.ceil(count / perPage),
-      blueprints: rows,
-    },
+      blueprints: rows.map((row) => ({
+        id: row.id,
+        image_hash: row.image_hash,
+        favorite_count: row.favorite_count,
+        title: row.title,
+        updated_at: row.updated_at,
+      })),
+    } as IndexProps,
   };
 }
 

@@ -22,7 +22,7 @@ RUN apt-get -qy update && apt-get -qy install openssl
 
 WORKDIR /usr/src/app
 
-COPY apps/blueprints/prod.package.json ./package.json
+COPY --from=builder  /usr/src/app/dist/apps/blueprints/package.json ./package.json
 COPY yarn.lock .
 COPY yalc.lock .
 COPY .yalc ./.yalc/

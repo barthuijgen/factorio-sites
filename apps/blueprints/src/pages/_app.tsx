@@ -10,6 +10,25 @@ import { useFetch } from "../hooks/fetch";
 import { getSessionToken } from "@factorio-sites/node-utils";
 
 const globalStyles = css`
+  @font-face {
+    font-family: titillium web;
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/TitilliumWeb-Regular.ttf);
+  }
+  @font-face {
+    font-family: titillium web;
+    font-style: normal;
+    font-weight: 600;
+    src: url(/fonts/TitilliumWeb-SemiBold.ttf);
+  }
+  @font-face {
+    font-family: titillium web;
+    font-style: normal;
+    font-weight: 700;
+    src: url(/fonts/TitilliumWeb-Bold.ttf);
+  }
+
   html {
     height: 100%;
     font-size: 100%;
@@ -60,7 +79,7 @@ const BlueprintsApp = ({
         <Head>
           <title>Factorio Blueprints</title>
           <link rel="shortcut icon" href="/favicon.png" />
-          <link href="https://cdn.factorio.com/assets/fonts/titillium-web.css" rel="stylesheet" />
+          <meta name="description" content="Find blueprints for Factorio with advanced search" />
         </Head>
         {!auth.loading && (
           <>
