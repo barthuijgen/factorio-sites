@@ -33,7 +33,7 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-      - run: gsutil -m rsync -r -d ./dist/apps/blueprints/.next/static gs://factorio-blueprints-assets/dev/_next/static
+      - run: gsutil -h "Cache-Control:public, max-age=604800" -m rsync -r -d ./dist/apps/blueprints/.next/static gs://factorio-blueprints-assets/dev/_next/static
       - run: gcloud auth configure-docker --quiet
       - name: Build and push
         uses: docker/build-push-action@v2
