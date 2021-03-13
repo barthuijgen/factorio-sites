@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+// To be included in dependencies, chakra-ui depends on it but has it as peer dependency
+require("framer-motion");
+
 module.exports = {
   poweredByHeader: false,
   reactStrictMode: true,
