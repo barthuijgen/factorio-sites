@@ -42,4 +42,4 @@ jobs:
           file: blueprints.github.Dockerfile
           push: true
           tags: eu.gcr.io/factorio-sites/blueprints:dev
-      - run: gcloud beta run deploy factorio-blueprints-dev --image=eu.gcr.io/factorio-sites/blueprints:dev --platform managed --region=europe-west4
+      - run: gcloud run deploy factorio-blueprints-dev --image=eu.gcr.io/factorio-sites/blueprints:dev --platform managed --region=europe-west4
