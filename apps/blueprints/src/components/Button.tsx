@@ -21,6 +21,7 @@ const StyledButton = styled.button`
   padding: 10px 12px;
   text-align: left;
   color: #000;
+  font-size: 16px;
   font-weight: 600;
   border: none;
   line-height: 100%;

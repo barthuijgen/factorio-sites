@@ -36,15 +36,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ content, label, ...props
   };
 
   return (
-    <Button
-      css={{
-        display: "inline-flex",
-        minWidth: "128px",
-      }}
-      disabled={loading}
-      {...props}
-      onClick={handleClick}
-    >
+    <Button css={{ display: "inline-flex" }} disabled={loading} {...props} onClick={handleClick}>
       <span className="icon" css={{ marginRight: "5px" }}>
         {icon}
       </span>

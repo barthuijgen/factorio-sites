@@ -354,11 +354,15 @@ export const Index: NextPage<IndexProps> = ({
       </Panel>
 
       <Panel className="tags" gridColumn="2" gridRow={isBlueprintBook ? "3" : "2"} title={"Tags"}>
-        {blueprint_page.tags.map((tag) => (
-          <span key={tag} className="tag">
-            {TAGS_BY_KEY[tag].category}: {TAGS_BY_KEY[tag].label}
-          </span>
-        ))}
+        {blueprint_page.tags.length ? (
+          blueprint_page.tags.map((tag) => (
+            <span key={tag} className="tag">
+              {TAGS_BY_KEY[tag].category}: {TAGS_BY_KEY[tag].label}
+            </span>
+          ))
+        ) : (
+          <div>No tags have been added yet</div>
+        )}
       </Panel>
 
       {showEntities && (
