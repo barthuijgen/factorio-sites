@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { MdCheck, MdClose } from "react-icons/md";
-import Button, { ButtonProps } from "../components/Button";
+import { IoMdClipboard } from "react-icons/io";
+import { Button, ButtonProps } from "../components/Button";
 
 const SUCCESS_ICON_DURATION = 2000;
 
@@ -17,7 +18,7 @@ export const CopyButton: React.FC<
       case "error":
         return <MdClose />;
       default:
-        return null;
+        return <IoMdClipboard />;
     }
   }, [iconType]);
 
@@ -29,6 +30,7 @@ export const CopyButton: React.FC<
       setTimeout(() => setIconType(null), SUCCESS_ICON_DURATION);
       setLoading(false);
     } catch (err) {
+      setIconType("error");
       setLoading(false);
     }
   };
@@ -37,14 +39,15 @@ export const CopyButton: React.FC<
     <Button
       css={{
         display: "inline-flex",
-        justifyContent: "space-between",
-        minWidth: 128,
-        textAlign: "center",
+        minWidth: "128px",
       }}
       disabled={loading}
       {...props}
       onClick={handleClick}
     >
+      <span className="icon" css={{ marginRight: "5px" }}>
+        {icon}
+      </span>
       {label || "copy"}
       <span className="icon" css={{ marginLeft: 5 }}>
         {icon}

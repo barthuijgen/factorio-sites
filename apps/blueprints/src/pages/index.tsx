@@ -22,14 +22,39 @@ import {
   Radio,
   Checkbox,
 } from "@chakra-ui/react";
+import { css } from "@emotion/react";
 import { MdSearch } from "react-icons/md";
 import { TAGS } from "@factorio-sites/common-utils";
+
+const pageCss = css({
+  display: "flex",
+});
+const sidebarCss = css({
+  borderRight: "1px solid #b7b7b7",
+  paddingRight: "1rem",
+  marginRight: "1rem",
+  width: "233px",
+});
+const SidebarRow = css({
+  marginTop: "1rem",
+});
+const sidebarCheckbox = css(SidebarRow, {
+  display: "flex",
+  alignItems: "center",
+  p: {
+    marginRight: "1rem",
+    display: "inline-block",
+  },
+});
 
 interface IndexProps {
   totalItems: number;
   currentPage: number;
   totalPages: number;
-  blueprints: BlueprintPage[];
+  blueprints: Pick<
+    BlueprintPage,
+    "id" | "image_hash" | "favorite_count" | "title" | "updated_at"
+  >[];
 }
 
 export const Index: NextPage<IndexProps> = ({
@@ -48,7 +73,6 @@ export const Index: NextPage<IndexProps> = ({
   }, [router.query.q]);
 
   if (!data) return null;
-  console.log(JSON.stringify(router.query, null, 2));
 
   const entityOptions = Object.keys(data.entities).filter(
     (key) => !key.startsWith("factorio-logo") && !key.startsWith("crash-site")
@@ -61,21 +85,10 @@ export const Index: NextPage<IndexProps> = ({
   }));
 
   return (
-    <SimpleGrid columns={1} margin="0.7rem">
+    <SimpleGrid columns={1}>
       <Panel title="Blueprints">
-        <Box
-          css={{
-            display: "flex",
-          }}
-        >
-          <Box
-            css={{
-              borderRight: "1px solid #b7b7b7",
-              paddingRight: "1rem",
-              marginRight: "1rem",
-              width: "250px",
-            }}
-          >
+        <Box css={pageCss}>
+          <Box css={sidebarCss}>
             <Box>
               <InputGroup>
                 <InputLeftElement pointerEvents="none" children={<MdSearch />} />
@@ -93,9 +106,9 @@ export const Index: NextPage<IndexProps> = ({
                 />
               </InputGroup>
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Sort order</Text>
-              <Box css={{ marginRight: "1rem" }}>
+            <Box css={SidebarRow}>
+              <Text>Sort order</Text>
+              <Box>
                 <RadioGroup
                   onChange={(value: string) => router.push(routerQueryToHref({ order: value }))}
                   value={(router.query.order as string) || "date"}
@@ -107,9 +120,9 @@ export const Index: NextPage<IndexProps> = ({
                 </RadioGroup>
               </Box>
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Search mode</Text>
-              <Box css={{ marginRight: "1rem" }}>
+            <Box css={SidebarRow}>
+              <Text>Search mode</Text>
+              <Box>
                 <RadioGroup
                   onChange={(value: string) => router.push(routerQueryToHref({ mode: value }))}
                   value={(router.query.mode as string) || "and"}
@@ -121,8 +134,8 @@ export const Index: NextPage<IndexProps> = ({
                 </RadioGroup>
               </Box>
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Tags</Text>
+            <Box css={SidebarRow}>
+              <Text>Tags</Text>
               <Select
                 options={tagsOptions}
                 value={queryValueAsArray(router.query.tags)}
@@ -130,8 +143,8 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Entities</Text>
+            <Box css={SidebarRow}>
+              <Text>Entities</Text>
               <Select
                 options={entityOptions}
                 value={queryValueAsArray(router.query.entities)}
@@ -139,8 +152,8 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Recipes</Text>
+            <Box css={SidebarRow}>
+              <Text>Recipes</Text>
               <Select
                 options={recipeOptions}
                 value={queryValueAsArray(router.query.recipes)}
@@ -148,8 +161,8 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
-            <Box css={{ marginTop: "1rem" }}>
-              <Text css={{ marginRight: "1rem" }}>Items</Text>
+            <Box css={SidebarRow}>
+              <Text>Items</Text>
               <Select
                 options={itemOptions}
                 value={queryValueAsArray(router.query.items)}
@@ -157,8 +170,8 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
-            <Box css={{ marginTop: "1rem", display: "flex", alignItems: "center" }}>
-              <Text css={{ marginRight: "1rem", display: "inline-block" }}>Snaps to grid</Text>
+            <Box css={sidebarCheckbox}>
+              <Text>Snaps to grid</Text>
               <Checkbox
                 value="true"
                 onChange={(ev) =>
@@ -168,11 +181,13 @@ export const Index: NextPage<IndexProps> = ({
               />
             </Box>
           </Box>
-          <Box>
-            <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px" }}>
-              {blueprints.map((bp) => (
-                <BlueprintLink key={bp.id} blueprint={bp} type="tile" />
-              ))}
+          <Box css={{ display: "flex", flexDirection: "column" }}>
+            <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px", flexGrow: 1 }}>
+              {blueprints.length ? (
+                blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} type="tile" />)
+              ) : (
+                <p css={{ marginTop: "10px" }}>No results found</p>
+              )}
             </Box>
             <Box css={{ marginTop: "15px" }}>
               <Pagination page={currentPage} totalPages={totalPages} totalItems={totalItems} />
@@ -218,8 +233,14 @@ export async function getServerSideProps({ query }: NextPageContext) {
       totalItems: count,
       currentPage: page,
       totalPages: Math.ceil(count / perPage),
-      blueprints: rows,
-    },
+      blueprints: rows.map((row) => ({
+        id: row.id,
+        image_hash: row.image_hash,
+        favorite_count: row.favorite_count,
+        title: row.title,
+        updated_at: row.updated_at,
+      })),
+    } as IndexProps,
   };
 }
 

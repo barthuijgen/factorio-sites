@@ -57,7 +57,7 @@ const formatDate = (datenum: number) => {
 };
 
 interface BlueprintLinkProps {
-  blueprint: BlueprintPage;
+  blueprint: Pick<BlueprintPage, "id" | "title" | "image_hash" | "favorite_count" | "updated_at">;
   editLink?: boolean;
   type: "tile" | "row";
 }

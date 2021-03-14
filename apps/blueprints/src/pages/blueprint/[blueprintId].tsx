@@ -15,7 +15,7 @@ import {
   BlueprintPage,
   BlueprintStringData,
 } from "@factorio-sites/types";
-import { timeLogger } from "@factorio-sites/common-utils";
+import { TAGS_BY_KEY, timeLogger } from "@factorio-sites/common-utils";
 import {
   chakraResponsive,
   ChildTreeBlueprintBookEnriched,
@@ -32,7 +32,7 @@ import { pageHandler } from "../../utils/page-handler";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import Button from "../../components/Button";
+import { Button } from "../../components/Button";
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash" | "label"> }
@@ -60,7 +60,6 @@ const BlueprintStyles = css`
     }
   }
 `;
-
 const StyledTable = styled.table`
   td {
     border: 1px solid #909090;
@@ -171,7 +170,6 @@ export const Index: NextPage<IndexProps> = ({
   return (
     <Grid
       css={BlueprintStyles}
-      margin="0.7rem"
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
       gridRow="1 / span 2"
       gap={6}
@@ -197,8 +195,8 @@ export const Index: NextPage<IndexProps> = ({
                 css={{ display: "inline-flex", float: "right", fontSize: "initial" }}
               >
                 Favorite
-                <span className="icon" css={{ marginLeft: 5 }}>
-                  {isFavorite ? <AiFillHeart color="#fe5a5a" /> : <AiOutlineHeart />}
+                <span className="icon" css={{ marginLeft: "5px" }}>
+                  {isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
                 </span>
               </Button>
             )}
@@ -277,7 +275,11 @@ export const Index: NextPage<IndexProps> = ({
           <StyledHr />
           <StyledDescriptionList>
             <dt>Tags</dt>
-            <dd>{blueprint_page.tags.join(", ") || "-"}</dd>
+            <dd>
+              {blueprint_page.tags
+                .map((tag) => `${TAGS_BY_KEY[tag].category}: ${TAGS_BY_KEY[tag].label}`)
+                .join(", ")}
+            </dd>
           </StyledDescriptionList>
         </Box>
       </Panel>

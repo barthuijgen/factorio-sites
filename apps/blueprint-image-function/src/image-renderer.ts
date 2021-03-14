@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { timeLogger } from "@factorio-sites/common-utils";
 import * as Puppeteer from "puppeteer";
 

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+// To be included in dependencies, chakra-ui depends on it but has it as peer dependency
+require("framer-motion");
+
 module.exports = {
   poweredByHeader: false,
   reactStrictMode: true,
-  images: {
-    domains: ["storage.googleapis.com"],
-  },
   assetPrefix: process.env.ASSET_PREFIX ? process.env.ASSET_PREFIX : "",
   webpack(config, options) {
     const { dev, isServer } = options;

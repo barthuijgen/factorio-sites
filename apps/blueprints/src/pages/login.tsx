@@ -27,99 +27,97 @@ export const Login: NextPage = () => {
   const router = useRouter();
 
   return (
-    <div css={{ margin: "0.7rem" }}>
-      <SimpleGrid columns={1} margin="0 auto" maxWidth="600px">
-        <Panel title="Login">
-          <Formik
-            initialValues={{ email: "", password: "" }}
-            validate={validateLoginForm}
-            onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
-              setStatus("");
+    <SimpleGrid columns={1} margin="0 auto" maxWidth="600px">
+      <Panel title="Login">
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validate={validateLoginForm}
+          onSubmit={async (values, { setSubmitting, setErrors, setStatus }) => {
+            setStatus("");
 
-              const result = await fetch("/api/login", {
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify(values),
-              }).then((res) => res.json());
+            const result = await fetch("/api/login", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify(values),
+            }).then((res) => res.json());
 
-              if (result.status) {
-                setSubmitting(false);
-                setStatus(result.status);
-              } else if (result.errors) {
-                setSubmitting(false);
-                setErrors(result.errors);
-              } else if (result.success) {
-                router.push("/");
-              }
-            }}
-          >
-            {({ isSubmitting, handleSubmit, status }) => (
-              <form onSubmit={handleSubmit}>
-                <Field name="email">
-                  {({ field, meta }: FieldProps) => (
-                    <FormControl
-                      id="email"
-                      isRequired
-                      isInvalid={meta.touched && !!meta.error}
-                      css={FieldStyle}
-                    >
-                      <FormLabel>Email address</FormLabel>
-                      <Input type="text" {...field} />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+            if (result.status) {
+              setSubmitting(false);
+              setStatus(result.status);
+            } else if (result.errors) {
+              setSubmitting(false);
+              setErrors(result.errors);
+            } else if (result.success) {
+              router.push("/");
+            }
+          }}
+        >
+          {({ isSubmitting, handleSubmit, status }) => (
+            <form onSubmit={handleSubmit}>
+              <Field name="email">
+                {({ field, meta }: FieldProps) => (
+                  <FormControl
+                    id="email"
+                    isRequired
+                    isInvalid={meta.touched && !!meta.error}
+                    css={FieldStyle}
+                  >
+                    <FormLabel>Email address</FormLabel>
+                    <Input type="text" {...field} />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
 
-                <Field name="password">
-                  {({ field, meta }: FieldProps) => (
-                    <FormControl
-                      id="password"
-                      isRequired
-                      isInvalid={meta.touched && !!meta.error}
-                      css={FieldStyle}
-                    >
-                      <FormLabel>Password</FormLabel>
-                      <Input type="password" {...field} />
-                      <FormErrorMessage>{meta.error}</FormErrorMessage>
-                    </FormControl>
-                  )}
-                </Field>
+              <Field name="password">
+                {({ field, meta }: FieldProps) => (
+                  <FormControl
+                    id="password"
+                    isRequired
+                    isInvalid={meta.touched && !!meta.error}
+                    css={FieldStyle}
+                  >
+                    <FormLabel>Password</FormLabel>
+                    <Input type="password" {...field} />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
 
-                <Box>
-                  <Box css={{ display: "flex", alignItems: "center" }}>
-                    <Button type="submit" colorScheme="green" disabled={isSubmitting}>
-                      Login
-                    </Button>
-                    {status && <Text css={{ marginLeft: "1rem", color: "red" }}>{status}</Text>}
-                  </Box>
-
-                  <div css={{ float: "right", display: "flex", alignItems: "center" }}>
-                    <Text css={{ marginRight: "1rem" }}>Make an account instead?</Text>
-                    <Link href="/register">
-                      <a>
-                        <Button
-                          type="submit"
-                          colorScheme="grey"
-                          variant="outline"
-                          disabled={isSubmitting}
-                        >
-                          Register
-                        </Button>
-                      </a>
-                    </Link>
-                  </div>
+              <Box>
+                <Box css={{ display: "flex", alignItems: "center" }}>
+                  <Button type="submit" colorScheme="green" disabled={isSubmitting}>
+                    Login
+                  </Button>
+                  {status && <Text css={{ marginLeft: "1rem", color: "red" }}>{status}</Text>}
                 </Box>
-              </form>
-            )}
-          </Formik>
-        </Panel>
-        <Panel title="Or login with" marginTop="1rem">
-          <Box>
-            <SteamLogin />
-          </Box>
-        </Panel>
-      </SimpleGrid>
-    </div>
+
+                <div css={{ float: "right", display: "flex", alignItems: "center" }}>
+                  <Text css={{ marginRight: "1rem" }}>Make an account instead?</Text>
+                  <Link href="/register">
+                    <a>
+                      <Button
+                        type="submit"
+                        colorScheme="grey"
+                        variant="outline"
+                        disabled={isSubmitting}
+                      >
+                        Register
+                      </Button>
+                    </a>
+                  </Link>
+                </div>
+              </Box>
+            </form>
+          )}
+        </Formik>
+      </Panel>
+      <Panel title="Or login with" marginTop="1rem">
+        <Box>
+          <SteamLogin />
+        </Box>
+      </Panel>
+    </SimpleGrid>
   );
 };
 

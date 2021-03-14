@@ -28,7 +28,7 @@ export function encodeBlueprintClient(data: BlueprintStringData): string {
   const string = JSON.stringify(data);
   const encoded = new TextEncoder().encode(string);
   const compresed = pako.deflate(encoded, { level: 9 });
-  return "0" + Base64.encodeU(compresed as any);
+  return "0" + Base64.encodeU(compresed);
 }
 
 export function getFirstBookFromString(string: string): BlueprintString | null {
@@ -38,6 +38,7 @@ export function getFirstBookFromString(string: string): BlueprintString | null {
   else if (data.blueprint_book) {
     const bpData = data.blueprint_book.blueprints.find((bp) => !!bp.blueprint);
     if (bpData) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { index, ...bp } = bpData;
       return bp as BlueprintString;
     }
@@ -87,6 +88,7 @@ export function mergeBlueprintDataAndChildTree(
           parent: child_tree_item,
           bp_data: data.blueprint_book,
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return { ...child, icons: [] } as any;
       }
     }),

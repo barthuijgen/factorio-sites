@@ -1,6 +1,4 @@
-node_modules
 *.Dockerfile
 /credentials
-/dist
 /.vscode
 /.cache
