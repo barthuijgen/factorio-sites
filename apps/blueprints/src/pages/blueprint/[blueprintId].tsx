@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import BBCode from "bbcode-to-react";
-import { Grid, Image, Box } from "@chakra-ui/react";
+import { Image, Box, Grid } from "@chakra-ui/react";
+import styled from "@emotion/styled";
 import {
   getBlueprintBookById,
   getBlueprintById,
@@ -29,24 +30,13 @@ import { CopyButton } from "../../components/CopyButton";
 import { ImageEditor } from "../../components/ImageEditor";
 import { useAuth } from "../../providers/auth";
 import { pageHandler } from "../../utils/page-handler";
-import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { Button } from "../../components/Button";
+import clsx from "clsx";
 
-type Selected =
-  | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash" | "label"> }
-  | { type: "blueprint_book"; data: Pick<BlueprintBook, "id" | "blueprint_hash" | "label"> };
+const StyledBlueptintPage = styled(Grid)`
+  grid-gap: 16px;
 
-interface IndexProps {
-  selected: Selected;
-  blueprint: Blueprint | null;
-  blueprint_book: BlueprintBook | null;
-  blueprint_page: BlueprintPage;
-  favorite: boolean;
-}
-
-const BlueprintStyles = css`
   .title {
     position: relative;
     width: 100%;
@@ -59,38 +49,79 @@ const BlueprintStyles = css`
       text-overflow: ellipsis;
     }
   }
-`;
-const StyledTable = styled.table`
-  td {
-    border: 1px solid #909090;
-  }
-  td:not(.no-padding) {
-    padding: 5px 10px;
+
+  .panel {
+    &.image {
+      height: 564px;
+    }
+    &.child-tree {
+      overflow: hidden;
+      height: 564px;
+      position: relative;
+      .child-tree-wrapper {
+        height: 100%;
+        overflow: auto;
+      }
+    }
+    &.info {
+      dl {
+        display: flex;
+        dt {
+          width: 65%;
+          font-weight: 600;
+        }
+        dd {
+          width: 35%;
+          text-align: right;
+        }
+      }
+
+      hr {
+        margin-left: -64px;
+        margin-right: -64px;
+        border: none;
+        height: 2px;
+        margin: 12px auto;
+        box-shadow: inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e;
+      }
+    }
+
+    &.tags {
+      text-align: left;
+
+      .tag {
+        display: inline-block;
+        margin: 3px;
+        padding: 0 3px;
+        background: #313131;
+        border-radius: 3px;
+      }
+    }
+
+    &.entities table {
+      width: 100%;
+
+      td {
+        border: 1px solid #909090;
+      }
+      td:not(.no-padding) {
+        padding: 5px 10px;
+      }
+    }
   }
 `;
 
-const StyledDescriptionList = styled.dl`
-  display: flex;
+type Selected =
+  | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash" | "label"> }
+  | { type: "blueprint_book"; data: Pick<BlueprintBook, "id" | "blueprint_hash" | "label"> };
 
-  dt {
-    width: 65%;
-    font-weight: 600;
-  }
-
-  dd {
-    width: 35%;
-    text-align: right;
-  }
-`;
-
-const StyledHr = styled.hr`
-  margin-left: -64px;
-  margin-right: -64px;
-  border: none;
-  height: 2px;
-  margin: 12px auto;
-  box-shadow: inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e;
-`;
+interface IndexProps {
+  selected: Selected;
+  blueprint: Blueprint | null;
+  blueprint_book: BlueprintBook | null;
+  blueprint_page: BlueprintPage;
+  favorite: boolean;
+}
 
 export const Index: NextPage<IndexProps> = ({
   selected,
@@ -107,8 +138,10 @@ export const Index: NextPage<IndexProps> = ({
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
   const [showDetails, setShowDetails] = useState<"string" | "json" | "none">("none");
   const [isFavorite, setIsFavorite] = useState(favorite);
-
   const selectedHash = selected.data.blueprint_hash;
+  const isBlueprintBook = Boolean(blueprint_book);
+  // const isBlueprintBookChild = isBlueprintBook && selected.type === "blueprint";
+  const showEntities = selected.type === "blueprint" && selectedData?.blueprint;
 
   useEffect(() => {
     const hash = blueprint_book ? blueprint_book.blueprint_hash : blueprint?.blueprint_hash;
@@ -168,15 +201,13 @@ export const Index: NextPage<IndexProps> = ({
   };
 
   return (
-    <Grid
-      css={BlueprintStyles}
+    <StyledBlueptintPage
+      className={clsx({ "bp-book": isBlueprintBook })}
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
-      gridRow="1 / span 2"
-      gap={6}
     >
-      {blueprint_book && bookChildTreeData && (
-        <Panel gridColumn="1">
-          <div css={{ maxHeight: "360px", overflow: "auto" }}>
+      {isBlueprintBook && bookChildTreeData && (
+        <Panel className="child-tree" gridColumn="1" gridRow="1">
+          <div className="child-tree-wrapper">
             <BookChildTree
               blueprint_book={bookChildTreeData}
               base_url={`/blueprint/${blueprint_page.id}`}
@@ -185,7 +216,28 @@ export const Index: NextPage<IndexProps> = ({
           </div>
         </Panel>
       )}
+
       <Panel
+        className="image"
+        gridColumn="2"
+        title={
+          <>
+            <span>Image</span>
+            <img
+              src="/fbe.svg"
+              alt="Factorio blueprint editor"
+              css={{ height: "24px", marginLeft: "10px" }}
+            />
+          </>
+        }
+      >
+        {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>}
+      </Panel>
+
+      <Panel
+        className="description"
+        gridColumn="1"
+        gridRow={isBlueprintBook ? "2 / span 2" : "1"}
         title={
           <div className="title">
             <span className="text">{blueprint_page.title}</span>
@@ -219,33 +271,13 @@ export const Index: NextPage<IndexProps> = ({
             )}
           </div>
         }
-        gridColumn="1"
       >
         <Markdown>{blueprint_page.description_markdown}</Markdown>
       </Panel>
 
-      <Panel
-        title={
-          <>
-            <span>Image</span>
-            <img
-              src="/fbe.svg"
-              alt="Factorio blueprint editor"
-              css={{ height: "24px", marginLeft: "10px" }}
-            />
-          </>
-        }
-        gridColumn={chakraResponsive({
-          mobile: "1",
-          desktop: "2",
-        })}
-        gridRow={`1 / span ${selected.type === "blueprint_book" ? 2 : 3}`}
-      >
-        {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>}
-      </Panel>
-      <Panel title={"Info"}>
+      <Panel className="info" gridColumn={isBlueprintBook ? "2" : "1"} gridRow="2" title={"Info"}>
         <Box>
-          <StyledDescriptionList>
+          <dl>
             <dt>User:</dt>
             <dd>
               {blueprint_page.user ? (
@@ -256,48 +288,49 @@ export const Index: NextPage<IndexProps> = ({
                 "-"
               )}
             </dd>
-          </StyledDescriptionList>
-          <StyledHr />
-          <StyledDescriptionList>
+          </dl>
+          <hr />
+          <dl>
             <dt>Last updated:</dt>
             <dd>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</dd>
-          </StyledDescriptionList>
-          <StyledHr />
-          <StyledDescriptionList>
+          </dl>
+          <hr />
+          <dl>
             <dt>Created:</dt>
             <dd>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</dd>
-          </StyledDescriptionList>
-          <StyledHr />
-          <StyledDescriptionList>
+          </dl>
+          <hr />
+          <dl>
             <dt>Favorites:</dt>
             <dd>{blueprint_page.favorite_count || "0"}</dd>
-          </StyledDescriptionList>
-          <StyledHr />
-          <StyledDescriptionList>
-            <dt>Tags</dt>
-            <dd>
-              {blueprint_page.tags
-                .map((tag) => `${TAGS_BY_KEY[tag].category}: ${TAGS_BY_KEY[tag].label}`)
-                .join(", ")}
-            </dd>
-          </StyledDescriptionList>
+          </dl>
         </Box>
       </Panel>
-      {selected.type === "blueprint" && selectedData?.blueprint && (
+
+      <Panel className="tags" gridColumn="2" gridRow={isBlueprintBook ? "3" : "2"} title={"Tags"}>
+        {blueprint_page.tags.map((tag) => (
+          <span key={tag} className="tag">
+            {TAGS_BY_KEY[tag].category}: {TAGS_BY_KEY[tag].label}
+          </span>
+        ))}
+      </Panel>
+
+      {showEntities && (
         <Panel
-          gridColumn="1"
+          className="entities"
+          gridColumn="1 / span 2"
           title={
             <span>
               Entities for{" "}
-              {selectedData.blueprint.label
+              {selectedData?.blueprint?.label
                 ? BBCode.toReact(selectedData.blueprint.label)
                 : "blueprint"}
             </span>
           }
         >
-          <StyledTable>
+          <table>
             <tbody>
-              {selectedData.blueprint.entities &&
+              {selectedData?.blueprint?.entities &&
                 Object.entries(
                   selectedData.blueprint.entities.reduce<Record<string, number>>(
                     (entities, entity) => {
@@ -313,7 +346,7 @@ export const Index: NextPage<IndexProps> = ({
                 )
                   .sort((a, b) => b[1] - a[1])
                   .map(([entry_name, entry]) => (
-                    <tr key={entry_name} css={{}}>
+                    <tr key={entry_name}>
                       <td className="no-padding">
                         <Image
                           alt={entry_name.replace(/-/g, " ")}
@@ -328,16 +361,14 @@ export const Index: NextPage<IndexProps> = ({
                     </tr>
                   ))}
             </tbody>
-          </StyledTable>
+          </table>
         </Panel>
       )}
 
       <Panel
+        className="bp-strings"
+        gridColumn="1 / span 2"
         title={`data for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
-        gridColumn={chakraResponsive({
-          mobile: "1",
-          desktop: selected.type === "blueprint" && selectedData?.blueprint ? "2" : "1 / span 2",
-        })}
       >
         <Box>
           <Button
@@ -385,7 +416,7 @@ export const Index: NextPage<IndexProps> = ({
           )}
         </Box>
       </Panel>
-    </Grid>
+    </StyledBlueptintPage>
   );
 };
 
