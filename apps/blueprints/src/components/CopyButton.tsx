@@ -5,9 +5,9 @@ import { Button, ButtonProps } from "../components/Button";
 
 const SUCCESS_ICON_DURATION = 2000;
 
-export const CopyButton: React.FC<
-  Omit<ButtonProps, "children"> & { content: string; label?: string }
-> = ({ content, label, ...props }) => {
+export type CopyButtonProps = Omit<ButtonProps, "children"> & { content: string; label?: string };
+
+export const CopyButton: React.FC<CopyButtonProps> = ({ content, label, ...props }) => {
   const [loading, setLoading] = useState(false);
   const [iconType, setIconType] = useState<"success" | "error" | null>(null);
 

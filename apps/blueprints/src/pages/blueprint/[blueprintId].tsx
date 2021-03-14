@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import BBCode from "bbcode-to-react";
-import { Grid, Image, Box } from "@chakra-ui/react";
+import { Image, Box, Grid } from "@chakra-ui/react";
+import styled from "@emotion/styled";
+import clsx from "clsx";
 import {
   getBlueprintBookById,
   getBlueprintById,
@@ -29,10 +31,92 @@ import { CopyButton } from "../../components/CopyButton";
 import { ImageEditor } from "../../components/ImageEditor";
 import { useAuth } from "../../providers/auth";
 import { pageHandler } from "../../utils/page-handler";
-import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { Button } from "../../components/Button";
+import { useUrl } from "../../hooks/url.hook";
+
+const StyledBlueptintPage = styled(Grid)`
+  grid-gap: 16px;
+
+  .title {
+    position: relative;
+    width: 100%;
+
+    .text {
+      white-space: nowrap;
+      width: calc(100% - 120px);
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .panel {
+    &.image {
+      height: 579px;
+    }
+    &.child-tree {
+      overflow: hidden;
+      height: 579px;
+      position: relative;
+      .child-tree-wrapper {
+        height: 483px;
+        overflow: auto;
+      }
+    }
+    &.info {
+      dl {
+        display: flex;
+        dt {
+          width: 65%;
+          font-weight: 600;
+        }
+        dd {
+          width: 35%;
+          text-align: right;
+        }
+      }
+
+      hr {
+        margin-left: -64px;
+        margin-right: -64px;
+        border: none;
+        height: 2px;
+        margin: 12px auto;
+        box-shadow: inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e;
+      }
+    }
+
+    &.tags {
+      text-align: left;
+
+      .tag {
+        display: inline-block;
+        margin: 3px;
+        padding: 0 3px;
+        background: #313131;
+        border-radius: 3px;
+      }
+    }
+
+    &.entities table {
+      td {
+        border: 1px solid #909090;
+      }
+      td:not(.no-padding) {
+        padding: 5px 10px;
+      }
+    }
+
+    .description {
+      max-height: 600px;
+    }
+  }
+`;
+
+const StyledMarkdown = styled(Markdown)`
+  max-height: 600px;
+`;
 
 type Selected =
   | { type: "blueprint"; data: Pick<Blueprint, "id" | "blueprint_hash" | "image_hash" | "label"> }
@@ -46,29 +130,6 @@ interface IndexProps {
   favorite: boolean;
 }
 
-const BlueprintStyles = css`
-  .title {
-    position: relative;
-    width: 100%;
-
-    .text {
-      white-space: nowrap;
-      width: calc(100% - 120px);
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-`;
-const StyledTable = styled.table`
-  td {
-    border: 1px solid #909090;
-  }
-  td:not(.no-padding) {
-    padding: 5px 10px;
-  }
-`;
-
 export const Index: NextPage<IndexProps> = ({
   selected,
   blueprint,
@@ -77,6 +138,7 @@ export const Index: NextPage<IndexProps> = ({
   favorite,
 }) => {
   const auth = useAuth();
+  const url = useUrl();
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
   const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
     null
@@ -84,8 +146,10 @@ export const Index: NextPage<IndexProps> = ({
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
   const [showDetails, setShowDetails] = useState<"string" | "json" | "none">("none");
   const [isFavorite, setIsFavorite] = useState(favorite);
-
   const selectedHash = selected.data.blueprint_hash;
+  const isBlueprintBook = Boolean(blueprint_book);
+  // const isBlueprintBookChild = isBlueprintBook && selected.type === "blueprint";
+  const showEntities = selected.type === "blueprint" && selectedData?.blueprint;
 
   useEffect(() => {
     const hash = blueprint_book ? blueprint_book.blueprint_hash : blueprint?.blueprint_hash;
@@ -145,16 +209,85 @@ export const Index: NextPage<IndexProps> = ({
   };
 
   return (
-    <Grid
-      css={BlueprintStyles}
+    <StyledBlueptintPage
+      className={clsx({ "bp-book": isBlueprintBook })}
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}
-      gap={6}
     >
+      {isBlueprintBook && (
+        <Panel
+          className="child-tree"
+          title={
+            <div className="title">
+              <span className="text">{blueprint_page.title}</span>
+              {auth && (
+                <Button
+                  onClick={onClickFavorite}
+                  css={{ display: "inline-flex", float: "right", fontSize: "initial" }}
+                >
+                  Favorite
+                  <span className="icon" css={{ marginLeft: "5px" }}>
+                    {isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
+                  </span>
+                </Button>
+              )}
+            </div>
+          }
+          gridColumn="1"
+          gridRow="1"
+        >
+          {bookChildTreeData && (
+            <div className="child-tree-wrapper">
+              <BookChildTree
+                blueprint_book={bookChildTreeData}
+                base_url={`/blueprint/${blueprint_page.id}`}
+                selected_id={selected.data.id}
+              />
+            </div>
+          )}
+        </Panel>
+      )}
+
       <Panel
+        className="image"
+        gridColumn="2"
         title={
           <div className="title">
-            <span className="text">{blueprint_page.title}</span>
-            {auth && (
+            <span>Image</span>
+            <img
+              src="/fbe.svg"
+              alt="Factorio blueprint editor"
+              css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
+            />
+            <Box css={{ display: "inline-block", float: "right" }}>
+              {selectedBlueprintString && (
+                <CopyButton
+                  primary
+                  css={{ marginRight: "1rem" }}
+                  label="Copy Blueprint"
+                  content={selectedBlueprintString}
+                />
+              )}
+              {selected.data.blueprint_hash && url && (
+                <CopyButton
+                  label="Copy URL"
+                  content={`${url.origin}/api/string/${selected.data.blueprint_hash}`}
+                />
+              )}
+            </Box>
+          </div>
+        }
+      >
+        {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>}
+      </Panel>
+
+      <Panel
+        className="description"
+        gridColumn="1"
+        gridRow={isBlueprintBook ? "2 / span 2" : "1"}
+        title={
+          <div className="title">
+            <span className="text">{isBlueprintBook ? "Description" : blueprint_page.title}</span>
+            {auth && !isBlueprintBook && (
               <Button
                 onClick={onClickFavorite}
                 css={{ display: "inline-flex", float: "right", fontSize: "initial" }}
@@ -167,115 +300,83 @@ export const Index: NextPage<IndexProps> = ({
             )}
           </div>
         }
-        gridColumn="1"
+        // bottom={
+        //   <div css={{ display: "flex", justifyContent: "flex-end" }}>
+        //     {selectedBlueprintString && (
+        //       <CopyButton
+        //         css={{ marginRight: 16 }}
+        //         label="Copy Blueprint"
+        //         content={selectedBlueprintString}
+        //       />
+        //     )}
+        //     {selected.data.blueprint_hash && typeof window !== "undefined" && (
+        //       <CopyButton
+        //         label="Copy URL"
+        //         content={`${window.location.origin}/api/string/${selected.data.blueprint_hash}`}
+        //       />
+        //     )}
+        //   </div>
+        // }
       >
-        {blueprint_book && bookChildTreeData ? (
-          <div css={{ maxHeight: "400px", overflow: "auto" }}>
-            <BookChildTree
-              blueprint_book={bookChildTreeData}
-              base_url={`/blueprint/${blueprint_page.id}`}
-              selected_id={selected.data.id}
-            />
-          </div>
-        ) : blueprint ? (
-          <Markdown>{blueprint_page.description_markdown}</Markdown>
-        ) : null}
+        <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
       </Panel>
-      <Panel title={"Info"}>
-        <Box css={{ display: "flex" }}>
-          <Box>
-            <StyledTable>
-              <tbody>
-                <tr>
-                  <td>User</td>
-                  <td>
-                    {blueprint_page.user ? (
-                      <Link href={`/?user=${blueprint_page.user?.id}`}>
-                        <a>{blueprint_page.user?.username}</a>
-                      </Link>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Tags</td>
-                  <td>
-                    {blueprint_page.tags
-                      .map((tag) => `${TAGS_BY_KEY[tag].category}: ${TAGS_BY_KEY[tag].label}`)
-                      .join(", ")}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Last updated</td>
-                  <td>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</td>
-                </tr>
-                <tr>
-                  <td>Created</td>
-                  <td>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</td>
-                </tr>
-                <tr>
-                  <td>Favorites</td>
-                  <td>{blueprint_page.favorite_count || "0"}</td>
-                </tr>
-              </tbody>
-            </StyledTable>
-          </Box>
-          <Box primary css={{ marginLeft: "1rem" }}>
-            {selectedBlueprintString && (
-              <CopyButton primary label="Copy Blueprint" content={selectedBlueprintString} />
-            )}
-          </Box>
-          <Box css={{ marginLeft: "1rem" }}>
-            {selected.data.blueprint_hash && typeof window !== "undefined" && (
-              <CopyButton
-                label="Copy URL"
-                content={`${window.location.origin}/api/string/${selected.data.blueprint_hash}`}
-              />
-            )}
-          </Box>
+
+      <Panel className="info" gridColumn={isBlueprintBook ? "2" : "1"} gridRow="2" title={"Info"}>
+        <Box>
+          <dl>
+            <dt>User:</dt>
+            <dd>
+              {blueprint_page.user ? (
+                <Link href={`/?user=${blueprint_page.user?.id}`}>
+                  <a>{blueprint_page.user?.username}</a>
+                </Link>
+              ) : (
+                "-"
+              )}
+            </dd>
+          </dl>
+          <hr />
+          <dl>
+            <dt>Last updated:</dt>
+            <dd>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</dd>
+          </dl>
+          <hr />
+          <dl>
+            <dt>Created:</dt>
+            <dd>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</dd>
+          </dl>
+          <hr />
+          <dl>
+            <dt>Favorites:</dt>
+            <dd>{blueprint_page.favorite_count || "0"}</dd>
+          </dl>
         </Box>
       </Panel>
-      <Panel
-        title={
-          <>
-            <span>Image</span>
-            <img
-              src="/fbe.svg"
-              alt="Factorio blueprint editor"
-              css={{ height: "24px", marginLeft: "10px" }}
-            />
-          </>
-        }
-        gridColumn={chakraResponsive({ mobile: "1", desktop: "2" })}
-        gridRow={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
-      >
-        {/* {renderImage()} */}
-        {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>}
+
+      <Panel className="tags" gridColumn="2" gridRow={isBlueprintBook ? "3" : "2"} title={"Tags"}>
+        {blueprint_page.tags.map((tag) => (
+          <span key={tag} className="tag">
+            {TAGS_BY_KEY[tag].category}: {TAGS_BY_KEY[tag].label}
+          </span>
+        ))}
       </Panel>
-      {blueprint_book && (
+
+      {showEntities && (
         <Panel
-          title="Description"
-          gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
-        >
-          <Markdown>{blueprint_page.description_markdown}</Markdown>
-        </Panel>
-      )}
-      {selected.type === "blueprint" && selectedData?.blueprint && (
-        <Panel
+          className="entities"
+          gridColumn="1 / span 2"
           title={
             <span>
               Entities for{" "}
-              {selectedData.blueprint.label
+              {selectedData?.blueprint?.label
                 ? BBCode.toReact(selectedData.blueprint.label)
                 : "blueprint"}
             </span>
           }
-          gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         >
-          <StyledTable>
+          <table>
             <tbody>
-              {selectedData.blueprint.entities &&
+              {selectedData?.blueprint?.entities &&
                 Object.entries(
                   selectedData.blueprint.entities.reduce<Record<string, number>>(
                     (entities, entity) => {
@@ -291,7 +392,7 @@ export const Index: NextPage<IndexProps> = ({
                 )
                   .sort((a, b) => b[1] - a[1])
                   .map(([entry_name, entry]) => (
-                    <tr key={entry_name} css={{}}>
+                    <tr key={entry_name}>
                       <td className="no-padding">
                         <Image
                           alt={entry_name.replace(/-/g, " ")}
@@ -306,12 +407,14 @@ export const Index: NextPage<IndexProps> = ({
                     </tr>
                   ))}
             </tbody>
-          </StyledTable>
+          </table>
         </Panel>
       )}
+
       <Panel
+        className="bp-strings"
+        gridColumn="1 / span 2"
         title={`data for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
-        gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
       >
         <Box>
           <Button
@@ -359,7 +462,7 @@ export const Index: NextPage<IndexProps> = ({
           )}
         </Box>
       </Panel>
-    </Grid>
+    </StyledBlueptintPage>
   );
 };
 
