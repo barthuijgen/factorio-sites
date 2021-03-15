@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import BBCode from "bbcode-to-react";
 import { Image, Box, Grid } from "@chakra-ui/react";
 import styled from "@emotion/styled";
@@ -9,7 +8,6 @@ import {
   BlueprintPage,
   BlueprintStringData,
 } from "@factorio-sites/types";
-import { TAGS_BY_KEY } from "@factorio-sites/common-utils";
 import {
   chakraResponsive,
   ChildTreeBlueprintBookEnriched,
@@ -21,9 +19,12 @@ import { Markdown } from "../../components/Markdown";
 import { BookChildTree } from "../../components/BookChildTree";
 import { CopyButton } from "../../components/CopyButton";
 import { ImageEditor } from "../../components/ImageEditor";
-import { Button } from "../../components/Button";
 import { useUrl } from "../../hooks/url.hook";
 import { FavoriteButton } from "./FavoriteButton";
+import { BlueprintData } from "./BlueprintData";
+import { BlueprintInfo } from "./BlueprintInfo";
+import { BlueprintTags } from "./BlueprintTags";
+import { BlueprintEntities } from "./BlueprintEntities";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -54,49 +55,6 @@ const StyledBlueptintPage = styled(Grid)`
       .child-tree-wrapper {
         height: 483px;
         overflow: auto;
-      }
-    }
-    &.info {
-      dl {
-        display: flex;
-        dt {
-          width: 65%;
-          font-weight: 600;
-        }
-        dd {
-          width: 35%;
-          text-align: right;
-        }
-      }
-
-      hr {
-        margin-left: -64px;
-        margin-right: -64px;
-        border: none;
-        height: 2px;
-        margin: 12px auto;
-        box-shadow: inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e;
-      }
-    }
-
-    &.tags {
-      text-align: left;
-
-      .tag {
-        display: inline-block;
-        margin: 3px;
-        padding: 0 3px;
-        background: #313131;
-        border-radius: 3px;
-      }
-    }
-
-    &.entities table {
-      td {
-        border: 1px solid #909090;
-      }
-      td:not(.no-padding) {
-        padding: 5px 10px;
       }
     }
 
@@ -133,7 +91,6 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
     null
   );
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
-  const [showDetails, setShowDetails] = useState<"string" | "json" | "none">("none");
   const selectedHash = selected.data.blueprint_hash;
   const showEntities = selected.type === "blueprint" && selectedData?.blueprint;
 
@@ -161,7 +118,6 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
     fetch(`/api/string/${selectedHash}`)
       .then((res) => res.text())
       .then((string) => {
-        setShowDetails("none");
         setSelectedBlueprintString(string);
         if (selected.type === "blueprint") {
           const data = parseBlueprintStringClient(string);
@@ -173,6 +129,15 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
       .catch((reason) => console.error(reason));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHash]);
+
+  const onRequestData = () => {
+    fetch(`/api/string/${selectedHash}`)
+      .then((res) => res.text())
+      .then((string) => {
+        const data = parseBlueprintStringClient(string);
+        setSelectedData(data);
+      });
+  };
 
   return (
     <StyledBlueptintPage
@@ -248,48 +213,12 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
       </Panel>
 
-      <Panel className="info" gridColumn="2" gridRow="2" title={"Info"}>
-        <Box>
-          <dl>
-            <dt>User:</dt>
-            <dd>
-              {blueprint_page.user ? (
-                <Link href={`/?user=${blueprint_page.user?.id}`}>
-                  <a>{blueprint_page.user?.username}</a>
-                </Link>
-              ) : (
-                "-"
-              )}
-            </dd>
-          </dl>
-          <hr />
-          <dl>
-            <dt>Last updated:</dt>
-            <dd>{new Date(blueprint_page.updated_at * 1000).toLocaleDateString()}</dd>
-          </dl>
-          <hr />
-          <dl>
-            <dt>Created:</dt>
-            <dd>{new Date(blueprint_page.created_at * 1000).toLocaleDateString()}</dd>
-          </dl>
-          <hr />
-          <dl>
-            <dt>Favorites:</dt>
-            <dd>{blueprint_page.favorite_count || "0"}</dd>
-          </dl>
-        </Box>
+      <Panel title="Info" gridColumn="2" gridRow="2">
+        <BlueprintInfo blueprint_page={blueprint_page} />
       </Panel>
 
-      <Panel className="tags" gridColumn="2" gridRow={"3"} title={"Tags"}>
-        {blueprint_page.tags.length ? (
-          blueprint_page.tags.map((tag) => (
-            <span key={tag} className="tag">
-              {TAGS_BY_KEY[tag].category}: {TAGS_BY_KEY[tag].label}
-            </span>
-          ))
-        ) : (
-          <div>No tags have been added yet</div>
-        )}
+      <Panel title="Tags" gridColumn="2" gridRow={"3"}>
+        <BlueprintTags blueprint_page={blueprint_page} />
       </Panel>
 
       {showEntities && (
@@ -305,40 +234,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
             </span>
           }
         >
-          <table>
-            <tbody>
-              {selectedData?.blueprint?.entities &&
-                Object.entries(
-                  selectedData.blueprint.entities.reduce<Record<string, number>>(
-                    (entities, entity) => {
-                      if (entities[entity.name]) {
-                        entities[entity.name]++;
-                      } else {
-                        entities[entity.name] = 1;
-                      }
-                      return entities;
-                    },
-                    {}
-                  )
-                )
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([entry_name, entry]) => (
-                    <tr key={entry_name}>
-                      <td className="no-padding">
-                        <Image
-                          alt={entry_name.replace(/-/g, " ")}
-                          src={`https://factorioprints.com/icons/${entry_name}.png`}
-                          fallbackSrc="https://storage.googleapis.com/factorio-blueprints-assets/error-icon.png"
-                          width="32px"
-                          height="32px"
-                        />
-                      </td>
-                      <td>{entry_name}</td>
-                      <td>{entry}</td>
-                    </tr>
-                  ))}
-            </tbody>
-          </table>
+          {selectedData && <BlueprintEntities data={selectedData} />}
         </Panel>
       )}
 
@@ -347,51 +243,13 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         gridColumn="1 / span 2"
         title={`data for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
       >
-        <Box>
-          <Button
-            onClick={() => {
-              setShowDetails(showDetails === "string" ? "none" : "string");
-            }}
-          >
-            {showDetails === "string" ? "Hide" : "Show"} string
-          </Button>
-          <Button
-            css={{ marginLeft: "1rem" }}
-            onClick={() => {
-              setShowDetails(showDetails === "json" ? "none" : "json");
-              if (!selectedData) {
-                fetch(`/api/string/${selectedHash}`)
-                  .then((res) => res.text())
-                  .then((string) => {
-                    const data = parseBlueprintStringClient(string);
-                    setSelectedData(data);
-                  });
-              }
-            }}
-          >
-            {showDetails === "json" ? "Hide" : "Show"} json
-          </Button>
-        </Box>
-        <Box css={{ marginTop: "1rem" }}>
-          {showDetails === "string" && (
-            <textarea
-              value={selectedBlueprintString || "Loading..."}
-              readOnly
-              css={{
-                width: "100%",
-                height: "100px",
-                resize: "none",
-                color: "#fff",
-                backgroundColor: "#414040",
-              }}
-            />
-          )}
-          {showDetails === "json" && (
-            <pre css={{ maxHeight: "500px", overflowY: "scroll" }}>
-              {JSON.stringify(selectedData, null, 2)}
-            </pre>
-          )}
-        </Box>
+        {selectedBlueprintString && (
+          <BlueprintData
+            string={selectedBlueprintString}
+            data={selectedData}
+            onRequestData={onRequestData}
+          />
+        )}
       </Panel>
     </StyledBlueptintPage>
   );
