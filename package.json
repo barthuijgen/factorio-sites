@@ -45,7 +45,7 @@
     "cookie": "0.4.1",
     "document-register-element": "1.14.10",
     "formik": "2.2.6",
-    "framer-motion": "3.6.7",
+    "framer-motion": "3.10.5",
     "next": "10.0.7",
     "nprogress": "0.2.0",
     "openid": "2.0.7",
