@@ -2,3 +2,4 @@
 /credentials
 /.vscode
 /.cache
+/node_modules

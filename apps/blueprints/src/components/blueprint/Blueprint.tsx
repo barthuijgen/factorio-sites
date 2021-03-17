@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import BBCode from "bbcode-to-react";
 import { Grid, Box } from "@chakra-ui/react";
 import { Blueprint as IBlueprint, BlueprintPage, BlueprintStringData } from "@factorio-sites/types";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
@@ -14,6 +13,7 @@ import { BlueprintData } from "./BlueprintData";
 import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
+import { FactorioCode } from "../FactorioCode";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -154,7 +154,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         title={
           <span>
             Components for{" "}
-            {data?.blueprint?.label ? BBCode.toReact(data.blueprint.label) : "blueprint"}
+            {data?.blueprint?.label ? <FactorioCode code={data.blueprint.label} /> : "blueprint"}
           </span>
         }
       >

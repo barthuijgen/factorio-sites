@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import BBCode from "bbcode-to-react";
 import { Box, Grid } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import {
@@ -25,23 +24,17 @@ import { BlueprintData } from "./BlueprintData";
 import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
+import { FactorioCode } from "../FactorioCode";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
 
-  .title {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-
-    .text {
-      white-space: nowrap;
-      width: calc(100% - 120px);
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .title .text {
+    white-space: nowrap;
+    width: calc(100% - 120px);
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .panel {
@@ -143,10 +136,10 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
       <Panel
         className="child-tree"
         title={
-          <div className="title">
+          <>
             <span className="text">{blueprint_page.title}</span>
             <FavoriteButton is_favorite={favorite} blueprint_page_id={blueprint_page.id} />
-          </div>
+          </>
         }
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         gridRow={chakraResponsive({ mobile: "2", desktop: "1" })}
@@ -167,7 +160,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "3 / span 2" })}
         gridRow={chakraResponsive({ mobile: "1", desktop: "1" })}
         title={
-          <div className="title">
+          <>
             <span>Image</span>
             <img
               src="/fbe.svg"
@@ -190,7 +183,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
                 />
               )}
             </Box>
-          </div>
+          </>
         }
       >
         {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>}
@@ -201,10 +194,10 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "2 / span 2" })}
         title={
-          <div className="title">
+          <>
             <span className="text">Description </span>
             <FavoriteButton is_favorite={favorite} blueprint_page_id={blueprint_page.id} />
-          </div>
+          </>
         }
       >
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
@@ -233,9 +226,11 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
           title={
             <span>
               Components for{" "}
-              {selectedData?.blueprint?.label
-                ? BBCode.toReact(selectedData.blueprint.label)
-                : "blueprint"}
+              {selectedData?.blueprint?.label ? (
+                <FactorioCode code={selectedData.blueprint.label} />
+              ) : (
+                "blueprint"
+              )}
             </span>
           }
         >

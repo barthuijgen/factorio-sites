@@ -4071,13 +4071,6 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/bbcode-to-react@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@types/bbcode-to-react/-/bbcode-to-react-0.2.0.tgz#7aa9e5c8ba8fea5b1e4968b96413aab426b0c4b7"
-  integrity sha512-qcrZwvQgwiEdZbola1LrGghV7fGxHQCM09Pa/cRVmjpD3dOkE8N/H2S9kuJf1O8wg7AM1J80USyi3pbr1Ra0uQ==
-  dependencies:
-    "@types/react" "*"
-
 "@types/bcrypt@3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/bcrypt/-/bcrypt-3.0.0.tgz#851489a9065a067cb7f3c9cbe4ce9bed8bba0876"
@@ -5315,11 +5308,6 @@ batch@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha1-3DQxT05nkxgJP8dgJyUl+UvyXBY=
-
-bbcode-to-react@0.2.9:
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/bbcode-to-react/-/bbcode-to-react-0.2.9.tgz#75ec5358c78e9c2a486a62274bb5f4695fb99e60"
-  integrity sha512-ZuqVg44xi0nqMbZJMB/j1WxVvDnpfQYHLGFdZW8FQfW7uoCMyF48iEUVbYontcdrD5uZTcqMs3qbGeIa/bCi+g==
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
