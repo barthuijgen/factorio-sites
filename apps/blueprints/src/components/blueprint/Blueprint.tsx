@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BBCode from "bbcode-to-react";
-import { Grid, Image, Box } from "@chakra-ui/react";
+import { Grid, Box } from "@chakra-ui/react";
 import { Blueprint as IBlueprint, BlueprintPage, BlueprintStringData } from "@factorio-sites/types";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
@@ -34,28 +34,12 @@ const StyledBlueptintPage = styled(Grid)`
   }
 
   .panel {
-    &.image {
-      height: 579px;
-    }
     &.child-tree {
       overflow: hidden;
-      height: 579px;
       position: relative;
       .child-tree-wrapper {
         height: 483px;
         overflow: auto;
-      }
-    }
-
-    &.tags {
-      text-align: left;
-
-      .tag {
-        display: inline-block;
-        margin: 3px;
-        padding: 0 3px;
-        background: #313131;
-        border-radius: 3px;
       }
     }
 
@@ -97,10 +81,13 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
   }, []);
 
   return (
-    <StyledBlueptintPage templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr" })}>
+    <StyledBlueptintPage
+      templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr 1fr 1fr" })}
+    >
       <Panel
         className="image"
-        gridColumn="2"
+        gridColumn={chakraResponsive({ mobile: "1", desktop: "3 / span 2" })}
+        gridRow="1"
         title={
           <div className="title">
             <span>Image</span>
@@ -133,8 +120,8 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
 
       <Panel
         className="description"
-        gridColumn="1"
-        gridRow="1"
+        gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
+        gridRow={chakraResponsive({ mobile: null, desktop: "1" })}
         title={
           <div className="title">
             <span className="text">{blueprint_page.title}</span>
@@ -145,20 +132,28 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
       </Panel>
 
-      <Panel title="Info" gridColumn="1" gridRow="2">
+      <Panel
+        title="Info"
+        gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
+        gridRow={chakraResponsive({ mobile: null, desktop: "2" })}
+      >
         <BlueprintInfo blueprint_page={blueprint_page} />
       </Panel>
 
-      <Panel gridColumn="2" gridRow="2" title="Tags">
+      <Panel
+        title="Tags"
+        gridColumn={chakraResponsive({ mobile: "1", desktop: "3" })}
+        gridRow={chakraResponsive({ mobile: null, desktop: "2" })}
+      >
         <BlueprintTags blueprint_page={blueprint_page} />
       </Panel>
 
       <Panel
         className="entities"
-        gridColumn="1 / span 2"
+        gridColumn={chakraResponsive({ mobile: "1", desktop: "4" })}
         title={
           <span>
-            Entities for{" "}
+            Components for{" "}
             {data?.blueprint?.label ? BBCode.toReact(data.blueprint.label) : "blueprint"}
           </span>
         }
@@ -166,7 +161,11 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         {data && <BlueprintEntities data={data} />}
       </Panel>
 
-      <Panel className="bp-strings" gridColumn="1 / span 2" title="Blueprint data">
+      <Panel
+        title="Blueprint data"
+        className="bp-strings"
+        gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 4" })}
+      >
         {string && data && <BlueprintData string={string} data={data} />}
       </Panel>
     </StyledBlueptintPage>
