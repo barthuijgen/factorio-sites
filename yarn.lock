@@ -13551,10 +13551,10 @@ react-markdown@5.0.3:
     unist-util-visit "^2.0.0"
     xtend "^4.0.1"
 
-react-multi-select-component@3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/react-multi-select-component/-/react-multi-select-component-3.1.5.tgz#7b9cda1958e8f6aca301161922e1a11c8830faa4"
-  integrity sha512-rL2LGCyUmCrDgOLc511PahZ21D47gerJ3d44SIyt36AziPjmUOGf0H5UqR/D1xTKGYNNlDb27gde/OT/nqkqnA==
+react-multi-select-component@3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/react-multi-select-component/-/react-multi-select-component-3.1.6.tgz#84e148ba6c501a1c7b37743fcce0d2b3ad4dc279"
+  integrity sha512-UnjvSXC/4iqiRh5IcECNgXovox5K7kKzbV1tQ4Tr6gYo2rvO9SHjT/ELVV841U6z6huQZkcZ5gUQyhC85B/95w==
   dependencies:
     goober "^2.0.30"
 
