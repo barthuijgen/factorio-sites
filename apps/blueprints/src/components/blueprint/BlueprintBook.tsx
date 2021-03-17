@@ -223,16 +223,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         <Panel
           className="entities"
           gridColumn={chakraResponsive({ mobile: "1", desktop: "4" })}
-          title={
-            <span>
-              Components for{" "}
-              {selectedData?.blueprint?.label ? (
-                <FactorioCode code={selectedData.blueprint.label} />
-              ) : (
-                "blueprint"
-              )}
-            </span>
-          }
+          title={<span>Components</span>}
         >
           {selectedData && <BlueprintEntities data={selectedData} />}
         </Panel>
@@ -241,7 +232,15 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
       <Panel
         className="bp-strings"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 4" })}
-        title={`data for ${selected.type.replace("_", " ")} "${selected.data.label}"`}
+        title={
+          <>
+            <span css={{ marginRight: "5px" }}>{`data for ${selected.type.replace(
+              "_",
+              " "
+            )}`}</span>
+            {selectedData?.blueprint?.label && <FactorioCode code={selectedData.blueprint.label} />}
+          </>
+        }
       >
         {selectedBlueprintString && (
           <BlueprintData

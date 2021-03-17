@@ -2,6 +2,8 @@ import { Box } from "@chakra-ui/react";
 import { BlueprintPage } from "@factorio-sites/types";
 import styled from "@emotion/styled";
 import { TAGS_BY_KEY } from "@factorio-sites/common-utils";
+import { useRouter } from "next/router";
+import { useRouterQueryToHref } from "../../hooks/query.hook";
 
 const StyledBox = styled(Box)`
   text-align: left;
@@ -13,6 +15,10 @@ const StyledBox = styled(Box)`
     background: #313131;
     border-radius: 3px;
   }
+
+  .tag:hover {
+    cursor: pointer;
+  }
 `;
 
 interface BlueprintTagsProps {
@@ -20,11 +26,18 @@ interface BlueprintTagsProps {
 }
 
 export const BlueprintTags: React.FC<BlueprintTagsProps> = ({ blueprint_page }) => {
+  const router = useRouter();
+  const routerQueryToHref = useRouterQueryToHref();
+
   return (
     <StyledBox>
       {blueprint_page.tags.length ? (
         blueprint_page.tags.map((tag) => (
-          <span key={tag} className="tag">
+          <span
+            key={tag}
+            className="tag"
+            onClick={() => router.push(routerQueryToHref({ tags: [tag] }, true))}
+          >
             {TAGS_BY_KEY[tag].category}: {TAGS_BY_KEY[tag].label}
           </span>
         ))

@@ -151,12 +151,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
       <Panel
         className="entities"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "4" })}
-        title={
-          <span>
-            Components for{" "}
-            {data?.blueprint?.label ? <FactorioCode code={data.blueprint.label} /> : "blueprint"}
-          </span>
-        }
+        title={<span>Components</span>}
       >
         {data && <BlueprintEntities data={data} />}
       </Panel>
