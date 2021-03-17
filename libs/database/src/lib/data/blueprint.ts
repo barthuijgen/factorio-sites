@@ -58,6 +58,7 @@ export async function createBlueprint(
       tags: extraInfo.tags,
       game_version: `${blueprint.version}`,
       image_version: 1,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: blueprintDataToDbData(blueprint) as any,
       updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
       created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),

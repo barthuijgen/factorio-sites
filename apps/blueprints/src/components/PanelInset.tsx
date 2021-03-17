@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Box, BoxProps } from "@chakra-ui/layout";
-import clsx from "clsx";
 
 interface PanelInsetProps extends BoxProps {
   light?: boolean;
@@ -27,7 +26,7 @@ const StyledPanelInset = styled(Box)`
 
 export const PanelInset: React.FC<PanelInsetProps> = ({ className, children, ...props }) => {
   return (
-    <StyledPanelInset className={clsx("panel-inset", className)} {...props}>
+    <StyledPanelInset className={className} {...props}>
       {children}
     </StyledPanelInset>
   );
