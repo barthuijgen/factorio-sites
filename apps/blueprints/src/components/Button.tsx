@@ -15,12 +15,14 @@ export const Button: React.FC<ButtonProps> = ({ primary, className, children, ..
 };
 
 const StyledButton = styled.button`
+  display: inline-flex;
+  align-items: center;
   background-color: #8e8e8e;
   padding: 10px 12px;
   text-align: left;
   color: #000;
+  font-size: 16px;
   font-weight: 600;
-  display: inline-block;
   border: none;
   line-height: 100%;
   vertical-align: middle;
@@ -58,7 +60,6 @@ const StyledButton = styled.button`
     position: relative;
     padding-top: 12px;
     padding-bottom: 8px;
-    vertical-align: -2px;
     box-shadow: inset 0 10px 2px -8px #000, inset 0 9px 2px -8px #000, inset 8px 0 4px -8px #563a10,
       inset 8px 0 4px -8px #563a10, inset -8px 0 4px -8px #563a10, inset -8px 0 4px -8px #563a10,
       inset 0 9px 2px -8px #563a10, inset 0 -9px 2px -8px #563a10, inset 0 -8.5px 0 -8px #563a10,

@@ -204,6 +204,7 @@ export async function getServerSideProps({ query }: NextPageContext) {
   const page = Number(query.page || "1");
   const perPage = Number(query["per-page"] || "20");
   const order = (query["order"] as string) || "date";
+  const _query = query.q ? String(query.q) : undefined;
   const tags = query.tags ? String(query.tags).split(",") : undefined;
   const entities = query.entities ? String(query.entities).split(",") : undefined;
   const items = query.items ? String(query.items).split(",") : undefined;
@@ -217,7 +218,7 @@ export async function getServerSideProps({ query }: NextPageContext) {
   const { count, rows } = await searchBlueprintPages({
     page,
     perPage,
-    query: query.q as string,
+    query: _query,
     order,
     mode,
     tags,

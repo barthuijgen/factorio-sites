@@ -44,10 +44,11 @@ const globalStyles = css`
   }
   main {
     display: flex;
-    margin: 1rem;
+    padding: 1rem;
     .container {
       max-width: 1400px;
       margin: 0 auto;
+      width: 100%;
     }
   }
 `;

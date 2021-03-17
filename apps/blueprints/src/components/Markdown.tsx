@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import ReactMarkdown from "react-markdown";
 
 const markdownStyle = css`
-  overflow: hidden;
+  overflow: auto;
   img {
     max-width: 100%;
   }
@@ -16,8 +16,8 @@ const markdownStyle = css`
   }
 `;
 
-export const Markdown: React.FC<{ children: string }> = ({ children }) => (
-  <div css={markdownStyle}>
+export const Markdown: React.FC<{ children: string }> = ({ children, ...props }) => (
+  <div css={markdownStyle} {...props}>
     <ReactMarkdown>{children}</ReactMarkdown>
   </div>
 );
