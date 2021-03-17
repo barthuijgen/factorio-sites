@@ -49,12 +49,12 @@ export const BlueprintInfo: React.FC<BlueprintInfoProps> = ({ blueprint_page }) 
       <hr />
       <dl>
         <dt>Last updated:</dt>
-        <dd>{format(new Date(blueprint_page.updated_at * 1000), "DD/mm/YYYY")}</dd>
+        <dd>{format(new Date(blueprint_page.updated_at * 1000), "dd/mm/yyyy")}</dd>
       </dl>
       <hr />
       <dl>
         <dt>Created:</dt>
-        <dd>{format(new Date(blueprint_page.created_at * 1000), "DD/mm/YYYY")}</dd>
+        <dd>{format(new Date(blueprint_page.created_at * 1000), "dd/mm/yyyy")}</dd>
       </dl>
       <hr />
       <dl>
