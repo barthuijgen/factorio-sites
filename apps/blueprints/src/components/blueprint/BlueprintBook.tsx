@@ -29,12 +29,12 @@ import { FactorioCode } from "../FactorioCode";
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
 
-  .title .text {
+  .text {
     white-space: nowrap;
-    width: calc(100% - 120px);
-    display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-right: 0.5rem;
+    flex-grow: 1;
   }
 
   .panel {
@@ -45,10 +45,6 @@ const StyledBlueptintPage = styled(Grid)`
         height: 480px;
         overflow: auto;
       }
-    }
-
-    .description {
-      max-height: 600px;
     }
   }
 `;
@@ -190,15 +186,9 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
       </Panel>
 
       <Panel
-        className="description"
+        title="Description"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "2 / span 2" })}
-        title={
-          <>
-            <span className="text">Description </span>
-            <FavoriteButton is_favorite={favorite} blueprint_page_id={blueprint_page.id} />
-          </>
-        }
       >
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
       </Panel>

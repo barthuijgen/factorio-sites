@@ -6,6 +6,7 @@ import clsx from "clsx";
 const StyledPanel = styled(Box)`
   display: flex;
   flex-direction: column;
+  width: 100%;
   padding: 12px;
   background-color: #313031;
   box-shadow: inset 3px 0 3px -3px #201815, inset 2px 0 2px -2px #201815,
@@ -13,16 +14,16 @@ const StyledPanel = styled(Box)`
     inset 0 1px 1px -1px #8f8c8b, inset -3px 0 3px -3px #201815, inset -2px 0 2px -2px #201815,
     inset -2px 0 1px -1px #201815, inset 0 -3px 3px -3px #000, inset 0 -2px 2px -2px #000,
     inset 0 -1px 1px -1px #000, 0 0 2px 0 #201815, 0 0 4px 0 #201815;
+`;
 
-  .title {
-    font-weight: 900;
-    color: #ffe6c0;
-    line-height: 1.25;
-    margin: 0 0 12px 0;
-    font-size: 120%;
-    display: flex;
-    align-items: center;
-  }
+const StyledTitle = styled.h2`
+  font-weight: 900;
+  color: #ffe6c0;
+  line-height: 1.25;
+  margin: 0 0 12px 0;
+  font-size: 120%;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledPanelContent = styled.div`
@@ -42,8 +43,8 @@ interface PanelProps extends Omit<BoxProps, "title" | "bottom"> {
 
 export const Panel: React.FC<PanelProps> = ({ title, bottom, children, className, ...props }) => (
   <StyledPanel className={clsx("panel", className)} {...props}>
-    {title && <h2 className="title">{title}</h2>}
+    {title && <StyledTitle className="title">{title}</StyledTitle>}
     <StyledPanelContent>{children}</StyledPanelContent>
-    {bottom && <div className="panel-inset">{bottom}</div>}
+    {bottom && <div>{bottom}</div>}
   </StyledPanel>
 );
