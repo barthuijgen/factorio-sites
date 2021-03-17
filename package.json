@@ -43,6 +43,7 @@
     "bcrypt": "5.0.1",
     "clsx": "1.1.1",
     "cookie": "0.4.1",
+    "date-fns": "2.19.0",
     "document-register-element": "1.14.10",
     "formik": "2.2.6",
     "framer-motion": "3.6.7",
