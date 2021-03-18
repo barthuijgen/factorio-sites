@@ -13,6 +13,9 @@ import { BlueprintData } from "./BlueprintData";
 import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
+import { useCookies } from "react-cookie";
+import { FullscreenImage } from "../FullscreenImage";
+import { isMobileBrowser } from "../../utils/navigator.utils";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -55,6 +58,8 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
   const url = useUrl();
   const [string, setString] = useState<string | null>(null);
   const [data, setData] = useState<BlueprintStringData | null>(null);
+  const [cookies] = useCookies();
+  const isFbeRenderer = cookies.renderer !== "fbsr" && !isMobileBrowser();
 
   useEffect(() => {
     fetch(`/api/string/${blueprint.blueprint_hash}`)
@@ -79,11 +84,13 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         title={
           <>
             <span>Image</span>
-            <img
-              src="/fbe.svg"
-              alt="Factorio blueprint editor"
-              css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
-            />
+            {isFbeRenderer && (
+              <img
+                src="/fbe.svg"
+                alt="Factorio blueprint editor"
+                css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
+              />
+            )}
             <Box css={{ display: "inline-block", flexGrow: 1, textAlign: "right" }}>
               {string && (
                 <CopyButton
@@ -103,7 +110,15 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
           </>
         }
       >
-        {string && <ImageEditor string={string}></ImageEditor>}
+        {string &&
+          (isFbeRenderer ? (
+            <ImageEditor string={string}></ImageEditor>
+          ) : (
+            <FullscreenImage
+              src={`https://fbsr.factorio.workers.dev/${blueprint.blueprint_hash}?size=1000`}
+              alt={blueprint.label}
+            />
+          ))}
       </Panel>
 
       <Panel
