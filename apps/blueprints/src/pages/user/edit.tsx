@@ -98,6 +98,8 @@ export const UserEdit: NextPage = () => {
                         setCookie("renderer", value, {
                           path: "/",
                           expires: addYears(new Date(), 1),
+                          sameSite: "strict",
+                          secure: process.env.NODE_ENV === "production",
                         })
                       }
                       value={cookies.renderer || "fbe"}

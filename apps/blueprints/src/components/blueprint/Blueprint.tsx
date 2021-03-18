@@ -5,7 +5,6 @@ import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/we
 import { Panel } from "../../components/Panel";
 import { Markdown } from "../../components/Markdown";
 import { CopyButton } from "../../components/CopyButton";
-import { ImageEditor } from "../../components/ImageEditor";
 import styled from "@emotion/styled";
 import { FavoriteButton } from "./FavoriteButton";
 import { useUrl } from "../../hooks/url.hook";
@@ -13,9 +12,7 @@ import { BlueprintData } from "./BlueprintData";
 import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
-import { useCookies } from "react-cookie";
-import { FullscreenImage } from "../FullscreenImage";
-import { isMobileBrowser } from "../../utils/navigator.utils";
+import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -58,8 +55,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
   const url = useUrl();
   const [string, setString] = useState<string | null>(null);
   const [data, setData] = useState<BlueprintStringData | null>(null);
-  const [cookies] = useCookies();
-  const isFbeRenderer = cookies.renderer !== "fbsr" && !isMobileBrowser();
+  const [renderer, setRenderer] = useState<RENDERERS | null>(null);
 
   useEffect(() => {
     fetch(`/api/string/${blueprint.blueprint_hash}`)
@@ -84,7 +80,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         title={
           <>
             <span>Image</span>
-            {isFbeRenderer && (
+            {renderer === "fbe" && (
               <img
                 src="/fbe.svg"
                 alt="Factorio blueprint editor"
@@ -110,15 +106,14 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
           </>
         }
       >
-        {string &&
-          (isFbeRenderer ? (
-            <ImageEditor string={string}></ImageEditor>
-          ) : (
-            <FullscreenImage
-              src={`https://fbsr.factorio.workers.dev/${blueprint.blueprint_hash}?size=1000`}
-              alt={blueprint.label}
-            />
-          ))}
+        {string && (
+          <BlueprintImage
+            string={string}
+            label={blueprint.label}
+            blueprint_hash={blueprint.blueprint_hash}
+            onSetRenderer={setRenderer}
+          />
+        )}
       </Panel>
 
       <Panel

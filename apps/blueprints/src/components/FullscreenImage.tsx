@@ -50,7 +50,6 @@ export const FullscreenImage: React.FC<FullscreenImageProps> = ({ alt, src }) =>
     scale: 0.9,
     translation: { x: window.innerWidth * 0.05, y: 30 },
   });
-  console.log(src);
 
   return (
     <>

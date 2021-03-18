@@ -17,7 +17,6 @@ import { Panel } from "../../components/Panel";
 import { Markdown } from "../../components/Markdown";
 import { BookChildTree } from "../../components/BookChildTree";
 import { CopyButton } from "../../components/CopyButton";
-import { ImageEditor } from "../../components/ImageEditor";
 import { useUrl } from "../../hooks/url.hook";
 import { FavoriteButton } from "./FavoriteButton";
 import { BlueprintData } from "./BlueprintData";
@@ -25,9 +24,7 @@ import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { FactorioCode } from "../FactorioCode";
-import { useCookies } from "react-cookie";
-import { FullscreenImage } from "../FullscreenImage";
-import { isMobileBrowser } from "../../utils/navigator.utils";
+import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -79,8 +76,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
     null
   );
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
-  const [cookies] = useCookies();
-  const isFbeRenderer = cookies.renderer !== "fbsr" && !isMobileBrowser();
+  const [renderer, setRenderer] = useState<RENDERERS | null>(null);
   const selectedHash = selected.data.blueprint_hash;
   const showEntities = selected.type === "blueprint" && selectedData?.blueprint;
 
@@ -163,7 +159,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         title={
           <>
             <span>Image</span>
-            {isFbeRenderer && (
+            {renderer === "fbe" && (
               <img
                 src="/fbe.svg"
                 alt="Factorio blueprint editor"
@@ -189,17 +185,14 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
           </>
         }
       >
-        {selectedBlueprintString &&
-          (isFbeRenderer ? (
-            <ImageEditor string={selectedBlueprintString}></ImageEditor>
-          ) : (
-            <FullscreenImage
-              src={`https://fbsr.factorio.workers.dev/${selected.data.blueprint_hash}?size=1000`}
-              alt={selected.data.label}
-            />
-          ))}
-
-        {/* {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>} */}
+        {selectedBlueprintString && (
+          <BlueprintImage
+            string={selectedBlueprintString}
+            label={selected.data.label}
+            blueprint_hash={selected.data.blueprint_hash}
+            onSetRenderer={setRenderer}
+          />
+        )}
       </Panel>
 
       <Panel

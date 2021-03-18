@@ -42,8 +42,6 @@ const parseFactorioCode = (string: string): ReactNode => {
 
   if (!iconMatches.length) return <span>{string}</span>;
 
-  // console.log(string, iconMatches);
-
   const result = [] as ReactNode[];
   let lastHandledIndex = 0;
 
@@ -73,7 +71,6 @@ const parseFactorioCode = (string: string): ReactNode => {
           match.groups.type = type;
           match.groups.icon = icon;
         }
-        console.log(match);
       }
       result.push(
         <FactorioIcon

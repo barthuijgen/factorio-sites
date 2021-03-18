@@ -21,19 +21,33 @@ import {
   Stack,
   Radio,
   Checkbox,
+  useBreakpoint,
 } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 import { MdSearch } from "react-icons/md";
 import { TAGS } from "@factorio-sites/common-utils";
+import { mq } from "@factorio-sites/web-utils";
 
 const pageCss = css({
   display: "flex",
+  flexDirection: "column",
+  [mq[0]]: {
+    flexDirection: "row",
+  },
 });
 const sidebarCss = css({
-  borderRight: "1px solid #b7b7b7",
-  paddingRight: "1rem",
-  marginRight: "1rem",
-  width: "233px",
+  borderBottom: "1px solid #b7b7b7",
+  paddingBottom: "1rem",
+  marginBottom: "1rem",
+  [mq[0]]: {
+    borderRight: "1px solid #b7b7b7",
+    marginRight: "1rem",
+    paddingRight: "1rem",
+    borderBottom: "none",
+    paddingBottom: "0",
+    marginBottom: "0",
+    width: "233px",
+  },
 });
 const SidebarRow = css({
   marginTop: "1rem",
@@ -67,6 +81,8 @@ export const Index: NextPage<IndexProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const routerQueryToHref = useRouterQueryToHref();
   const data = useFbeData();
+  const bp = useBreakpoint();
+  console.log({ bp });
 
   useEffect(() => {
     setSearchQuery((router.query.q as string) || "");

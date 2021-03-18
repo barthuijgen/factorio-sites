@@ -112,3 +112,7 @@ export function chakraResponsive({
 }): Array<string | null> {
   return [mobile, mobile, desktop, desktop];
 }
+
+const breakpoints = ["30em", "48em", "62em", "80em"];
+
+export const mq = breakpoints.map((bp) => `@media (min-width: ${bp})`);
