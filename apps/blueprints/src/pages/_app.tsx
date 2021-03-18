@@ -4,10 +4,11 @@ import Router from "next/router";
 import { css, Global } from "@emotion/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import NProgress from "nprogress";
+import { CookiesProvider } from "react-cookie";
+import { getSessionToken } from "@factorio-sites/node-utils";
 import { Header } from "../components/Header";
 import { AuthContext, AuthContextProps } from "../providers/auth";
 import { useFetch } from "../hooks/fetch";
-import { getSessionToken } from "@factorio-sites/node-utils";
 
 const globalStyles = css`
   @font-face {
@@ -59,7 +60,7 @@ if (typeof window !== "undefined") {
     speed: 800,
     trickleSpeed: 150,
     template:
-      '<div class="bar" role="bar" style="background: #00a1ff;position: fixed;z-index: 1031;top: 0;left: 0;width: 100%;height: 4px;" />',
+      '<div class="bar" role="bar" style="background: #00a1ff;position: fixed;z-index: 5;top: 0;left: 0;width: 100%;height: 4px;" />',
   });
   Router.events.on("routeChangeStart", () => NProgress.start());
   Router.events.on("routeChangeComplete", () => NProgress.done());
@@ -75,24 +76,26 @@ const BlueprintsApp = ({
 
   return (
     <ChakraProvider>
-      <AuthContext.Provider value={auth.data?.auth || null}>
-        <Global styles={globalStyles} />
-        <Head>
-          <title>Factorio Blueprints</title>
-          <link rel="shortcut icon" href="/favicon.png" />
-          <meta name="description" content="Find blueprints for Factorio with advanced search" />
-        </Head>
-        {!auth.loading && (
-          <>
-            <Header />
-            <main>
-              <div className="container">
-                <Component {...pageProps} />
-              </div>
-            </main>
-          </>
-        )}
-      </AuthContext.Provider>
+      <CookiesProvider>
+        <AuthContext.Provider value={auth.data?.auth || null}>
+          <Global styles={globalStyles} />
+          <Head>
+            <title>Factorio Blueprints</title>
+            <link rel="shortcut icon" href="/favicon.png" />
+            <meta name="description" content="Find blueprints for Factorio with advanced search" />
+          </Head>
+          {!auth.loading && (
+            <>
+              <Header />
+              <main>
+                <div className="container">
+                  <Component {...pageProps} />
+                </div>
+              </main>
+            </>
+          )}
+        </AuthContext.Provider>
+      </CookiesProvider>
     </ChakraProvider>
   );
 };

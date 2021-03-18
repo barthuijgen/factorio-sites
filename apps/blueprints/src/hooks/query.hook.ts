@@ -1,20 +1,13 @@
 import { useRouter } from "next/router";
 import { useCallback } from "react";
+import { stringifyQuery } from "../utils/query.utils";
 
 export const useRouterQueryToHref = () => {
   const router = useRouter();
   return useCallback(
-    (override: Record<string, string | string[] | null>) => {
-      const query = { ...router.query, ...override };
-      const keys = Object.keys(query).filter((key) => query[key] !== null);
-      const href = keys.length
-        ? "/?" +
-          Object.keys(query)
-            .filter((key) => query[key] !== null)
-            .map((key) => `${key}=${query[key]}`)
-            .join("&")
-        : "/";
-      return href;
+    (override: Record<string, string | string[] | null>, overrideAll = false) => {
+      const query = overrideAll ? override : { ...router.query, ...override };
+      return stringifyQuery(query);
     },
     [router]
   );

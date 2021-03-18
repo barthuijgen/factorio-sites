@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import BBCode from "bbcode-to-react";
 import { Grid, Box } from "@chakra-ui/react";
 import { Blueprint as IBlueprint, BlueprintPage, BlueprintStringData } from "@factorio-sites/types";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
@@ -14,23 +13,19 @@ import { BlueprintData } from "./BlueprintData";
 import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
+import { useCookies } from "react-cookie";
+import { FullscreenImage } from "../FullscreenImage";
+import { isMobileBrowser } from "../../utils/navigator.utils";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
 
-  .title {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-
-    .text {
-      white-space: nowrap;
-      width: calc(100% - 120px);
-      display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 0.5rem;
+    flex-grow: 1;
   }
 
   .panel {
@@ -41,10 +36,6 @@ const StyledBlueptintPage = styled(Grid)`
         height: 483px;
         overflow: auto;
       }
-    }
-
-    .description {
-      max-height: 600px;
     }
   }
 `;
@@ -67,6 +58,8 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
   const url = useUrl();
   const [string, setString] = useState<string | null>(null);
   const [data, setData] = useState<BlueprintStringData | null>(null);
+  const [cookies] = useCookies();
+  const isFbeRenderer = cookies.renderer !== "fbsr" && !isMobileBrowser();
 
   useEffect(() => {
     fetch(`/api/string/${blueprint.blueprint_hash}`)
@@ -89,13 +82,15 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "3 / span 2" })}
         gridRow="1"
         title={
-          <div className="title">
+          <>
             <span>Image</span>
-            <img
-              src="/fbe.svg"
-              alt="Factorio blueprint editor"
-              css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
-            />
+            {isFbeRenderer && (
+              <img
+                src="/fbe.svg"
+                alt="Factorio blueprint editor"
+                css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
+              />
+            )}
             <Box css={{ display: "inline-block", flexGrow: 1, textAlign: "right" }}>
               {string && (
                 <CopyButton
@@ -112,21 +107,28 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
                 />
               )}
             </Box>
-          </div>
+          </>
         }
       >
-        {string && <ImageEditor string={string}></ImageEditor>}
+        {string &&
+          (isFbeRenderer ? (
+            <ImageEditor string={string}></ImageEditor>
+          ) : (
+            <FullscreenImage
+              src={`https://fbsr.factorio.workers.dev/${blueprint.blueprint_hash}?size=1000`}
+              alt={blueprint.label}
+            />
+          ))}
       </Panel>
 
       <Panel
-        className="description"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "1" })}
         title={
-          <div className="title">
+          <>
             <span className="text">{blueprint_page.title}</span>
             <FavoriteButton is_favorite={favorite} blueprint_page_id={blueprint_page.id} />
-          </div>
+          </>
         }
       >
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
@@ -151,12 +153,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
       <Panel
         className="entities"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "4" })}
-        title={
-          <span>
-            Components for{" "}
-            {data?.blueprint?.label ? BBCode.toReact(data.blueprint.label) : "blueprint"}
-          </span>
-        }
+        title={<span>Components</span>}
       >
         {data && <BlueprintEntities data={data} />}
       </Panel>

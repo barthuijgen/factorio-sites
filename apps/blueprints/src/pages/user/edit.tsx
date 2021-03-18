@@ -1,9 +1,20 @@
 import React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FormControl, FormLabel, FormErrorMessage, Input, SimpleGrid } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Input,
+  SimpleGrid,
+  Radio,
+  Stack,
+  RadioGroup,
+} from "@chakra-ui/react";
 import { Formik, Field, FieldProps } from "formik";
+import { addYears } from "date-fns";
 import { css } from "@emotion/react";
+import { useCookies } from "react-cookie";
 import { Panel } from "../../components/Panel";
 import { Button } from "../../components/Button";
 import { validateUserForm } from "../../utils/validate";
@@ -17,6 +28,7 @@ const FieldStyle = css`
 export const UserEdit: NextPage = () => {
   const auth = useAuth();
   const router = useRouter();
+  const [cookies, setCookie] = useCookies(["renderer"]);
 
   return (
     <SimpleGrid columns={1} margin="0 auto" width="600px">
@@ -67,6 +79,34 @@ export const UserEdit: NextPage = () => {
                   >
                     <FormLabel>Username</FormLabel>
                     <Input type="text" {...field} />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              <Field name="renderer">
+                {({ field, meta }: FieldProps) => (
+                  <FormControl
+                    id="renderer"
+                    isRequired={!auth?.steam_id}
+                    isInvalid={meta.touched && !!meta.error}
+                    css={FieldStyle}
+                  >
+                    <FormLabel>Image renderer</FormLabel>
+                    <RadioGroup
+                      onChange={(value: string) =>
+                        setCookie("renderer", value, {
+                          path: "/",
+                          expires: addYears(new Date(), 1),
+                        })
+                      }
+                      value={cookies.renderer || "fbe"}
+                    >
+                      <Stack>
+                        <Radio value="fbe">FBE</Radio>
+                        <Radio value="fbsr">FBSR</Radio>
+                      </Stack>
+                    </RadioGroup>
                     <FormErrorMessage>{meta.error}</FormErrorMessage>
                   </FormControl>
                 )}

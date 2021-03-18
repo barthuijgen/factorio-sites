@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import Link from "next/link";
 import { ChildTreeBlueprintBookEnriched } from "@factorio-sites/web-utils";
 import { FactorioIcon } from "./FactorioIcon";
-import { BBCode } from "./BBCode";
+import { FactorioCode } from "./FactorioCode";
 
 const componentStyles = css`
   .blueprint,
@@ -51,7 +51,7 @@ export const BookChildTree: React.FC<BookChildTreeProps> = ({
                 />
               ))}
             <span className="label">
-              <BBCode code={blueprint_book.name || ""} />
+              <FactorioCode code={blueprint_book.name || ""} />
             </span>
           </a>
         </Link>
@@ -70,7 +70,7 @@ export const BookChildTree: React.FC<BookChildTreeProps> = ({
                       />
                     ))}
                   <span className="label">
-                    <BBCode code={child.name || ""} />
+                    <FactorioCode code={child.name || ""} />
                   </span>
                 </a>
               </Link>

@@ -111,11 +111,11 @@ export const Index: NextPage<IndexProps> = ({
               <Box>
                 <RadioGroup
                   onChange={(value: string) => router.push(routerQueryToHref({ order: value }))}
-                  value={(router.query.order as string) || "date"}
+                  value={(router.query.order as string) || "favorites"}
                 >
                   <Stack>
-                    <Radio value="date">Last updated</Radio>
                     <Radio value="favorites">Favorites</Radio>
+                    <Radio value="date">Last updated</Radio>
                   </Stack>
                 </RadioGroup>
               </Box>
@@ -203,7 +203,7 @@ export async function getServerSideProps({ query }: NextPageContext) {
   await init();
   const page = Number(query.page || "1");
   const perPage = Number(query["per-page"] || "20");
-  const order = (query["order"] as string) || "date";
+  const order = (query["order"] as string) || "favorites";
   const _query = query.q ? String(query.q) : undefined;
   const tags = query.tags ? String(query.tags).split(",") : undefined;
   const entities = query.entities ? String(query.entities).split(",") : undefined;

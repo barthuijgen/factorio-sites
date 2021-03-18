@@ -6,6 +6,7 @@ import clsx from "clsx";
 const StyledPanel = styled(Box)`
   display: flex;
   flex-direction: column;
+  width: 100%;
   padding: 12px;
   background-color: #313031;
   box-shadow: inset 3px 0 3px -3px #201815, inset 2px 0 2px -2px #201815,
@@ -13,26 +14,26 @@ const StyledPanel = styled(Box)`
     inset 0 1px 1px -1px #8f8c8b, inset -3px 0 3px -3px #201815, inset -2px 0 2px -2px #201815,
     inset -2px 0 1px -1px #201815, inset 0 -3px 3px -3px #000, inset 0 -2px 2px -2px #000,
     inset 0 -1px 1px -1px #000, 0 0 2px 0 #201815, 0 0 4px 0 #201815;
+`;
 
-  .title {
-    font-weight: 900;
-    color: #ffe6c0;
-    line-height: 1.25;
-    margin: 0 0 12px 0;
-    font-size: 120%;
-    display: flex;
-    align-items: center;
-  }
+const StyledTitle = styled.h2`
+  font-weight: 900;
+  color: #ffe6c0;
+  line-height: 1.25;
+  margin: 0 0 12px 0;
+  font-size: 120%;
+  display: flex;
+  align-items: center;
+`;
 
-  .panel-content {
-    color: white;
-    height: 100%;
-    padding: 12px;
-    background: #414040;
-    box-shadow: inset 0 0 3px 0 #000, 0 -2px 2px -1px #000, -2px 0 2px -2px #28221f,
-      -2px 0 2px -2px #28221f, 2px 0 2px -2px #28221f, 2px 0 2px -2px #28221f,
-      0 3px 3px -3px #8f8c8b, 0 2px 2px -2px #8f8c8b, 0 1px 1px -1px #8f8c8b;
-  }
+const StyledPanelContent = styled.div`
+  color: white;
+  height: 100%;
+  padding: 12px;
+  background: #414040;
+  box-shadow: inset 0 0 3px 0 #000, 0 -2px 2px -1px #000, -2px 0 2px -2px #28221f,
+    -2px 0 2px -2px #28221f, 2px 0 2px -2px #28221f, 2px 0 2px -2px #28221f, 0 3px 3px -3px #8f8c8b,
+    0 2px 2px -2px #8f8c8b, 0 1px 1px -1px #8f8c8b;
 `;
 
 interface PanelProps extends Omit<BoxProps, "title" | "bottom"> {
@@ -42,8 +43,8 @@ interface PanelProps extends Omit<BoxProps, "title" | "bottom"> {
 
 export const Panel: React.FC<PanelProps> = ({ title, bottom, children, className, ...props }) => (
   <StyledPanel className={clsx("panel", className)} {...props}>
-    {title && <h2 className="title">{title}</h2>}
-    <div className="panel-content">{children}</div>
-    {bottom && <div className="panel-inset">{bottom}</div>}
+    {title && <StyledTitle className="title">{title}</StyledTitle>}
+    <StyledPanelContent>{children}</StyledPanelContent>
+    {bottom && <div>{bottom}</div>}
   </StyledPanel>
 );

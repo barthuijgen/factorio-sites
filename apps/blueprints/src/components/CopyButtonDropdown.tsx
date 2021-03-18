@@ -14,7 +14,6 @@ const DropdownBox = styled(Box)`
   transform: translateY(100%);
   bottom: -0.5rem;
   right: 40px;
-  z-index: 3;
 `;
 
 export const CopyButtonDropdown: React.FC = (props) => {
