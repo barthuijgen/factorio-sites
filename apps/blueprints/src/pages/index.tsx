@@ -21,7 +21,6 @@ import {
   Stack,
   Radio,
   Checkbox,
-  useBreakpoint,
 } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 import { MdSearch } from "react-icons/md";
@@ -81,8 +80,6 @@ export const Index: NextPage<IndexProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const routerQueryToHref = useRouterQueryToHref();
   const data = useFbeData();
-  const bp = useBreakpoint();
-  console.log({ bp });
 
   useEffect(() => {
     setSearchQuery((router.query.q as string) || "");
