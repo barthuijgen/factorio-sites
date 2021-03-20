@@ -40,7 +40,7 @@ const regexMatchAll = (string: string, regexp: RegExp): Match[] => {
 const parseFactorioCode = (string: string): ReactNode => {
   const iconMatches = regexMatchAll(string, ICON_REGEX);
 
-  if (!iconMatches.length) return <span>{string}</span>;
+  if (!iconMatches.length) return string;
 
   const result = [] as ReactNode[];
   let lastHandledIndex = 0;
@@ -99,6 +99,9 @@ const StyledBox = styled(Box)`
   align-items: center;
 `;
 
-export const FactorioCode: React.FC<{ code: string }> = ({ code }) => {
-  return <StyledBox>{parseFactorioCode(code)}</StyledBox>;
+export const FactorioCode: React.FC<{ code: string; className?: string }> = ({
+  code,
+  className,
+}) => {
+  return <StyledBox className={className}>{parseFactorioCode(code)}</StyledBox>;
 };
