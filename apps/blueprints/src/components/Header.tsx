@@ -56,6 +56,7 @@ export const Header: React.FC = (props) => {
       >
         {auth ? (
           <>
+            <MenuItem href="/user/favorites">My Favorites</MenuItem>
             <MenuItem href="/user/blueprints">My blueprints</MenuItem>
             <MenuItem href="/user/edit">Account</MenuItem>
             <MenuItem href="/about">About</MenuItem>
