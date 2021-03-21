@@ -5,6 +5,11 @@
       "signature": "4db8c378010b5990474548640c7c809e",
       "file": true,
       "replaced": "./fbe-editor-v1.0.0.tgz"
+    },
+    "react-map-interaction": {
+      "signature": "760fcdb2b8c4ce14979304df32411d35",
+      "file": true,
+      "replaced": "2.0.0"
     }
   }
 }

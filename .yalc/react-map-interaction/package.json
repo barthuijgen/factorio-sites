@@ -1,0 +1,36 @@
+{
+  "name": "react-map-interaction",
+  "version": "2.0.0+760fcdb2",
+  "description": "'Add map like zooming and dragging to any element'",
+  "main": "dist/react-map-interaction.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha",
+    "test:watch": "./node_modules/mocha/bin/mocha --watch",
+    "test:cover": "nyc ./node_modules/mocha/bin/mocha",
+    "dist": "webpack --config webpack.config.js --mode production",
+    "dist:dev": "npm run dist && ./copy-to-example.sh",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "keywords": [
+    "react",
+    "zoom",
+    "pan",
+    "pinch",
+    "data visualization",
+    "map"
+  ],
+  "author": "Transcriptic",
+  "private": false,
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.3.0",
+    "prop-types": "^15.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/transcriptic/react-map-interaction"
+  },
+  "dependencies": {},
+  "yalcSig": "760fcdb2b8c4ce14979304df32411d35"
+}

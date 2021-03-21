@@ -1,0 +1,13 @@
+/.storybook
+/example
+/src
+/stories
+.babelrc
+.gitignore
+.mocharc.json
+.nvmrc
+*.md
+*.sh
+example.gif
+mochaTestSetup.js
+webpack.config.js
