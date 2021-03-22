@@ -15,6 +15,7 @@ const mapBlueprintPageEntityToObject = (
   id: entity.id,
   blueprint_id: entity.blueprint_id ?? null,
   blueprint_book_id: entity.blueprint_book_id ?? null,
+  user_id: entity.user_id,
   title: entity.title,
   description_markdown: entity.description_markdown || "",
   tags: entity.tags,
@@ -105,19 +106,27 @@ export async function searchBlueprintPages({
     conditionals.push(sqltag`blueprint_page.title ILIKE ${`%${query}%`}`);
   }
   if (entities) {
-    conditionals.push(sqltag`blueprint.data -> 'entities' ?& array[${join(entities)}::text]`);
+    const matchSql = mode === "AND" ? sqltag`?&` : sqltag`?|`;
+    conditionals.push(
+      sqltag`blueprint.data -> 'entities' ${matchSql} array[${join(entities)}::text]`
+    );
     requires_blueprint_join = true;
   }
   if (items) {
-    conditionals.push(sqltag`blueprint.data -> 'items' ?& array[${join(items)}::text]`);
+    const matchSql = mode === "AND" ? sqltag`?&` : sqltag`?|`;
+    conditionals.push(sqltag`blueprint.data -> 'items' ${matchSql} array[${join(items)}::text]`);
     requires_blueprint_join = true;
   }
   if (recipes) {
-    conditionals.push(sqltag`blueprint.data -> 'recipes' ?& array[${join(recipes)}::text]`);
+    const matchSql = mode === "AND" ? sqltag`?&` : sqltag`?|`;
+    conditionals.push(
+      sqltag`blueprint.data -> 'recipes' ${matchSql} array[${join(recipes)}::text]`
+    );
     requires_blueprint_join = true;
   }
   if (tags) {
-    conditionals.push(sqltag`blueprint_page.tags @> array[${join(tags)}::varchar]`);
+    const matchSql = mode === "AND" ? sqltag`@>` : sqltag`&&`;
+    conditionals.push(sqltag`blueprint_page.tags ${matchSql} array[${join(tags)}::varchar]`);
   }
   if (user) {
     conditionals.push(sqltag`blueprint_page.user_id = ${user}`);

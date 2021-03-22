@@ -1,10 +1,12 @@
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { css } from "@emotion/react";
-import { BlueprintPage } from "@factorio-sites/types";
+import { format } from "date-fns";
 import { Box, Text } from "@chakra-ui/react";
 import { MdFavorite } from "react-icons/md";
-import { useState } from "react";
+import { BlueprintPage } from "@factorio-sites/types";
+import { getLocaleDateFormat } from "@factorio-sites/web-utils";
 
 const linkStyles = css`
   margin: 5px 10px 5px 0;
@@ -50,11 +52,6 @@ const linkStyles = css`
     }
   }
 `;
-
-const formatDate = (datenum: number) => {
-  const date = new Date(datenum * 1000);
-  return date.toLocaleString();
-};
 
 interface BlueprintLinkProps {
   blueprint: Pick<BlueprintPage, "id" | "title" | "image_hash" | "favorite_count" | "updated_at">;
@@ -105,7 +102,7 @@ export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
             </Box>
             {type === "row" && (
               <Box>
-                <Text>{formatDate(blueprint.updated_at)}</Text>
+                <Text>{format(blueprint.updated_at * 1000, getLocaleDateFormat(true))}</Text>
               </Box>
             )}
           </Box>

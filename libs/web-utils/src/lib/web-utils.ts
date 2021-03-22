@@ -116,3 +116,12 @@ export function chakraResponsive({
 const breakpoints = ["30em", "48em", "62em", "80em"];
 
 export const mq = breakpoints.map((bp) => `@media (min-width: ${bp})`);
+
+export function getLocaleDateFormat(withHours?: boolean) {
+  const format = new Date(2013, 11, 31)
+    .toLocaleDateString()
+    .replace("31", "dd")
+    .replace("12", "MM")
+    .replace("2013", "yyyy");
+  return withHours ? `${format} HH:mm` : format;
+}

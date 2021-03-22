@@ -28,7 +28,7 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
         </Box>
         <Box>
           {blueprints.length !== 0 ? (
-            blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />)
+            blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} type="row" />)
           ) : (
             <p css={{ marginTop: "10px" }}>You don't have any favorites yet</p>
           )}

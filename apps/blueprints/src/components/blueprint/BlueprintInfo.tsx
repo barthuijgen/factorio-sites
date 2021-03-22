@@ -1,8 +1,9 @@
 import { Box } from "@chakra-ui/react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { BlueprintPage } from "@factorio-sites/types";
 import styled from "@emotion/styled";
+import { BlueprintPage } from "@factorio-sites/types";
+import { getLocaleDateFormat } from "@factorio-sites/web-utils";
 
 const StyledBox = styled(Box)`
   dl {
@@ -49,12 +50,12 @@ export const BlueprintInfo: React.FC<BlueprintInfoProps> = ({ blueprint_page }) 
       <hr />
       <dl>
         <dt>Last updated:</dt>
-        <dd>{format(new Date(blueprint_page.updated_at * 1000), "dd/mm/yyyy")}</dd>
+        <dd>{format(new Date(blueprint_page.updated_at * 1000), getLocaleDateFormat())}</dd>
       </dl>
       <hr />
       <dl>
         <dt>Created:</dt>
-        <dd>{format(new Date(blueprint_page.created_at * 1000), "dd/mm/yyyy")}</dd>
+        <dd>{format(new Date(blueprint_page.created_at * 1000), getLocaleDateFormat())}</dd>
       </dl>
       <hr />
       <dl>

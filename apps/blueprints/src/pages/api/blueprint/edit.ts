@@ -1,4 +1,9 @@
-import { createBlueprint, editBlueprintPage, createBlueprintBook } from "@factorio-sites/database";
+import {
+  createBlueprint,
+  editBlueprintPage,
+  createBlueprintBook,
+  getBlueprintPageById,
+} from "@factorio-sites/database";
 import { parseBlueprintString } from "@factorio-sites/node-utils";
 import { parseDatabaseError } from "../../../utils/api.utils";
 import { apiHandler } from "../../../utils/api-handler";
@@ -12,7 +17,13 @@ const handler = apiHandler(async (req, res, { session }) => {
 
   const { id, title, description, string, tags } = req.body;
 
-  const parsed = await parseBlueprintString(string).catch(() => null);
+  const existing = await getBlueprintPageById(id);
+  if (!existing) {
+    return res.status(404).json({ status: "Blueprint not found" });
+  }
+  if (existing?.user_id !== session.user_id) {
+    return res.status(403).json({ status: "Unauthorised" });
+  }
 
   // Validation
   const errors: Record<string, string> = {};
@@ -20,6 +31,9 @@ const handler = apiHandler(async (req, res, { session }) => {
   if (!title) errors.title = "Required";
   if (!description) errors.description = "Required";
   if (!string) errors.string = "Required";
+
+  const parsed = await parseBlueprintString(string).catch(() => null);
+
   if (!parsed) errors.string = "Not recognised as a blueprint string";
 
   if (Object.keys(errors).length) {
