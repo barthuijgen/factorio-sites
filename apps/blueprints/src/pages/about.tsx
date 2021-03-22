@@ -5,13 +5,6 @@ import { Panel } from "../components/Panel";
 import { css } from "@emotion/react";
 import { IoIosConstruct } from "react-icons/io";
 
-const listCss = css`
-  padding-left: 25px;
-  .strike {
-    text-decoration: line-through;
-  }
-`;
-
 const headerCss = css`
   margin-top: 1rem;
   h3 {
