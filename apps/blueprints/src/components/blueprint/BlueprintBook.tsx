@@ -25,6 +25,7 @@ import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { FactorioCode } from "../FactorioCode";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
+import { css } from "@emotion/react";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -48,6 +49,17 @@ const StyledBlueptintPage = styled(Grid)`
     }
   }
 `;
+
+const descriptionCss = css({
+  hr: {
+    marginLeft: "-64px",
+    marginRight: "-64px",
+    border: "none",
+    height: "2px",
+    margin: "12px auto",
+    boxShadow: "inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e",
+  },
+});
 
 const StyledMarkdown = styled(Markdown)`
   max-height: 600px;
@@ -79,7 +91,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
   const [renderer, setRenderer] = useState<RENDERERS | null>(null);
   const selectedHash = selected.data.blueprint_hash;
   const showEntities = selected.type === "blueprint" && selectedData?.blueprint;
-
+  console.log(selectedData);
   useEffect(() => {
     fetch(`/api/string/${blueprint_book.blueprint_hash}`)
       .then((res) => res.text())
@@ -199,8 +211,19 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         title="Description"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "2 / span 2" })}
+        css={descriptionCss}
       >
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
+        {(selectedData?.blueprint?.description || selectedData?.blueprint_book?.description) && (
+          <>
+            <hr />
+            <StyledMarkdown>
+              {selectedData?.blueprint?.description ||
+                selectedData?.blueprint_book?.description ||
+                ""}
+            </StyledMarkdown>
+          </>
+        )}
       </Panel>
 
       <Panel

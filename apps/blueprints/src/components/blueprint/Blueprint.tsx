@@ -13,6 +13,7 @@ import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
+import { css } from "@emotion/react";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -36,6 +37,17 @@ const StyledBlueptintPage = styled(Grid)`
     }
   }
 `;
+
+const descriptionCss = css({
+  hr: {
+    marginLeft: "-64px",
+    marginRight: "-64px",
+    border: "none",
+    height: "2px",
+    margin: "12px auto",
+    boxShadow: "inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e",
+  },
+});
 
 const StyledMarkdown = styled(Markdown)`
   max-height: 600px;
@@ -125,8 +137,15 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
             <FavoriteButton is_favorite={favorite} blueprint_page_id={blueprint_page.id} />
           </>
         }
+        css={descriptionCss}
       >
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
+        {blueprint.description && (
+          <>
+            <hr />
+            <StyledMarkdown>{blueprint.description}</StyledMarkdown>
+          </>
+        )}
       </Panel>
 
       <Panel
