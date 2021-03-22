@@ -38,7 +38,7 @@ export const BookChildTree: React.FC<BookChildTreeProps> = ({
   return (
     <div css={componentStyles}>
       <div>
-        <Link href={`${base_url}?selected=${blueprint_book.id}&type=book`}>
+        <Link href={`${base_url}?selected=${blueprint_book.id}&type=book`} replace>
           <a className={"book" + (selected_id === blueprint_book.id ? " active" : "")}>
             <FactorioIcon type="item" icon="blueprint-book" size={20} />
             {blueprint_book.icons &&
