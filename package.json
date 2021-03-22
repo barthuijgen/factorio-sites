@@ -69,7 +69,7 @@
     "@babel/preset-react": "7.12.13",
     "@babel/preset-typescript": "7.13.0",
     "@emotion/jest": "11.2.1",
-    "@nrwl/cli": "11.5.1",
+    "@nrwl/cli": "11.5.2",
     "@nrwl/cypress": "11.5.1",
     "@nrwl/eslint-plugin-nx": "11.5.1",
     "@nrwl/jest": "11.5.1",
