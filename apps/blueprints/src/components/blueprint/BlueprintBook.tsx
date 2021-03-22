@@ -91,7 +91,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
   const [renderer, setRenderer] = useState<RENDERERS | null>(null);
   const selectedHash = selected.data.blueprint_hash;
   const showEntities = selected.type === "blueprint" && selectedData?.blueprint;
-  console.log(selectedData);
+
   useEffect(() => {
     fetch(`/api/string/${blueprint_book.blueprint_hash}`)
       .then((res) => res.text())
