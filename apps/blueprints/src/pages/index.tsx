@@ -83,7 +83,7 @@ export const Index: NextPage<IndexProps> = ({
 
   useEffect(() => {
     setSearchQuery((router.query.q as string) || "");
-  }, [router.query.q]);
+  }, [router?.query.q]);
 
   if (!data) return null;
 

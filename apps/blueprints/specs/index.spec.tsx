@@ -1,9 +1,11 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import Index from "../src/pages/index";
 import * as nextRouter from "next/router";
 
 const useRouter = jest.spyOn(nextRouter, "useRouter");
+(global as any).fetch = jest.fn(() => Promise.resolve());
+console.error = jest.fn();
 
 describe("Index", () => {
   it("should render successfully", () => {
