@@ -15,7 +15,7 @@ const handler = apiHandler(async (req, res, { session }) => {
     return res.status(403).json({ status: "Unauthorised" });
 
   try {
-    await deleteBlueprintPage(String(id));
+    await deleteBlueprintPage(String(id), session.user_id);
     return res.status(201).json({ success: true, id });
   } catch (err) {
     const insert_errors = parseDatabaseError(err);
