@@ -60,8 +60,12 @@ export const useFbeData = (): FactorioData | null => {
 
   useEffect(() => {
     (async () => {
-      const result = await fetch("/api/fbe-proxy/data.json").then((res) => res.json());
-      setData(result);
+      const result = await fetch("/api/fbe-proxy/data.json")
+        .then((res) => res.json())
+        .catch(() => {
+          console.error("Failed to fetch data.json");
+        });
+      if (result) setData(result);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

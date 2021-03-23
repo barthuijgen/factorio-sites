@@ -4,6 +4,9 @@ import Index from "../src/pages/index";
 import * as nextRouter from "next/router";
 
 const useRouter = jest.spyOn(nextRouter, "useRouter");
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(global as any).fetch = jest.fn(() => Promise.resolve());
+console.error = jest.fn();
 
 describe("Index", () => {
   it("should render successfully", () => {
