@@ -52,7 +52,6 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints: blue
                 key={bp.id}
                 blueprint={bp}
                 editLink
-                type="row"
                 onDelete={deleteBlueprint}
                 disableDelete={deleteId === bp.id}
               />

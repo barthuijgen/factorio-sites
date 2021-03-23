@@ -1,6 +1,4 @@
-import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import styled from "@emotion/styled";
 import { format } from "date-fns";
 import { Box, Text } from "@chakra-ui/react";
@@ -12,12 +10,13 @@ import { Button } from "./Button";
 
 const StyledBlueprintLink = styled.div`
   display: flex;
-  margin: 5px 0;
+  /* margin: 5px 0; */
 
   .link-box {
     width: 100%;
     height: 36px;
     margin-right: 5px;
+    padding: 5px;
     background-color: #313031;
     box-shadow: inset 3px 0 3px -3px #201815, inset 2px 0 2px -2px #201815,
       inset 1px 0 1px -1px #201815, inset 0 3px 3px -3px #8f8c8b, inset 0 2px 2px -2px #8f8c8b,
@@ -28,12 +27,6 @@ const StyledBlueprintLink = styled.div`
     .block {
       display: flex;
       justify-content: space-between;
-    }
-
-    .image {
-      position: relative;
-      width: 200px;
-      height: 200px;
     }
 
     .details {
@@ -48,7 +41,6 @@ const StyledBlueprintLink = styled.div`
 
     a {
       display: block;
-      padding: 5px;
       color: #fff;
     }
 
@@ -76,7 +68,6 @@ const StyledBlueprintLink = styled.div`
 interface BlueprintLinkProps extends React.HTMLAttributes<HTMLDivElement> {
   blueprint: Pick<BlueprintPage, "id" | "title" | "image_hash" | "favorite_count" | "updated_at">;
   editLink?: boolean;
-  type: "tile" | "row";
   onDelete?: (id: string) => void;
   disableDelete?: boolean;
 }
@@ -84,18 +75,12 @@ interface BlueprintLinkProps extends React.HTMLAttributes<HTMLDivElement> {
 export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
   blueprint,
   editLink,
-  type = "tile",
   onDelete,
   disableDelete,
   className,
 }) => {
-  const [imageError, setImageError] = useState(false);
-  const onImageError = () => {
-    setImageError(true);
-  };
-
   return (
-    <StyledBlueprintLink className={clsx("blueprint-link", type, className)}>
+    <StyledBlueprintLink className={clsx("blueprint-link", className)}>
       <Box className="link-box">
         <Link
           href={editLink ? `/user/blueprint/${blueprint.id}` : `/blueprint/${blueprint.id}`}
@@ -103,22 +88,6 @@ export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
         >
           <a>
             <Box className="block">
-              {type === "tile" && (
-                <div className="image">
-                  {imageError ? (
-                    <div>The image is not generated yet, please be patient it will come soon.</div>
-                  ) : (
-                    <Image
-                      loader={({ src }) => src}
-                      src={`https://storage.googleapis.com/blueprint-images/300/${blueprint.image_hash}.webp`}
-                      layout="fill"
-                      objectFit="contain"
-                      alt={blueprint.title}
-                      onError={onImageError}
-                    />
-                  )}
-                </div>
-              )}
               <Box className="details">
                 <Text css={{ display: "flex", alignItems: "center", marginRight: "1rem" }}>
                   <MdFavorite css={{ marginRight: "5px" }} />
@@ -126,11 +95,9 @@ export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
                 </Text>
                 <Text className="title">{blueprint.title}</Text>
               </Box>
-              {type === "row" && (
-                <Box>
-                  <Text>{format(blueprint.updated_at * 1000, getLocaleDateFormat(true))}</Text>
-                </Box>
-              )}
+              <Box>
+                <Text>{format(blueprint.updated_at * 1000, getLocaleDateFormat(true))}</Text>
+              </Box>
             </Box>
           </a>
         </Link>
