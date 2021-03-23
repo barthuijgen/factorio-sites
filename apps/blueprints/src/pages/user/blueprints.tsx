@@ -8,6 +8,7 @@ import { pageHandler } from "../../utils/page-handler";
 import { BlueprintLink } from "../../components/BlueprintLink";
 import { Panel } from "../../components/Panel";
 import { Button } from "../../components/Button";
+import { MdDeleteForever } from "react-icons/md";
 
 interface UserBlueprintsProps {
   blueprints: BlueprintPage[];
@@ -48,13 +49,27 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints: blue
         <Box>
           {blueprints.length !== 0 ? (
             blueprints.map((bp) => (
-              <BlueprintLink
-                key={bp.id}
-                blueprint={bp}
-                editLink
-                onDelete={deleteBlueprint}
-                disableDelete={deleteId === bp.id}
-              />
+              <div key={bp.id} css={{ display: "flex", margin: "5px 0" }}>
+                <BlueprintLink
+                  blueprint={bp}
+                  editLink
+                  onDelete={deleteBlueprint}
+                  disableDelete={deleteId === bp.id}
+                />
+                <Button
+                  danger
+                  css={{
+                    padding: "2px",
+                    width: "36px",
+                    justifyContent: "center",
+                  }}
+                  className="delete"
+                  disabled={deleteId === bp.id}
+                  onClick={() => deleteBlueprint(bp.id)}
+                >
+                  <MdDeleteForever size={18} />
+                </Button>
+              </div>
             ))
           ) : (
             <p css={{ marginTop: "10px" }}>You don't have any blueprints yet</p>
