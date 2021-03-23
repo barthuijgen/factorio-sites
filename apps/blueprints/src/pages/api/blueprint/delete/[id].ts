@@ -1,4 +1,4 @@
-import { deleteBlueprintPage } from "@factorio-sites/database";
+import { deleteBlueprintPage, getBlueprintPageById } from "@factorio-sites/database";
 import { parseDatabaseError } from "../../../../utils/api.utils";
 import { apiHandler } from "../../../../utils/api-handler";
 
@@ -9,6 +9,10 @@ const handler = apiHandler(async (req, res, { session }) => {
 
   const { id } = req.query;
   if (!id) return res.status(400).json({ status: "ID is required" });
+
+  const existing = await getBlueprintPageById(String(id));
+  if (existing?.user_id !== session.user_id)
+    return res.status(403).json({ status: "Unauthorised" });
 
   try {
     await deleteBlueprintPage(String(id));
