@@ -180,9 +180,18 @@ export const getServerSideProps = pageHandler(async (context, { session, redirec
   }
 
   const blueprintPage = await getBlueprintPageById(blueprintId);
+
+  if (!blueprintPage) {
+    return redirect("/");
+  }
+
   let selected!: UserBlueprintProps["selected"];
 
-  if (blueprintPage?.blueprint_id) {
+  if (blueprintPage.user_id !== session.user_id) {
+    return redirect("/");
+  }
+
+  if (blueprintPage.blueprint_id) {
     const blueprint = await getBlueprintById(blueprintPage.blueprint_id);
     if (!blueprint) return;
 
@@ -194,7 +203,7 @@ export const getServerSideProps = pageHandler(async (context, { session, redirec
       },
       string: (await getBlueprintStringByHash(blueprint.blueprint_hash)) as string,
     };
-  } else if (blueprintPage?.blueprint_book_id) {
+  } else if (blueprintPage.blueprint_book_id) {
     const blueprintBook = await getBlueprintBookById(blueprintPage.blueprint_book_id);
     if (!blueprintBook) return;
 
