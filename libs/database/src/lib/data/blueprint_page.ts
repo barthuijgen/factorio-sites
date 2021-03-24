@@ -262,10 +262,11 @@ export async function editBlueprintPage(
   return page;
 }
 
-export async function deleteBlueprintPage(blueprintPageId: string, userId: string) {
-  await prisma.user_favorites.delete({
-    where: { user_id_blueprint_page_id: { user_id: userId, blueprint_page_id: blueprintPageId } },
+export async function deleteBlueprintPage(blueprintPageId: string) {
+  await prisma.user_favorites.deleteMany({
+    where: { blueprint_page_id: blueprintPageId },
   });
+
   const result = await prisma.blueprint_page.delete({ where: { id: blueprintPageId } });
 
   return result;

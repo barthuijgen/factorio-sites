@@ -9,7 +9,7 @@ import clsx from "clsx";
 
 const StyledBlueprintLink = styled.div`
   width: 100%;
-  height: 36px;
+  min-height: 36px;
   margin-right: 5px;
   padding: 5px;
   background-color: #313031;
@@ -22,6 +22,7 @@ const StyledBlueprintLink = styled.div`
   .block {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   .details {
@@ -29,9 +30,7 @@ const StyledBlueprintLink = styled.div`
   }
 
   .title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: break-spaces;
   }
 
   a {
@@ -56,17 +55,9 @@ const StyledBlueprintLink = styled.div`
 interface BlueprintLinkProps extends React.HTMLAttributes<HTMLDivElement> {
   blueprint: Pick<BlueprintPage, "id" | "title" | "image_hash" | "favorite_count" | "updated_at">;
   editLink?: boolean;
-  onDelete?: (id: string) => void;
-  disableDelete?: boolean;
 }
 
-export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
-  blueprint,
-  editLink,
-  onDelete,
-  disableDelete,
-  className,
-}) => {
+export const BlueprintLink: React.FC<BlueprintLinkProps> = ({ blueprint, editLink, className }) => {
   return (
     <StyledBlueprintLink className={clsx("blueprint-link", className)}>
       <Link
@@ -82,7 +73,7 @@ export const BlueprintLink: React.FC<BlueprintLinkProps> = ({
               </Text>
               <Text className="title">{blueprint.title}</Text>
             </Box>
-            <Box>
+            <Box css={{ whiteSpace: "nowrap" }}>
               <Text>{format(blueprint.updated_at * 1000, getLocaleDateFormat(true))}</Text>
             </Box>
           </Box>
