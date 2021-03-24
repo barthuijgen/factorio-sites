@@ -50,12 +50,7 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints: blue
           {blueprints.length !== 0 ? (
             blueprints.map((bp) => (
               <div key={bp.id} css={{ display: "flex", margin: "5px 0" }}>
-                <BlueprintLink
-                  blueprint={bp}
-                  editLink
-                  onDelete={deleteBlueprint}
-                  disableDelete={deleteId === bp.id}
-                />
+                <BlueprintLink blueprint={bp} editLink />
                 <Button
                   danger
                   css={{
