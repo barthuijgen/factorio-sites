@@ -261,3 +261,13 @@ export async function editBlueprintPage(
   console.log(`Updated Blueprint Page`);
   return page;
 }
+
+export async function deleteBlueprintPage(blueprintPageId: string) {
+  await prisma.user_favorites.deleteMany({
+    where: { blueprint_page_id: blueprintPageId },
+  });
+
+  const result = await prisma.blueprint_page.delete({ where: { id: blueprintPageId } });
+
+  return result;
+}

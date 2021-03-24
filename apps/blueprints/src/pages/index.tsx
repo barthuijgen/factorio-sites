@@ -6,7 +6,7 @@ import { BlueprintPage } from "@factorio-sites/types";
 import { Panel } from "../components/Panel";
 import { Pagination } from "../components/Pagination";
 import { useRouterQueryToHref } from "../hooks/query.hook";
-import { BlueprintLink } from "../components/BlueprintLink";
+import { BlueprintTile } from "../components/BlueprintTile";
 import { Select } from "../components/Select";
 import { queryValueAsArray } from "../utils/query.utils";
 import { useFbeData } from "../hooks/fbe.hook";
@@ -197,7 +197,7 @@ export const Index: NextPage<IndexProps> = ({
           <Box css={{ display: "flex", flexDirection: "column" }}>
             <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px", flexGrow: 1 }}>
               {blueprints.length ? (
-                blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} type="tile" />)
+                blueprints.map((bp) => <BlueprintTile key={bp.id} blueprint={bp} />)
               ) : (
                 <p css={{ marginTop: "10px" }}>No results found</p>
               )}

@@ -4,11 +4,18 @@ import clsx from "clsx";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   primary?: boolean;
+  danger?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({ primary, className, children, ...props }) => {
+export const Button: React.FC<ButtonProps> = ({
+  primary,
+  danger,
+  className,
+  children,
+  ...props
+}) => {
   return (
-    <StyledButton className={clsx({ primary }, className)} {...props}>
+    <StyledButton className={clsx({ primary, danger }, className)} {...props}>
       {children}
     </StyledButton>
   );

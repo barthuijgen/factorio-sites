@@ -126,6 +126,7 @@ export const UserBlueprint: NextPage<UserBlueprintProps> = ({ blueprintPage, sel
                   <FormControl id="tags" isInvalid={meta.touched && !!meta.error} css={FieldStyle}>
                     <FormLabel>Tags</FormLabel>
                     <Select
+                      css={{ maxWidth: "640px" }}
                       options={tagsOptions}
                       value={field.value}
                       onChange={(tags) => setFieldValue("tags", tags)}

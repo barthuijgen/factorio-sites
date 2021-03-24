@@ -17,18 +17,20 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) =>
   return (
     <SimpleGrid columns={1} margin="0 auto" maxWidth="800px">
       <Panel title="Blueprints">
-        <Box
+        <Text>Your favorites</Text>
+        <hr
           css={{
-            display: "flex",
-            borderBottom: "1px solid #b7b7b7",
-            paddingBottom: "0.3rem",
+            border: "none",
+            height: "2px",
+            margin: "12px auto",
+            boxShadow: "inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e",
           }}
-        >
-          <Text>Your favorites</Text>
-        </Box>
+        />
         <Box>
           {blueprints.length !== 0 ? (
-            blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} type="row" />)
+            blueprints.map((bp) => (
+              <BlueprintLink key={bp.id} css={{ margin: "5px 0" }} blueprint={bp} />
+            ))
           ) : (
             <p css={{ marginTop: "10px" }}>You don't have any favorites yet</p>
           )}
