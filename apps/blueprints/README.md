@@ -38,3 +38,8 @@ nx serve
 - `docker build -t eu.gcr.io/factorio-sites/blueprints --file blueprints.Dockerfile .`
 - `docker tag eu.gcr.io/factorio-sites/blueprints eu.gcr.io/factorio-sites/blueprints:dev`
 - `docker push eu.gcr.io/factorio-sites/blueprints`
+
+## Google cloud environment
+
+If deploying nextjs assets to google storage, set cors options
+gsutil cors set ./gcp-storage-cors.json gs://bucket_name

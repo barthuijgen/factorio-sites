@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import styled from "@emotion/styled";
 import { BlueprintPage } from "@factorio-sites/types";
-import { getLocaleDateFormat, parseFactorioGameVersion } from "@factorio-sites/web-utils";
+import { getLocaleDateFormat } from "@factorio-sites/web-utils";
 import { useFactorioGameVersion } from "../../hooks/utils.hook";
 
 const StyledBox = styled(Box)`

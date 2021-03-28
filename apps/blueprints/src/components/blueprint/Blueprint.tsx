@@ -14,7 +14,6 @@ import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 import { css } from "@emotion/react";
-import { Blueprint } from "@fbe/editor";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
