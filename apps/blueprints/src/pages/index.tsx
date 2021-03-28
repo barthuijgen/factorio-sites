@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NextPage, NextPageContext } from "next";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
 import {
   searchBlueprintPages,
@@ -66,15 +66,18 @@ const sidebarCheckbox = css(SidebarRow, {
   },
 });
 
+type BlueprintPageWithUserFavorite = Pick<
+  BlueprintPage,
+  "id" | "image_hash" | "favorite_count" | "title" | "updated_at"
+> & {
+  user_favorite: boolean;
+};
+
 interface IndexProps {
   totalItems: number;
   currentPage: number;
   totalPages: number;
-  blueprints: Array<
-    Pick<BlueprintPage, "id" | "image_hash" | "favorite_count" | "title" | "updated_at"> & {
-      user_favorite: boolean;
-    }
-  >;
+  blueprints: BlueprintPageWithUserFavorite[];
 }
 
 export const Index: NextPage<IndexProps> = ({
@@ -86,13 +89,17 @@ export const Index: NextPage<IndexProps> = ({
   const router = useRouter();
   const auth = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [blueprints, setBlueprints] = useState(blueprintsProp);
+  const [blueprints, setBlueprints] = useState<BlueprintPageWithUserFavorite[]>([]);
   const routerQueryToHref = useRouterQueryToHref();
   const data = useFbeData();
 
   useEffect(() => {
     setSearchQuery((router.query.q as string) || "");
   }, [router?.query.q]);
+
+  useEffect(() => {
+    setBlueprints(blueprintsProp);
+  }, [blueprintsProp]);
 
   if (!data) return null;
 
