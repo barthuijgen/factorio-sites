@@ -44,6 +44,7 @@
     "cookie": "0.4.1",
     "date-fns": "2.19.0",
     "document-register-element": "1.14.10",
+    "factorio-wasm": "file:.yalc/factorio-wasm",
     "formik": "2.2.6",
     "framer-motion": "4.0.0",
     "next": "10.0.9",

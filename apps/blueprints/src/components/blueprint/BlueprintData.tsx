@@ -14,7 +14,7 @@ export const BlueprintData: React.FC<BlueprintDataProps> = ({ string, data, onRe
 
   useEffect(() => {
     setShowDetails("none");
-  }, [string, data]);
+  }, [string]);
 
   return (
     <Box>

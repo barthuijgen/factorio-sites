@@ -1,0 +1,17 @@
+{
+  "name": "factorio-wasm",
+  "collaborators": [
+    "bart"
+  ],
+  "version": "0.1.0+ea3a8f32",
+  "files": [
+    "factorio_wasm_bg.js",
+    "factorio_wasm_bg.wasm",
+    "factorio_wasm.js",
+    "factorio_wasm.d.ts"
+  ],
+  "module": "factorio_wasm.js",
+  "types": "factorio_wasm.d.ts",
+  "sideEffects": false,
+  "yalcSig": "ea3a8f32809fcc5258a3ba4dd5522c63"
+}

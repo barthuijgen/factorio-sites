@@ -125,3 +125,14 @@ export function getLocaleDateFormat(withHours?: boolean) {
     .replace("2013", "yyyy");
   return withHours ? `${format} HH:mm` : format;
 }
+
+let FactorioWasm: typeof import("factorio-wasm");
+
+export async function parseFactorioGameVersion(version: string | number) {
+  if (!FactorioWasm) {
+    FactorioWasm = await import("factorio-wasm");
+  }
+
+  const result = FactorioWasm.parseGameVersion(String(version));
+  return result.split(".").slice(0, 3).join(".");
+}

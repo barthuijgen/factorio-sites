@@ -14,6 +14,7 @@ import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 import { css } from "@emotion/react";
+import { Blueprint } from "@fbe/editor";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -153,7 +154,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "2" })}
       >
-        <BlueprintInfo blueprint_page={blueprint_page} />
+        <BlueprintInfo blueprint_page={blueprint_page} version={blueprint.game_version} />
       </Panel>
 
       <Panel

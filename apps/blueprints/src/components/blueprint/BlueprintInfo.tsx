@@ -3,7 +3,8 @@ import { format } from "date-fns";
 import Link from "next/link";
 import styled from "@emotion/styled";
 import { BlueprintPage } from "@factorio-sites/types";
-import { getLocaleDateFormat } from "@factorio-sites/web-utils";
+import { getLocaleDateFormat, parseFactorioGameVersion } from "@factorio-sites/web-utils";
+import { useFactorioGameVersion } from "../../hooks/utils.hook";
 
 const StyledBox = styled(Box)`
   dl {
@@ -30,9 +31,12 @@ const StyledBox = styled(Box)`
 
 interface BlueprintInfoProps {
   blueprint_page: BlueprintPage;
+  version?: string | number | null;
 }
 
-export const BlueprintInfo: React.FC<BlueprintInfoProps> = ({ blueprint_page }) => {
+export const BlueprintInfo: React.FC<BlueprintInfoProps> = ({ blueprint_page, version }) => {
+  const versionString = useFactorioGameVersion(version);
+
   return (
     <StyledBox>
       <dl>
@@ -57,6 +61,15 @@ export const BlueprintInfo: React.FC<BlueprintInfoProps> = ({ blueprint_page }) 
         <dt>Created:</dt>
         <dd>{format(new Date(blueprint_page.created_at * 1000), getLocaleDateFormat())}</dd>
       </dl>
+      {versionString && (
+        <>
+          <hr />
+          <dl>
+            <dt>Factorio version:</dt>
+            <dd>{versionString}</dd>
+          </dl>
+        </>
+      )}
       <hr />
       <dl>
         <dt>Favorites:</dt>

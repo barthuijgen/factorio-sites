@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, Grid } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import {
@@ -9,7 +9,6 @@ import {
 } from "@factorio-sites/types";
 import {
   chakraResponsive,
-  ChildTreeBlueprintBookEnriched,
   mergeBlueprintDataAndChildTree,
   parseBlueprintStringClient,
 } from "@factorio-sites/web-utils";
@@ -84,9 +83,10 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
 }) => {
   const url = useUrl();
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
-  const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
-    null
-  );
+  // const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
+  //   null
+  // );
+  const [mainBookData, setMainBookData] = useState<BlueprintStringData | null>(null);
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
   const [renderer, setRenderer] = useState<RENDERERS | null>(null);
   const selectedHash = selected.data.blueprint_hash;
@@ -98,19 +98,22 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
       .then((string) => {
         const data = parseBlueprintStringClient(string);
         if (data) {
-          setBookChildTreeData(
-            mergeBlueprintDataAndChildTree(data, {
-              id: blueprint_book.id,
-              name: blueprint_book.label,
-              type: "blueprint_book",
-              children: blueprint_book.child_tree,
-            })
-          );
+          setMainBookData(data);
         }
       })
       .catch((reason) => console.error(reason));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const bookChildTreeData = useMemo(() => {
+    if (!mainBookData) return null;
+    return mergeBlueprintDataAndChildTree(mainBookData, {
+      id: blueprint_book.id,
+      name: blueprint_book.label,
+      type: "blueprint_book",
+      children: blueprint_book.child_tree,
+    });
+  }, [blueprint_book.child_tree, blueprint_book.id, blueprint_book.label, mainBookData]);
 
   useEffect(() => {
     fetch(`/api/string/${selectedHash}`)
@@ -231,7 +234,10 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "3 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "2" })}
       >
-        <BlueprintInfo blueprint_page={blueprint_page} />
+        <BlueprintInfo
+          blueprint_page={blueprint_page}
+          version={mainBookData?.blueprint_book?.version}
+        />
       </Panel>
 
       <Panel
