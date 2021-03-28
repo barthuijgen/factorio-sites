@@ -55,12 +55,13 @@ export async function getBlueprintPageByFactorioprintsId(
   return result ? mapBlueprintPageEntityToObject(result) : null;
 }
 
-export async function getUserFavoriteBlueprintPages(user_id: string) {
+export async function getUserFavoriteBlueprintPages(user_id: string, ids?: string[]) {
   const result = await prisma.blueprint_page.findMany({
     where: {
       user_favorites: {
         some: {
           user_id: user_id,
+          blueprint_page_id: ids ? { in: ids } : undefined,
         },
       },
     },
