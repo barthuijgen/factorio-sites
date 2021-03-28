@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
-import { searchBlueprintPages, init } from "@factorio-sites/database";
+import {
+  searchBlueprintPages,
+  init,
+  getUserFavoriteBlueprintPages,
+} from "@factorio-sites/database";
 import { BlueprintPage } from "@factorio-sites/types";
 import { Panel } from "../components/Panel";
 import { Pagination } from "../components/Pagination";
@@ -26,6 +30,8 @@ import { css } from "@emotion/react";
 import { MdSearch } from "react-icons/md";
 import { TAGS } from "@factorio-sites/common-utils";
 import { mq } from "@factorio-sites/web-utils";
+import { useAuth } from "../providers/auth";
+import { pageHandler } from "../utils/page-handler";
 
 const pageCss = css({
   display: "flex",
@@ -64,20 +70,23 @@ interface IndexProps {
   totalItems: number;
   currentPage: number;
   totalPages: number;
-  blueprints: Pick<
-    BlueprintPage,
-    "id" | "image_hash" | "favorite_count" | "title" | "updated_at"
-  >[];
+  blueprints: Array<
+    Pick<BlueprintPage, "id" | "image_hash" | "favorite_count" | "title" | "updated_at"> & {
+      user_favorite: boolean;
+    }
+  >;
 }
 
 export const Index: NextPage<IndexProps> = ({
   totalItems,
   currentPage,
   totalPages,
-  blueprints,
+  blueprints: blueprintsProp,
 }) => {
   const router = useRouter();
+  const auth = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [blueprints, setBlueprints] = useState(blueprintsProp);
   const routerQueryToHref = useRouterQueryToHref();
   const data = useFbeData();
 
@@ -96,6 +105,30 @@ export const Index: NextPage<IndexProps> = ({
     label: `${tag.category}: ${tag.label}`,
     value: tag.value,
   }));
+
+  const handleBlueprintFavoriteClick = async (blueprint_page_id: string) => {
+    try {
+      const response = await fetch("/api/user/favorite", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ blueprint_page_id }),
+      });
+      const { favorite } = await response.json();
+      setBlueprints((blueprints) =>
+        blueprints.map((bp) =>
+          bp.id === blueprint_page_id
+            ? {
+                ...bp,
+                user_favorite: favorite,
+                favorite_count: bp.favorite_count + (favorite ? 1 : -1),
+              }
+            : bp
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <SimpleGrid columns={1}>
@@ -197,7 +230,14 @@ export const Index: NextPage<IndexProps> = ({
           <Box css={{ display: "flex", flexDirection: "column" }}>
             <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px", flexGrow: 1 }}>
               {blueprints.length ? (
-                blueprints.map((bp) => <BlueprintTile key={bp.id} blueprint={bp} />)
+                blueprints.map((bp) => (
+                  <BlueprintTile
+                    key={bp.id}
+                    blueprint={bp}
+                    disableFavorite={!auth}
+                    onFavoriteClick={handleBlueprintFavoriteClick}
+                  />
+                ))
               ) : (
                 <p css={{ marginTop: "10px" }}>No results found</p>
               )}
@@ -212,8 +252,9 @@ export const Index: NextPage<IndexProps> = ({
   );
 };
 
-export async function getServerSideProps({ query }: NextPageContext) {
+export const getServerSideProps = pageHandler(async ({ query }, { session }) => {
   await init();
+  console.log(session);
   const page = Number(query.page || "1");
   const perPage = Number(query["per-page"] || "20");
   const order = (query["order"] as string) || "favorites";
@@ -241,6 +282,14 @@ export async function getServerSideProps({ query }: NextPageContext) {
     user,
     absolute_snapping,
   });
+  const userFavorites: string[] = session?.user_id
+    ? (
+        await getUserFavoriteBlueprintPages(
+          session.user_id,
+          rows.map((row) => row.id)
+        )
+      ).map((item) => item.id)
+    : [];
 
   return {
     props: {
@@ -253,9 +302,10 @@ export async function getServerSideProps({ query }: NextPageContext) {
         favorite_count: row.favorite_count,
         title: row.title,
         updated_at: row.updated_at,
+        user_favorite: userFavorites.includes(row.id),
       })),
     } as IndexProps,
   };
-}
+});
 
 export default Index;
