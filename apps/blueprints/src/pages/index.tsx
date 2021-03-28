@@ -254,7 +254,6 @@ export const Index: NextPage<IndexProps> = ({
 
 export const getServerSideProps = pageHandler(async ({ query }, { session }) => {
   await init();
-  console.log(session);
   const page = Number(query.page || "1");
   const perPage = Number(query["per-page"] || "20");
   const order = (query["order"] as string) || "favorites";

@@ -10,7 +10,7 @@ import clsx from "clsx";
 const linkStyles = css`
   margin: 5px 10px 5px 0;
   background: #403f40;
-  width: 220px;
+  width: 210px;
   height: 255px;
   box-shadow: inset 3px 0 3px -3px #201815, inset 2px 0 2px -2px #201815,
     inset 1px 0 1px -1px #201815, inset 0 3px 3px -3px #8f8c8b, inset 0 2px 2px -2px #8f8c8b,
@@ -26,7 +26,7 @@ const linkStyles = css`
 
   .image {
     position: relative;
-    width: 200px;
+    width: 190px;
     height: 200px;
     background: #303030;
     margin: 10px;
@@ -36,7 +36,7 @@ const linkStyles = css`
       0 3px 3px -3px #8f8c8b, 0 2px 2px -2px #8f8c8b, 0 1px 1px -1px #8f8c8b;
 
     & > div {
-      margin: 2px 0 !important;
+      margin: 2px !important;
     }
   }
 
