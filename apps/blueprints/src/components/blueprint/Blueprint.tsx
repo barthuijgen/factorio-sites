@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { Grid, Box } from "@chakra-ui/react";
 import { Blueprint as IBlueprint, BlueprintPage, BlueprintStringData } from "@factorio-sites/types";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
@@ -14,6 +15,8 @@ import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 import { css } from "@emotion/react";
+import { useAuth } from "../../providers/auth";
+import { Button } from "../Button";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -64,6 +67,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
   blueprint_page,
   favorite,
 }) => {
+  const auth = useAuth();
   const url = useUrl();
   const [string, setString] = useState<string | null>(null);
   const [data, setData] = useState<BlueprintStringData | null>(null);
@@ -100,6 +104,13 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
               />
             )}
             <Box css={{ display: "inline-block", flexGrow: 1, textAlign: "right" }}>
+              {auth?.user_id === blueprint_page.user_id && (
+                <Link href={`/user/blueprint/${blueprint_page.id}`} passHref>
+                  <a css={{ marginRight: "1rem" }}>
+                    <Button>Edit</Button>
+                  </a>
+                </Link>
+              )}
               {string && (
                 <CopyButton
                   primary

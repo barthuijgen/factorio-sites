@@ -232,9 +232,7 @@ export async function createBlueprintPage(
 
 export async function editBlueprintPage(
   blueprintPageId: string,
-  type: "blueprint" | "blueprint_book",
-  targetId: string,
-  extraInfo: {
+  data: {
     title: string;
     user_id?: string;
     description_markdown: string;
@@ -242,20 +240,21 @@ export async function editBlueprintPage(
     created_at?: number;
     updated_at?: number;
     factorioprints_id?: string;
-  }
+  },
+  target?: { id: string; type: "blueprint" | "blueprint_book" }
 ) {
   const page = await prisma.blueprint_page.update({
     where: { id: blueprintPageId },
     data: {
-      user_id: extraInfo.user_id || null,
-      title: extraInfo.title,
-      description_markdown: extraInfo.description_markdown,
-      factorioprints_id: extraInfo.factorioprints_id,
-      blueprint_id: type === "blueprint" ? targetId : null,
-      blueprint_book_id: type === "blueprint_book" ? targetId : null,
-      tags: extraInfo.tags ? extraInfo.tags : [],
-      updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
-      created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
+      user_id: data.user_id || null,
+      title: data.title,
+      description_markdown: data.description_markdown,
+      factorioprints_id: data.factorioprints_id,
+      blueprint_id: target ? (target.type === "blueprint" ? target.id : null) : undefined,
+      blueprint_book_id: target ? (target.type === "blueprint_book" ? target.id : null) : undefined,
+      tags: data.tags ? data.tags : [],
+      updated_at: data.updated_at ? new Date(data.updated_at * 1000) : new Date(),
+      created_at: data.created_at ? new Date(data.created_at * 1000) : new Date(),
     },
   });
 

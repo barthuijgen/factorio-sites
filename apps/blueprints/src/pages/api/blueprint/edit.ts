@@ -29,33 +29,33 @@ const handler = apiHandler(async (req, res, { session }) => {
   const errors: Record<string, string> = {};
 
   if (!title) errors.title = "Required";
-  if (!description) errors.description = "Required";
-  if (!string) errors.string = "Required";
 
-  const parsed = await parseBlueprintString(string).catch(() => null);
+  const parsed = string ? await parseBlueprintString(string).catch(() => null) : null;
 
-  if (!parsed) errors.string = "Not recognised as a blueprint string";
+  if (string && !parsed) errors.string = "Not recognised as a blueprint string";
 
   if (Object.keys(errors).length) {
     return res.status(400).json({ errors });
   }
 
   try {
-    const info = {
+    const data = {
       user_id: session.user.id,
       title,
       tags: Array.isArray(tags) ? tags : [],
       description_markdown: description,
     };
-    console.log(info);
 
     if (parsed?.data.blueprint) {
-      const result = await createBlueprint(parsed.data.blueprint, info);
-      const page = await editBlueprintPage(id, "blueprint", result.id, info);
+      const result = await createBlueprint(parsed.data.blueprint, data);
+      const page = await editBlueprintPage(id, data, { id: result.id, type: "blueprint" });
       return res.status(200).json({ success: true, id: page.id });
     } else if (parsed?.data.blueprint_book) {
-      const result = await createBlueprintBook(parsed.data.blueprint_book, info);
-      const page = await editBlueprintPage(id, "blueprint_book", result.id, info);
+      const result = await createBlueprintBook(parsed.data.blueprint_book, data);
+      const page = await editBlueprintPage(id, data, { id: result.id, type: "blueprint_book" });
+      return res.status(200).json({ success: true, id: page.id });
+    } else if (!string) {
+      const page = await editBlueprintPage(id, data);
       return res.status(200).json({ success: true, id: page.id });
     }
   } catch (reason) {
