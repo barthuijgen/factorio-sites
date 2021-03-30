@@ -74,7 +74,7 @@
     "@nrwl/cypress": "11.5.2",
     "@nrwl/eslint-plugin-nx": "11.5.2",
     "@nrwl/jest": "11.5.2",
-    "@nrwl/next": "11.5.2",
+    "@nrwl/next": "11.6.0",
     "@nrwl/node": "11.5.2",
     "@nrwl/react": "11.5.2",
     "@nrwl/web": "11.5.2",
