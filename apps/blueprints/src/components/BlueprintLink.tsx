@@ -5,7 +5,6 @@ import { Box, Text } from "@chakra-ui/react";
 import { MdFavorite } from "react-icons/md";
 import { BlueprintPage } from "@factorio-sites/types";
 import { getLocaleDateFormat } from "@factorio-sites/web-utils";
-import clsx from "clsx";
 
 const StyledBlueprintLink = styled.div`
   width: 100%;
@@ -59,7 +58,7 @@ interface BlueprintLinkProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const BlueprintLink: React.FC<BlueprintLinkProps> = ({ blueprint, editLink, className }) => {
   return (
-    <StyledBlueprintLink className={clsx("blueprint-link", className)}>
+    <StyledBlueprintLink className={className}>
       <Link
         href={editLink ? `/user/blueprint/${blueprint.id}` : `/blueprint/${blueprint.id}`}
         passHref

@@ -8,11 +8,18 @@ import { pageHandler } from "../../utils/page-handler";
 import { BlueprintLink } from "../../components/BlueprintLink";
 import { Panel } from "../../components/Panel";
 import { Button } from "../../components/Button";
-import { MdDeleteForever } from "react-icons/md";
+import { MdDeleteForever, MdLink } from "react-icons/md";
+import { css } from "@emotion/react";
 
 interface UserBlueprintsProps {
   blueprints: BlueprintPage[];
 }
+
+const buttonCss = css({
+  padding: "2px",
+  width: "36px",
+  justifyContent: "center",
+});
 
 export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints: blueprintsProp }) => {
   const [blueprints, setBlueprints] = useState<BlueprintPage[]>(blueprintsProp);
@@ -51,14 +58,20 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints: blue
             blueprints.map((bp) => (
               <div key={bp.id} css={{ display: "flex", margin: "5px 0" }}>
                 <BlueprintLink blueprint={bp} editLink />
+                <Link href={`/blueprint/${bp.id}`}>
+                  <a
+                    css={{
+                      marginRight: "5px",
+                    }}
+                  >
+                    <Button css={buttonCss}>
+                      <MdLink size={18} />
+                    </Button>
+                  </a>
+                </Link>
                 <Button
                   danger
-                  css={{
-                    padding: "2px",
-                    width: "36px",
-                    justifyContent: "center",
-                  }}
-                  className="delete"
+                  css={buttonCss}
                   disabled={deleteId === bp.id}
                   onClick={() => deleteBlueprint(bp.id)}
                 >

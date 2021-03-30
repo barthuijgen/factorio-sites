@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Grid, Box } from "@chakra-ui/react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { Blueprint as IBlueprint, BlueprintPage, BlueprintStringData } from "@factorio-sites/types";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
 import { Markdown } from "../../components/Markdown";
 import { CopyButton } from "../../components/CopyButton";
-import styled from "@emotion/styled";
 import { FavoriteButton } from "./FavoriteButton";
 import { useUrl } from "../../hooks/url.hook";
 import { BlueprintData } from "./BlueprintData";
@@ -14,7 +15,6 @@ import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
-import { css } from "@emotion/react";
 import { useAuth } from "../../providers/auth";
 import { Button } from "../Button";
 

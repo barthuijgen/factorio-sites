@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Box, Grid } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   BlueprintBook,
   Blueprint,
@@ -24,7 +26,8 @@ import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { FactorioCode } from "../FactorioCode";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
-import { css } from "@emotion/react";
+import { Button } from "../Button";
+import { useAuth } from "../../providers/auth";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -81,6 +84,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
   blueprint_page,
   favorite,
 }) => {
+  const auth = useAuth();
   const url = useUrl();
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
   // const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
@@ -182,6 +186,13 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
               />
             )}
             <Box css={{ display: "inline-block", flexGrow: 1, textAlign: "right" }}>
+              {auth?.user_id === blueprint_page.user_id && (
+                <Link href={`/user/blueprint/${blueprint_page.id}`} passHref>
+                  <a css={{ marginRight: "1rem" }}>
+                    <Button>Edit</Button>
+                  </a>
+                </Link>
+              )}
               {selectedBlueprintString && (
                 <CopyButton
                   primary
