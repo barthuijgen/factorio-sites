@@ -11,6 +11,15 @@ import {
 import { ChildTreeBlueprintBook } from "@factorio-sites/types";
 import { Base64 } from "./base64";
 
+let FactorioWasm: typeof import("factorio-wasm");
+
+async function loadFactorioWasm() {
+  if (!FactorioWasm) {
+    FactorioWasm = await import("factorio-wasm");
+  }
+  return FactorioWasm;
+}
+
 export function parseBlueprintStringClient(source: string): BlueprintStringData | null {
   try {
     const compressed = atob(source.substring(1));
@@ -22,6 +31,11 @@ export function parseBlueprintStringClient(source: string): BlueprintStringData 
     console.log("Failed to parse blueprint string", reason);
     return null;
   }
+}
+
+if (typeof window !== "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).parseBlueprintString = parseBlueprintStringClient;
 }
 
 export function encodeBlueprintClient(data: BlueprintStringData): string {
@@ -126,13 +140,8 @@ export function getLocaleDateFormat(withHours?: boolean) {
   return withHours ? `${format} HH:mm` : format;
 }
 
-let FactorioWasm: typeof import("factorio-wasm");
-
 export async function parseFactorioGameVersion(version: string | number) {
-  if (!FactorioWasm) {
-    FactorioWasm = await import("factorio-wasm");
-  }
-
-  const result = FactorioWasm.parseGameVersion(String(version));
+  const factorioWasm = await loadFactorioWasm();
+  const result = factorioWasm.parse_game_version(String(version));
   return result.split(".").slice(0, 3).join(".");
 }

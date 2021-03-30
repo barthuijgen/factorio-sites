@@ -4,4 +4,4 @@
 * @param {string} version_string
 * @returns {string}
 */
-export function parseGameVersion(version_string: string): string;
+export function parse_game_version(version_string: string): string;
