@@ -106,3 +106,15 @@ model user_favorites {
 
   @@id([user_id, blueprint_page_id])
 }
+
+model blueprint_entities {
+  entity String @unique
+}
+
+model blueprint_items {
+  item String @unique
+}
+
+model blueprint_recipes {
+  recipe String @unique
+}

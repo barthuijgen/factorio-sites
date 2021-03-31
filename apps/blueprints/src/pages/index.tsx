@@ -32,6 +32,7 @@ import { TAGS } from "@factorio-sites/common-utils";
 import { mq } from "@factorio-sites/web-utils";
 import { useAuth } from "../providers/auth";
 import { pageHandler } from "../utils/page-handler";
+import { useFetch } from "../hooks/fetch";
 
 const pageCss = css({
   display: "flex",
@@ -92,6 +93,9 @@ export const Index: NextPage<IndexProps> = ({
   const [blueprints, setBlueprints] = useState<BlueprintPageWithUserFavorite[]>([]);
   const routerQueryToHref = useRouterQueryToHref();
   const data = useFbeData();
+  const searchOptions = useFetch<{ entities: string[]; items: string[]; recipes: string[] }>(
+    "/api/searchoptions"
+  );
 
   useEffect(() => {
     setSearchQuery((router.query.q as string) || "");
@@ -103,11 +107,9 @@ export const Index: NextPage<IndexProps> = ({
 
   if (!data) return null;
 
-  const entityOptions = Object.keys(data.entities).filter(
-    (key) => !key.startsWith("factorio-logo") && !key.startsWith("crash-site")
-  );
-  const recipeOptions = Object.keys(data.recipes);
-  const itemOptions = Object.keys(data.items).filter((key) => key.includes("module"));
+  const entityOptions = searchOptions.data?.entities || [];
+  const itemOptions = searchOptions.data?.items || [];
+  const recipeOptions = searchOptions.data?.recipes || [];
   const tagsOptions = TAGS.map((tag) => ({
     label: `${tag.category}: ${tag.label}`,
     value: tag.value,
