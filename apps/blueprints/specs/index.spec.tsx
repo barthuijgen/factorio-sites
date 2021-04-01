@@ -1,3 +1,8 @@
+/* eslint-disable import/first */
+jest.mock("next/config", () => () => ({
+  publicRuntimeConfig: {},
+}));
+
 import React from "react";
 import { render } from "@testing-library/react";
 import Index from "../src/pages/index";
