@@ -1,4 +1,4 @@
-name: Deploy dev
+name: Deploy prd
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    environment: blueprints-dev
+    environment: blueprints-prd
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
