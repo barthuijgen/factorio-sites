@@ -28,6 +28,7 @@ import { FactorioCode } from "../FactorioCode";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 import { Button } from "../Button";
 import { useAuth } from "../../providers/auth";
+import { PUBLIC_URL } from "../../utils/env";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -180,7 +181,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
             <span>Image</span>
             {renderer === "fbe" && (
               <img
-                src="/fbe.svg"
+                src={`${PUBLIC_URL}/fbe.svg`}
                 alt="Factorio blueprint editor"
                 css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
               />

@@ -17,6 +17,7 @@ import { BlueprintEntities } from "./BlueprintEntities";
 import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 import { useAuth } from "../../providers/auth";
 import { Button } from "../Button";
+import { PUBLIC_URL } from "../../utils/env";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -98,7 +99,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
             <span>Image</span>
             {renderer === "fbe" && (
               <img
-                src="/fbe.svg"
+                src={`${PUBLIC_URL}/fbe.svg`}
                 alt="Factorio blueprint editor"
                 css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
               />

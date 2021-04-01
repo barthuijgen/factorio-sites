@@ -1,7 +1,7 @@
 import { Blueprint, IOilOutpostSettings } from './core/Blueprint';
 import { GridPattern } from './containers/BlueprintContainer';
 export declare class Editor {
-    init(canvas: HTMLCanvasElement): Promise<void>;
+    init(canvas: HTMLCanvasElement, basis_transcoder_base_url: string): Promise<void>;
     setRendererSize(width: number, height: number): void;
     get moveSpeed(): number;
     set moveSpeed(speed: number);

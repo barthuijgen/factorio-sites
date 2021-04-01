@@ -4,6 +4,7 @@ import { SimpleGrid, Box, Text, Image, Link } from "@chakra-ui/react";
 import { Panel } from "../components/Panel";
 import { css } from "@emotion/react";
 import { IoIosConstruct } from "react-icons/io";
+import { PUBLIC_URL } from "../utils/env";
 
 const headerCss = css`
   margin-top: 1rem;
@@ -75,7 +76,7 @@ export const Index: NextPage = () => {
               }}
             >
               <img
-                src="/fbe.svg"
+                src={`${PUBLIC_URL}/fbe.svg`}
                 alt="Factorio blueprint editor"
                 css={{ display: "inline-block", height: "18px" }}
               />

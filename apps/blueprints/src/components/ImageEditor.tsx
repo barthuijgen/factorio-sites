@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { useEffect, useRef, useState } from "react";
+import { PUBLIC_URL } from "../utils/env";
 
 type FBE = typeof import("@fbe/editor");
 type Editor = InstanceType<FBE["Editor"]>;
@@ -43,7 +44,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string, onError }) => 
       const editor = new FBE.Editor();
       const canvas = canvasRef.current;
       if (!canvas) return;
-      await editor.init(canvas);
+      await editor.init(canvas, PUBLIC_URL);
       canvas.style.width = "100%";
       canvas.style.height = "auto";
       editor.setRendererSize(canvas.offsetWidth, canvas.offsetHeight);

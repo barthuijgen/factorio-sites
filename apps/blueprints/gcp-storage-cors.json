@@ -1,6 +1,10 @@
 [
   {
-    "origin": ["https://factorioblueprints.tech", "https://dev.factorioblueprints.tech"],
+    "origin": [
+      "https://factorioblueprints.tech",
+      "https://static.factorioblueprints.tech",
+      "https://dev.factorioblueprints.tech"
+    ],
     "method": ["GET"],
     "responseHeader": ["Content-Type"],
     "maxAgeSeconds": 3600

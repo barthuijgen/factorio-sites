@@ -7,6 +7,9 @@ module.exports = {
   poweredByHeader: false,
   reactStrictMode: true,
   assetPrefix: process.env.ASSET_PREFIX ? process.env.ASSET_PREFIX : "",
+  publicRuntimeConfig: {
+    PUBLIC_URL: process.env.PUBLIC_URL || "",
+  },
   webpack(config, options) {
     const { dev, isServer } = options;
 
