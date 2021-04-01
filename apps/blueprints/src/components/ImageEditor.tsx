@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { useEffect, useRef, useState } from "react";
+import { PUBLIC_URL } from "../utils/env";
 
 type FBE = typeof import("@fbe/editor");
 type Editor = InstanceType<FBE["Editor"]>;
@@ -25,9 +26,10 @@ const editorCss = css`
 
 interface ImageEditorProps {
   string: string;
+  onError?: () => void;
 }
 
-export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
+export const ImageEditor: React.FC<ImageEditorProps> = ({ string, onError }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // const [image, setImage] = useState<string | undefined>();
   const FbeRef = useRef<FBE>();
@@ -42,7 +44,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
       const editor = new FBE.Editor();
       const canvas = canvasRef.current;
       if (!canvas) return;
-      await editor.init(canvas);
+      await editor.init(canvas, PUBLIC_URL);
       canvas.style.width = "100%";
       canvas.style.height = "auto";
       editor.setRendererSize(canvas.offsetWidth, canvas.offsetHeight);
@@ -89,13 +91,14 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string }) => {
         // setImage(URL.createObjectURL(picture));
       } catch (reason) {
         setRenderError(true);
+        if (onError) onError();
         if (Array.isArray(reason.errors)) {
           return console.error("Blueprint string not supported by FBE", reason.errors);
         }
         console.error("Failed to render blueprint", reason);
       }
     })();
-  }, [string, editorLoaded]);
+  }, [string, editorLoaded, onError]);
 
   return (
     <div css={editorCss}>

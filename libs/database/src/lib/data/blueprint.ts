@@ -73,3 +73,15 @@ export async function createBlueprint(
 
   return mapBlueprintInstanceToEntry(result);
 }
+
+export async function getBlueprintEntities() {
+  return (await prisma.blueprint_entities.findMany()).map((item) => item.entity);
+}
+
+export async function getBlueprintItems() {
+  return (await prisma.blueprint_items.findMany()).map((item) => item.item);
+}
+
+export async function getBlueprintRecipes() {
+  return (await prisma.blueprint_recipes.findMany()).map((item) => item.recipe);
+}

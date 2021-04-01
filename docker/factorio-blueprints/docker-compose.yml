@@ -11,7 +11,7 @@ services:
     ports:
       - 5432:5432
   adminer:
-    image: dpage/pgadmin4:4
+    image: dpage/pgadmin4:5
     container_name: factorio-blueprints-database-admin
     restart: always
     volumes:

@@ -1,5 +1,5 @@
 {
-  "extends": ["../../.eslintrc.json"],
+  "extends": ["../../.eslintrc.json", "plugin:@next/next/recommended"],
   "ignorePatterns": ["!**/*"],
   "env": {
     "browser": true,
@@ -15,6 +15,7 @@
   },
   "plugins": ["import", "jsx-a11y", "react", "react-hooks"],
   "rules": {
+    "@next/next/no-html-link-for-pages": "off",
     "array-callback-return": "warn",
     "dot-location": ["warn", "property"],
     "eqeqeq": ["warn", "smart"],

@@ -1,6 +1,7 @@
 import { AuthContextProps } from "../providers/auth";
 import { parseBlueprintStringClient } from "@factorio-sites/web-utils";
-const validateEmail = (value: string) => {
+
+export const validateEmail = (value: string) => {
   if (!value) {
     return "Required";
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
@@ -8,7 +9,7 @@ const validateEmail = (value: string) => {
   }
 };
 
-const validateRequired = (value: string) => {
+export const validateRequired = (value: string) => {
   if (!value) {
     return "Required";
   }
@@ -78,12 +79,12 @@ interface CreateBlueprintValues {
   title: string;
   description: string;
   string: string;
+  tags: string[];
 }
 
 export const validateCreateBlueprintForm = (values: CreateBlueprintValues) => {
-  const errors = {} as Partial<CreateBlueprintValues>;
+  const errors = {} as Record<keyof CreateBlueprintValues, string | undefined>;
   errors.title = validateRequired(values.title);
-  errors.description = validateRequired(values.description);
   errors.string = validateRequired(values.string);
 
   if (values.string) {
@@ -95,5 +96,20 @@ export const validateCreateBlueprintForm = (values: CreateBlueprintValues) => {
     errors.string = "Not recognised as a blueprint string";
   }
 
+  if (!Array.isArray(values.tags)) {
+    errors.tags = "Invalid tags value";
+  }
+
   return filterUndefined(errors);
+};
+
+export const validateBlueprintString = (value: string) => {
+  if (value) {
+    const parsed = parseBlueprintStringClient(value);
+    console.log(parsed);
+
+    if (!parsed) {
+      return "Not recognised as a blueprint string";
+    }
+  }
 };

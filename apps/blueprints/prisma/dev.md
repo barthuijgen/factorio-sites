@@ -13,17 +13,17 @@ SELECT distinct concat(type,'/',name) FROM blueprint, jsonb_to_recordset(data ->
 ### Unique entities
 
 ```
-SELECT distinct UNNEST(ARRAY(SELECT jsonb_object_keys(data -> 'entities'))) as entities FROM blueprint
+SELECT distinct UNNEST(ARRAY(SELECT jsonb_object_keys(data -> 'entities'))) as entity FROM blueprint
 ```
 
 ### Unique items
 
 ```
-SELECT distinct UNNEST(ARRAY(SELECT jsonb_object_keys(data -> 'items'))) as entities FROM blueprint
+SELECT distinct UNNEST(ARRAY(SELECT jsonb_object_keys(data -> 'items'))) as item FROM blueprint
 ```
 
 ### Unique recipes
 
 ```
-SELECT distinct UNNEST(ARRAY(SELECT jsonb_object_keys(data -> 'recipes'))) as entities FROM blueprint
+SELECT distinct UNNEST(ARRAY(SELECT jsonb_object_keys(data -> 'recipes'))) as recipe FROM blueprint
 ```

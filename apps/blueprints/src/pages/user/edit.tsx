@@ -20,6 +20,7 @@ import { Button } from "../../components/Button";
 import { validateUserForm } from "../../utils/validate";
 import { useAuth } from "../../providers/auth";
 import { pageHandler } from "../../utils/page-handler";
+import { Tooltip } from "../../components/Tooltip";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -88,16 +89,23 @@ export const UserEdit: NextPage = () => {
                 {({ field, meta }: FieldProps) => (
                   <FormControl
                     id="renderer"
-                    isRequired={!auth?.steam_id}
+                    // isRequired={!auth?.steam_id}
                     isInvalid={meta.touched && !!meta.error}
                     css={FieldStyle}
                   >
-                    <FormLabel>Image renderer</FormLabel>
+                    <FormLabel>
+                      Image renderer{" "}
+                      <Tooltip
+                        text={`FBE is an interactive blueprint viewer, but it doesn't support mobile devices.\nFBSR is based on the factorio blueprint bot, it generates static images of blueprints`}
+                      />
+                    </FormLabel>
                     <RadioGroup
                       onChange={(value: string) =>
                         setCookie("renderer", value, {
                           path: "/",
                           expires: addYears(new Date(), 1),
+                          sameSite: "strict",
+                          secure: process.env.NODE_ENV === "production",
                         })
                       }
                       value={cookies.renderer || "fbe"}

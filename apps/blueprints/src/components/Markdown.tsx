@@ -8,11 +8,11 @@ const markdownStyle = css`
   }
   ul,
   ol {
-    margin-block-start: 1em;
-    margin-block-end: 1em;
+    margin-block-start: 0.7em;
+    margin-block-end: 0.7em;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
-    padding-inline-start: 40px;
+    padding-inline-start: 25px;
   }
 `;
 

@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Box, Grid } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   BlueprintBook,
   Blueprint,
@@ -9,7 +11,6 @@ import {
 } from "@factorio-sites/types";
 import {
   chakraResponsive,
-  ChildTreeBlueprintBookEnriched,
   mergeBlueprintDataAndChildTree,
   parseBlueprintStringClient,
 } from "@factorio-sites/web-utils";
@@ -17,7 +18,6 @@ import { Panel } from "../../components/Panel";
 import { Markdown } from "../../components/Markdown";
 import { BookChildTree } from "../../components/BookChildTree";
 import { CopyButton } from "../../components/CopyButton";
-import { ImageEditor } from "../../components/ImageEditor";
 import { useUrl } from "../../hooks/url.hook";
 import { FavoriteButton } from "./FavoriteButton";
 import { BlueprintData } from "./BlueprintData";
@@ -25,9 +25,10 @@ import { BlueprintInfo } from "./BlueprintInfo";
 import { BlueprintTags } from "./BlueprintTags";
 import { BlueprintEntities } from "./BlueprintEntities";
 import { FactorioCode } from "../FactorioCode";
-import { useCookies } from "react-cookie";
-import { FullscreenImage } from "../FullscreenImage";
-import { isMobileBrowser } from "../../utils/navigator.utils";
+import { BlueprintImage, RENDERERS } from "./BlueprintImage";
+import { Button } from "../Button";
+import { useAuth } from "../../providers/auth";
+import { PUBLIC_URL } from "../../utils/env";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -52,6 +53,17 @@ const StyledBlueptintPage = styled(Grid)`
   }
 `;
 
+const descriptionCss = css({
+  hr: {
+    marginLeft: "-64px",
+    marginRight: "-64px",
+    border: "none",
+    height: "2px",
+    margin: "12px auto",
+    boxShadow: "inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e",
+  },
+});
+
 const StyledMarkdown = styled(Markdown)`
   max-height: 600px;
 `;
@@ -73,14 +85,15 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
   blueprint_page,
   favorite,
 }) => {
+  const auth = useAuth();
   const url = useUrl();
   const [selectedBlueprintString, setSelectedBlueprintString] = useState<string | null>(null);
-  const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
-    null
-  );
+  // const [bookChildTreeData, setBookChildTreeData] = useState<ChildTreeBlueprintBookEnriched | null>(
+  //   null
+  // );
+  const [mainBookData, setMainBookData] = useState<BlueprintStringData | null>(null);
   const [selectedData, setSelectedData] = useState<BlueprintStringData | null>(null);
-  const [cookies] = useCookies();
-  const isFbeRenderer = cookies.renderer !== "fbsr" && !isMobileBrowser();
+  const [renderer, setRenderer] = useState<RENDERERS | null>(null);
   const selectedHash = selected.data.blueprint_hash;
   const showEntities = selected.type === "blueprint" && selectedData?.blueprint;
 
@@ -90,19 +103,22 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
       .then((string) => {
         const data = parseBlueprintStringClient(string);
         if (data) {
-          setBookChildTreeData(
-            mergeBlueprintDataAndChildTree(data, {
-              id: blueprint_book.id,
-              name: blueprint_book.label,
-              type: "blueprint_book",
-              children: blueprint_book.child_tree,
-            })
-          );
+          setMainBookData(data);
         }
       })
       .catch((reason) => console.error(reason));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const bookChildTreeData = useMemo(() => {
+    if (!mainBookData) return null;
+    return mergeBlueprintDataAndChildTree(mainBookData, {
+      id: blueprint_book.id,
+      name: blueprint_book.label,
+      type: "blueprint_book",
+      children: blueprint_book.child_tree,
+    });
+  }, [blueprint_book.child_tree, blueprint_book.id, blueprint_book.label, mainBookData]);
 
   useEffect(() => {
     fetch(`/api/string/${selectedHash}`)
@@ -163,14 +179,21 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         title={
           <>
             <span>Image</span>
-            {isFbeRenderer && (
+            {renderer === "fbe" && (
               <img
-                src="/fbe.svg"
+                src={`${PUBLIC_URL}/fbe.svg`}
                 alt="Factorio blueprint editor"
                 css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
               />
             )}
             <Box css={{ display: "inline-block", flexGrow: 1, textAlign: "right" }}>
+              {auth?.user_id === blueprint_page.user_id && (
+                <Link href={`/user/blueprint/${blueprint_page.id}`} passHref>
+                  <a css={{ marginRight: "1rem" }}>
+                    <Button>Edit</Button>
+                  </a>
+                </Link>
+              )}
               {selectedBlueprintString && (
                 <CopyButton
                   primary
@@ -189,25 +212,33 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
           </>
         }
       >
-        {selectedBlueprintString &&
-          (isFbeRenderer ? (
-            <ImageEditor string={selectedBlueprintString}></ImageEditor>
-          ) : (
-            <FullscreenImage
-              src={`https://fbsr.factorio.workers.dev/${selected.data.blueprint_hash}?size=1000`}
-              alt={selected.data.label}
-            />
-          ))}
-
-        {/* {selectedBlueprintString && <ImageEditor string={selectedBlueprintString}></ImageEditor>} */}
+        {selectedBlueprintString && (
+          <BlueprintImage
+            string={selectedBlueprintString}
+            label={selected.data.label}
+            blueprint_hash={selected.data.blueprint_hash}
+            onSetRenderer={setRenderer}
+          />
+        )}
       </Panel>
 
       <Panel
         title="Description"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "2 / span 2" })}
+        css={descriptionCss}
       >
         <StyledMarkdown>{blueprint_page.description_markdown}</StyledMarkdown>
+        {(selectedData?.blueprint?.description || selectedData?.blueprint_book?.description) && (
+          <>
+            <hr />
+            <StyledMarkdown>
+              {selectedData?.blueprint?.description ||
+                selectedData?.blueprint_book?.description ||
+                ""}
+            </StyledMarkdown>
+          </>
+        )}
       </Panel>
 
       <Panel
@@ -215,7 +246,10 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         gridColumn={chakraResponsive({ mobile: "1", desktop: "3 / span 2" })}
         gridRow={chakraResponsive({ mobile: null, desktop: "2" })}
       >
-        <BlueprintInfo blueprint_page={blueprint_page} />
+        <BlueprintInfo
+          blueprint_page={blueprint_page}
+          version={mainBookData?.blueprint_book?.version}
+        />
       </Panel>
 
       <Panel

@@ -39,7 +39,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/blueprints/**/*.{ts,tsx}"]
+            "lintFilePatterns": [
+              "apps/blueprints/**/*.{ts,tsx}"
+            ]
           }
         },
         "test": {
@@ -72,7 +74,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/blueprints-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/blueprints-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
@@ -115,7 +119,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/blueprint-image-function/**/*.ts"]
+            "lintFilePatterns": [
+              "apps/blueprint-image-function/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -140,7 +146,9 @@
             "outputPath": "dist/apps/factorioprints-scraper",
             "main": "apps/factorioprints-scraper/src/main.ts",
             "tsConfig": "apps/factorioprints-scraper/tsconfig.app.json",
-            "assets": ["apps/factorioprints-scraper/src/assets"]
+            "assets": [
+              "apps/factorioprints-scraper/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -165,7 +173,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/factorioprints-scraper/**/*.ts"]
+            "lintFilePatterns": [
+              "apps/factorioprints-scraper/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -186,7 +196,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/database/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/database/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -207,7 +219,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/node-utils/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/node-utils/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -228,7 +242,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/common-utils/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/common-utils/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -249,7 +265,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/web-utils/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/web-utils/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -269,12 +287,16 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/types/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/types/**/*.ts"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/types"],
+          "outputs": [
+            "coverage/libs/types"
+          ],
           "options": {
             "jestConfig": "libs/types/jest.config.js",
             "passWithNoTests": true

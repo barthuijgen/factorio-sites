@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { NextPage, NextPageContext } from "next";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { searchBlueprintPages, init } from "@factorio-sites/database";
+import {
+  searchBlueprintPages,
+  init,
+  getUserFavoriteBlueprintPages,
+} from "@factorio-sites/database";
 import { BlueprintPage } from "@factorio-sites/types";
 import { Panel } from "../components/Panel";
 import { Pagination } from "../components/Pagination";
 import { useRouterQueryToHref } from "../hooks/query.hook";
-import { BlueprintLink } from "../components/BlueprintLink";
+import { BlueprintTile } from "../components/BlueprintTile";
 import { Select } from "../components/Select";
 import { queryValueAsArray } from "../utils/query.utils";
 import { useFbeData } from "../hooks/fbe.hook";
@@ -25,15 +29,31 @@ import {
 import { css } from "@emotion/react";
 import { MdSearch } from "react-icons/md";
 import { TAGS } from "@factorio-sites/common-utils";
+import { mq } from "@factorio-sites/web-utils";
+import { useAuth } from "../providers/auth";
+import { pageHandler } from "../utils/page-handler";
+import { useFetch } from "../hooks/fetch";
 
 const pageCss = css({
   display: "flex",
+  flexDirection: "column",
+  [mq[0]]: {
+    flexDirection: "row",
+  },
 });
 const sidebarCss = css({
-  borderRight: "1px solid #b7b7b7",
-  paddingRight: "1rem",
-  marginRight: "1rem",
-  width: "233px",
+  borderBottom: "1px solid #b7b7b7",
+  paddingBottom: "1rem",
+  marginBottom: "1rem",
+  [mq[0]]: {
+    borderRight: "1px solid #b7b7b7",
+    marginRight: "1rem",
+    paddingRight: "1rem",
+    borderBottom: "none",
+    paddingBottom: "0",
+    marginBottom: "0",
+    width: "233px",
+  },
 });
 const SidebarRow = css({
   marginTop: "1rem",
@@ -47,42 +67,77 @@ const sidebarCheckbox = css(SidebarRow, {
   },
 });
 
+type BlueprintPageWithUserFavorite = Pick<
+  BlueprintPage,
+  "id" | "image_hash" | "favorite_count" | "title" | "updated_at"
+> & {
+  user_favorite: boolean;
+};
+
 interface IndexProps {
   totalItems: number;
   currentPage: number;
   totalPages: number;
-  blueprints: Pick<
-    BlueprintPage,
-    "id" | "image_hash" | "favorite_count" | "title" | "updated_at"
-  >[];
+  blueprints: BlueprintPageWithUserFavorite[];
 }
 
 export const Index: NextPage<IndexProps> = ({
   totalItems,
   currentPage,
   totalPages,
-  blueprints,
+  blueprints: blueprintsProp,
 }) => {
   const router = useRouter();
+  const auth = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [blueprints, setBlueprints] = useState<BlueprintPageWithUserFavorite[]>([]);
   const routerQueryToHref = useRouterQueryToHref();
   const data = useFbeData();
+  const searchOptions = useFetch<{ entities: string[]; items: string[]; recipes: string[] }>(
+    "/api/searchoptions"
+  );
 
   useEffect(() => {
     setSearchQuery((router.query.q as string) || "");
-  }, [router.query.q]);
+  }, [router?.query.q]);
+
+  useEffect(() => {
+    setBlueprints(blueprintsProp);
+  }, [blueprintsProp]);
 
   if (!data) return null;
 
-  const entityOptions = Object.keys(data.entities).filter(
-    (key) => !key.startsWith("factorio-logo") && !key.startsWith("crash-site")
-  );
-  const recipeOptions = Object.keys(data.recipes);
-  const itemOptions = Object.keys(data.items).filter((key) => key.includes("module"));
+  const entityOptions = searchOptions.data?.entities || [];
+  const itemOptions = searchOptions.data?.items || [];
+  const recipeOptions = searchOptions.data?.recipes || [];
   const tagsOptions = TAGS.map((tag) => ({
     label: `${tag.category}: ${tag.label}`,
     value: tag.value,
   }));
+
+  const handleBlueprintFavoriteClick = async (blueprint_page_id: string) => {
+    try {
+      const response = await fetch("/api/user/favorite", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ blueprint_page_id }),
+      });
+      const { favorite } = await response.json();
+      setBlueprints((blueprints) =>
+        blueprints.map((bp) =>
+          bp.id === blueprint_page_id
+            ? {
+                ...bp,
+                user_favorite: favorite,
+                favorite_count: bp.favorite_count + (favorite ? 1 : -1),
+              }
+            : bp
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <SimpleGrid columns={1}>
@@ -184,7 +239,14 @@ export const Index: NextPage<IndexProps> = ({
           <Box css={{ display: "flex", flexDirection: "column" }}>
             <Box css={{ display: "flex", flexWrap: "wrap", minHeight: "400px", flexGrow: 1 }}>
               {blueprints.length ? (
-                blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} type="tile" />)
+                blueprints.map((bp) => (
+                  <BlueprintTile
+                    key={bp.id}
+                    blueprint={bp}
+                    disableFavorite={!auth}
+                    onFavoriteClick={handleBlueprintFavoriteClick}
+                  />
+                ))
               ) : (
                 <p css={{ marginTop: "10px" }}>No results found</p>
               )}
@@ -199,7 +261,7 @@ export const Index: NextPage<IndexProps> = ({
   );
 };
 
-export async function getServerSideProps({ query }: NextPageContext) {
+export const getServerSideProps = pageHandler(async ({ query }, { session }) => {
   await init();
   const page = Number(query.page || "1");
   const perPage = Number(query["per-page"] || "20");
@@ -228,6 +290,14 @@ export async function getServerSideProps({ query }: NextPageContext) {
     user,
     absolute_snapping,
   });
+  const userFavorites: string[] = session?.user_id
+    ? (
+        await getUserFavoriteBlueprintPages(
+          session.user_id,
+          rows.map((row) => row.id)
+        )
+      ).map((item) => item.id)
+    : [];
 
   return {
     props: {
@@ -240,9 +310,10 @@ export async function getServerSideProps({ query }: NextPageContext) {
         favorite_count: row.favorite_count,
         title: row.title,
         updated_at: row.updated_at,
+        user_favorite: userFavorites.includes(row.id),
       })),
     } as IndexProps,
   };
-}
+});
 
 export default Index;

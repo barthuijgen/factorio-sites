@@ -45,6 +45,7 @@ export interface BlueprintPage {
   id: string;
   blueprint_id: string | null;
   blueprint_book_id: string | null;
+  user_id: string | null;
   title: string;
   description_markdown: string;
   tags: string[];

@@ -15,6 +15,7 @@ const mapBlueprintPageEntityToObject = (
   id: entity.id,
   blueprint_id: entity.blueprint_id ?? null,
   blueprint_book_id: entity.blueprint_book_id ?? null,
+  user_id: entity.user_id,
   title: entity.title,
   description_markdown: entity.description_markdown || "",
   tags: entity.tags,
@@ -52,6 +53,20 @@ export async function getBlueprintPageByFactorioprintsId(
 ): Promise<BlueprintPage | null> {
   const result = await prisma.blueprint_page.findFirst({ where: { factorioprints_id: id } });
   return result ? mapBlueprintPageEntityToObject(result) : null;
+}
+
+export async function getUserFavoriteBlueprintPages(user_id: string, ids?: string[]) {
+  const result = await prisma.blueprint_page.findMany({
+    where: {
+      user_favorites: {
+        some: {
+          user_id: user_id,
+          blueprint_page_id: ids ? { in: ids } : undefined,
+        },
+      },
+    },
+  });
+  return result ? result.map((row) => mapBlueprintPageEntityToObject(row)) : [];
 }
 
 export async function searchBlueprintPages({
@@ -92,19 +107,27 @@ export async function searchBlueprintPages({
     conditionals.push(sqltag`blueprint_page.title ILIKE ${`%${query}%`}`);
   }
   if (entities) {
-    conditionals.push(sqltag`blueprint.data -> 'entities' ?& array[${join(entities)}::text]`);
+    const matchSql = mode === "AND" ? sqltag`?&` : sqltag`?|`;
+    conditionals.push(
+      sqltag`blueprint.data -> 'entities' ${matchSql} array[${join(entities)}::text]`
+    );
     requires_blueprint_join = true;
   }
   if (items) {
-    conditionals.push(sqltag`blueprint.data -> 'items' ?& array[${join(items)}::text]`);
+    const matchSql = mode === "AND" ? sqltag`?&` : sqltag`?|`;
+    conditionals.push(sqltag`blueprint.data -> 'items' ${matchSql} array[${join(items)}::text]`);
     requires_blueprint_join = true;
   }
   if (recipes) {
-    conditionals.push(sqltag`blueprint.data -> 'recipes' ?& array[${join(recipes)}::text]`);
+    const matchSql = mode === "AND" ? sqltag`?&` : sqltag`?|`;
+    conditionals.push(
+      sqltag`blueprint.data -> 'recipes' ${matchSql} array[${join(recipes)}::text]`
+    );
     requires_blueprint_join = true;
   }
   if (tags) {
-    conditionals.push(sqltag`blueprint_page.tags @> array[${join(tags)}::varchar]`);
+    const matchSql = mode === "AND" ? sqltag`@>` : sqltag`&&`;
+    conditionals.push(sqltag`blueprint_page.tags ${matchSql} array[${join(tags)}::varchar]`);
   }
   if (user) {
     conditionals.push(sqltag`blueprint_page.user_id = ${user}`);
@@ -209,9 +232,7 @@ export async function createBlueprintPage(
 
 export async function editBlueprintPage(
   blueprintPageId: string,
-  type: "blueprint" | "blueprint_book",
-  targetId: string,
-  extraInfo: {
+  data: {
     title: string;
     user_id?: string;
     description_markdown: string;
@@ -219,23 +240,34 @@ export async function editBlueprintPage(
     created_at?: number;
     updated_at?: number;
     factorioprints_id?: string;
-  }
+  },
+  target?: { id: string; type: "blueprint" | "blueprint_book" }
 ) {
   const page = await prisma.blueprint_page.update({
     where: { id: blueprintPageId },
     data: {
-      user_id: extraInfo.user_id || null,
-      title: extraInfo.title,
-      description_markdown: extraInfo.description_markdown,
-      factorioprints_id: extraInfo.factorioprints_id,
-      blueprint_id: type === "blueprint" ? targetId : null,
-      blueprint_book_id: type === "blueprint_book" ? targetId : null,
-      tags: extraInfo.tags ? extraInfo.tags : [],
-      updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
-      created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
+      user_id: data.user_id || null,
+      title: data.title,
+      description_markdown: data.description_markdown,
+      factorioprints_id: data.factorioprints_id,
+      blueprint_id: target ? (target.type === "blueprint" ? target.id : null) : undefined,
+      blueprint_book_id: target ? (target.type === "blueprint_book" ? target.id : null) : undefined,
+      tags: data.tags ? data.tags : [],
+      updated_at: data.updated_at ? new Date(data.updated_at * 1000) : new Date(),
+      created_at: data.created_at ? new Date(data.created_at * 1000) : new Date(),
     },
   });
 
   console.log(`Updated Blueprint Page`);
   return page;
+}
+
+export async function deleteBlueprintPage(blueprintPageId: string) {
+  await prisma.user_favorites.deleteMany({
+    where: { blueprint_page_id: blueprintPageId },
+  });
+
+  const result = await prisma.blueprint_page.delete({ where: { id: blueprintPageId } });
+
+  return result;
 }

@@ -2,9 +2,18 @@
   "version": "v1",
   "packages": {
     "@fbe/editor": {
-      "signature": "4db8c378010b5990474548640c7c809e",
+      "signature": "4f4eee93c2881067899a7289c5c0e423",
       "file": true,
       "replaced": "./fbe-editor-v1.0.0.tgz"
+    },
+    "react-map-interaction": {
+      "signature": "760fcdb2b8c4ce14979304df32411d35",
+      "file": true,
+      "replaced": "2.0.0"
+    },
+    "factorio-wasm": {
+      "signature": "ca488e873c06eb37c221a7fe782bf786",
+      "file": true
     }
   }
 }

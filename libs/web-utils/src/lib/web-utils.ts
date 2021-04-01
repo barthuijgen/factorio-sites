@@ -11,6 +11,15 @@ import {
 import { ChildTreeBlueprintBook } from "@factorio-sites/types";
 import { Base64 } from "./base64";
 
+let FactorioWasm: typeof import("factorio-wasm");
+
+async function loadFactorioWasm() {
+  if (!FactorioWasm) {
+    FactorioWasm = await import("factorio-wasm");
+  }
+  return FactorioWasm;
+}
+
 export function parseBlueprintStringClient(source: string): BlueprintStringData | null {
   try {
     const compressed = atob(source.substring(1));
@@ -22,6 +31,11 @@ export function parseBlueprintStringClient(source: string): BlueprintStringData 
     console.log("Failed to parse blueprint string", reason);
     return null;
   }
+}
+
+if (typeof window !== "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).parseBlueprintString = parseBlueprintStringClient;
 }
 
 export function encodeBlueprintClient(data: BlueprintStringData): string {
@@ -111,4 +125,23 @@ export function chakraResponsive({
   desktop: string | null;
 }): Array<string | null> {
   return [mobile, mobile, desktop, desktop];
+}
+
+const breakpoints = ["30em", "48em", "62em", "80em"];
+
+export const mq = breakpoints.map((bp) => `@media (min-width: ${bp})`);
+
+export function getLocaleDateFormat(withHours?: boolean) {
+  const format = new Date(2013, 11, 31)
+    .toLocaleDateString()
+    .replace("31", "dd")
+    .replace("12", "MM")
+    .replace("2013", "yyyy");
+  return withHours ? `${format} HH:mm` : format;
+}
+
+export async function parseFactorioGameVersion(version: string | number) {
+  const factorioWasm = await loadFactorioWasm();
+  const result = factorioWasm.parse_game_version(String(version));
+  return result.split(".").slice(0, 3).join(".");
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import { MapInteractionCSS } from "react-map-interaction";
 import { Image } from "@chakra-ui/image";
@@ -50,7 +50,13 @@ export const FullscreenImage: React.FC<FullscreenImageProps> = ({ alt, src }) =>
     scale: 0.9,
     translation: { x: window.innerWidth * 0.05, y: 30 },
   });
-  console.log(src);
+
+  useEffect(() => {
+    setState({
+      scale: 0.9,
+      translation: { x: window.innerWidth * 0.05, y: 30 },
+    });
+  }, [src]);
 
   return (
     <>

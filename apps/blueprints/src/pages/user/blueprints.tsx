@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import { SimpleGrid, Box } from "@chakra-ui/react";
@@ -8,32 +8,77 @@ import { pageHandler } from "../../utils/page-handler";
 import { BlueprintLink } from "../../components/BlueprintLink";
 import { Panel } from "../../components/Panel";
 import { Button } from "../../components/Button";
+import { MdDeleteForever, MdLink } from "react-icons/md";
+import { css } from "@emotion/react";
+
 interface UserBlueprintsProps {
   blueprints: BlueprintPage[];
 }
 
-export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints }) => {
+const buttonCss = css({
+  padding: "2px",
+  width: "36px",
+  justifyContent: "center",
+});
+
+export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints: blueprintsProp }) => {
+  const [blueprints, setBlueprints] = useState<BlueprintPage[]>(blueprintsProp);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   if (!blueprints) return null;
+
+  const deleteBlueprint = async (id: string) => {
+    setDeleteId(id);
+    try {
+      await fetch(`/api/blueprint/delete/${id}`, { method: "DELETE" });
+      setBlueprints((blueprints) => blueprints.filter((bp) => bp.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
+    setDeleteId(null);
+  };
 
   return (
     <SimpleGrid columns={1} margin="0 auto" maxWidth="800px">
       <Panel title="Blueprints">
-        <Box
+        <Link href="/user/blueprint-create">
+          <a>
+            <Button primary>Create Blueprint</Button>
+          </a>
+        </Link>
+        <hr
           css={{
-            display: "flex",
-            borderBottom: "1px solid #b7b7b7",
-            paddingBottom: "0.3rem",
+            border: "none",
+            height: "2px",
+            margin: "12px auto",
+            boxShadow: "inset 0 1px 1px 0 #131313, inset 0 -1px 1px 0 #838383, 0 0 4px 0 #392f2e",
           }}
-        >
-          <Link href="/user/blueprint-create">
-            <a>
-              <Button primary>Create Blueprint</Button>
-            </a>
-          </Link>
-        </Box>
+        />
         <Box>
           {blueprints.length !== 0 ? (
-            blueprints.map((bp) => <BlueprintLink key={bp.id} blueprint={bp} editLink type="row" />)
+            blueprints.map((bp) => (
+              <div key={bp.id} css={{ display: "flex", margin: "5px 0" }}>
+                <BlueprintLink blueprint={bp} editLink />
+                <Link href={`/blueprint/${bp.id}`}>
+                  <a
+                    css={{
+                      marginRight: "5px",
+                    }}
+                  >
+                    <Button css={buttonCss}>
+                      <MdLink size={18} />
+                    </Button>
+                  </a>
+                </Link>
+                <Button
+                  danger
+                  css={buttonCss}
+                  disabled={deleteId === bp.id}
+                  onClick={() => deleteBlueprint(bp.id)}
+                >
+                  <MdDeleteForever size={18} />
+                </Button>
+              </div>
+            ))
           ) : (
             <p css={{ marginTop: "10px" }}>You don't have any blueprints yet</p>
           )}
