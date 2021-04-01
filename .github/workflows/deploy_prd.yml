@@ -45,4 +45,4 @@ jobs:
           tags: eu.gcr.io/factorio-sites/blueprints
       - run: gsutil -h "Cache-Control:public, max-age=31536000" -m rsync -r -d ./dist/apps/blueprints/.next/static gs://factorio-blueprints-assets/_next/static
       - run: gsutil -h "Cache-Control:public, max-age=31536000" -m rsync -r -d ./dist/apps/blueprints/public gs://factorio-blueprints-assets/public
-      - run: gcloud run deploy factorio-blueprints-dev --image=eu.gcr.io/factorio-sites/blueprints --platform managed --region=europe-west4 --update-env-vars PUBLIC_URL=https://storage.googleapis.com/factorio-blueprints-assets/public, ASSET_PREFIX=https://storage.googleapis.com/factorio-blueprints-assets
+      - run: gcloud run deploy factorio-blueprints --image=eu.gcr.io/factorio-sites/blueprints --platform managed --region=europe-west4 --update-env-vars PUBLIC_URL=https://storage.googleapis.com/factorio-blueprints-assets/public, ASSET_PREFIX=https://storage.googleapis.com/factorio-blueprints-assets
