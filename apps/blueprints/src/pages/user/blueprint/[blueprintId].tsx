@@ -28,6 +28,7 @@ import { validateBlueprintString, validateRequired } from "../../../utils/valida
 import { ImageEditor } from "../../../components/ImageEditor";
 import { Select } from "../../../components/Select";
 import { Button } from "../../../components/Button";
+import { MDEditor } from "../../../components/MDEditor";
 
 const FieldStyle = css`
   margin-bottom: 1rem;
@@ -123,7 +124,10 @@ const FormContent: React.FC<{ initialString: string }> = ({ initialString }) => 
                 css={FieldStyle}
               >
                 <FormLabel>Description</FormLabel>
-                <Textarea {...field} />
+                <MDEditor
+                  value={field.value}
+                  onChange={(value) => setFieldValue("description", value)}
+                />
                 <FormErrorMessage>{meta.error}</FormErrorMessage>
               </FormControl>
             )}
