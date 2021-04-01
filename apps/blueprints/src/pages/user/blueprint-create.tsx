@@ -20,6 +20,7 @@ import { validateCreateBlueprintForm } from "../../utils/validate";
 import { ImageEditor } from "../../components/ImageEditor";
 import { Select } from "../../components/Select";
 import { Button } from "../../components/Button";
+import { MDEditor } from "../../components/MDEditor";
 import { pageHandler } from "../../utils/page-handler";
 
 const FieldStyle = css`
@@ -90,7 +91,10 @@ export const UserBlueprintCreate: NextPage = () => {
                     css={FieldStyle}
                   >
                     <FormLabel>Description</FormLabel>
-                    <Textarea {...field} />
+                    <MDEditor
+                      value={field.value}
+                      onChange={(value) => setFieldValue("description", value)}
+                    />
                     <FormErrorMessage>{meta.error}</FormErrorMessage>
                   </FormControl>
                 )}
