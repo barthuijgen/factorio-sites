@@ -9,7 +9,7 @@ import { getSessionToken } from "@factorio-sites/node-utils";
 import { Header } from "../components/Header";
 import { AuthContext, AuthContextProps } from "../providers/auth";
 import { useFetch } from "../hooks/fetch";
-import { PUBLIC_URL } from "../utils/env";
+import { CF_WEB_ANALYTICS, PUBLIC_URL } from "../utils/env";
 
 const globalStyles = css`
   @font-face {
@@ -94,6 +94,13 @@ const BlueprintsApp = ({
                 </div>
               </main>
             </>
+          )}
+          {CF_WEB_ANALYTICS && (
+            <script
+              defer
+              src="https://static.cloudflareinsights.com/beacon.min.js"
+              data-cf-beacon={`{"token": "${CF_WEB_ANALYTICS}"}`}
+            ></script>
           )}
         </AuthContext.Provider>
       </CookiesProvider>
