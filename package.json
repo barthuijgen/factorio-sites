@@ -38,7 +38,7 @@
     "@google-cloud/secret-manager": "3.5.0",
     "@google-cloud/storage": "5.8.3",
     "@hookstate/core": "3.0.6",
-    "@prisma/client": "2.20.0",
+    "@prisma/client": "2.20.1",
     "bcrypt": "5.0.1",
     "clsx": "1.1.1",
     "cookie": "0.4.1",
