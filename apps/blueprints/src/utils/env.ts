@@ -1,5 +1,7 @@
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
 
-export const PUBLIC_URL = (publicRuntimeConfig.PUBLIC_URL as string) || "";
-export const CF_WEB_ANALYTICS = (publicRuntimeConfig.CF_WEB_ANALYTICS as string) || null;
+const config = publicRuntimeConfig || {};
+
+export const PUBLIC_URL = (config.PUBLIC_URL as string) || "";
+export const CF_WEB_ANALYTICS = (config.CF_WEB_ANALYTICS as string) || null;
