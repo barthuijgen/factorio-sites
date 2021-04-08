@@ -52,7 +52,7 @@ const sidebarCss = css({
     borderBottom: "none",
     paddingBottom: "0",
     marginBottom: "0",
-    width: "233px",
+    minWidth: "233px",
   },
 });
 const SidebarRow = css`

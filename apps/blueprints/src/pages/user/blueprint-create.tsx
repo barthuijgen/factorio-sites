@@ -9,7 +9,6 @@ import {
   SimpleGrid,
   Box,
   Text,
-  Textarea,
 } from "@chakra-ui/react";
 import { Formik, Field, FieldProps } from "formik";
 import { css } from "@emotion/react";
