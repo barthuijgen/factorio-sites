@@ -55,9 +55,13 @@ const sidebarCss = css({
     width: "233px",
   },
 });
-const SidebarRow = css({
-  marginTop: "1rem",
-});
+const SidebarRow = css`
+  margin-top: 1rem;
+
+  .chakra-text {
+    margin-bottom: 5px;
+  }
+`;
 const sidebarCheckbox = css(SidebarRow, {
   display: "flex",
   alignItems: "center",
@@ -195,7 +199,6 @@ export const Index: NextPage<IndexProps> = ({
                 options={tagsOptions}
                 value={queryValueAsArray(router.query.tags)}
                 onChange={(tags) => router.push(routerQueryToHref({ tags }))}
-                css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
             <Box css={SidebarRow}>
@@ -204,7 +207,6 @@ export const Index: NextPage<IndexProps> = ({
                 options={entityOptions}
                 value={queryValueAsArray(router.query.entities)}
                 onChange={(entities) => router.push(routerQueryToHref({ entities }))}
-                css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
             <Box css={SidebarRow}>
@@ -213,7 +215,6 @@ export const Index: NextPage<IndexProps> = ({
                 options={recipeOptions}
                 value={queryValueAsArray(router.query.recipes)}
                 onChange={(recipes) => router.push(routerQueryToHref({ recipes }))}
-                css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
             <Box css={SidebarRow}>
@@ -222,7 +223,6 @@ export const Index: NextPage<IndexProps> = ({
                 options={itemOptions}
                 value={queryValueAsArray(router.query.items)}
                 onChange={(items) => router.push(routerQueryToHref({ items }))}
-                css={{ width: "200px", marginRight: "1rem" }}
               />
             </Box>
             <Box css={sidebarCheckbox}>
