@@ -11,7 +11,6 @@ import {
   SimpleGrid,
   Box,
   Text,
-  Textarea,
 } from "@chakra-ui/react";
 import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import {
