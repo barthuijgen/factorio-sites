@@ -3245,6 +3245,18 @@
     strip-json-comments "2.0.1"
     tslib "^2.0.0"
 
+"@nrwl/devkit@12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@nrwl/devkit/-/devkit-12.0.0.tgz#246dfad3648fcf8e310fa646a3db6313d9a35d41"
+  integrity sha512-ZJIaq8XpLzQwC9kRI5x19sTu3zCpoByVunylTgP/vLGWro5tiGXXcv2EMYwcXCRNOryavV7drB7FGwgZ3h6Zug==
+  dependencies:
+    "@nrwl/tao" "12.0.0"
+    ejs "^3.1.5"
+    ignore "^5.0.4"
+    semver "7.3.4"
+    strip-json-comments "2.0.1"
+    tslib "^2.0.0"
+
 "@nrwl/eslint-plugin-nx@11.6.1":
   version "11.6.1"
   resolved "https://registry.yarnpkg.com/@nrwl/eslint-plugin-nx/-/eslint-plugin-nx-11.6.1.tgz#540b665168eea005bea63c3d7b643eb137d07558"
@@ -3261,6 +3273,17 @@
   integrity sha512-yM4Icg8k3Gfq2mFF9OSnojhwmmH6u/1Xk5dLCAhBwbSZcne/FlOTbca45QddO7YboADqx2WV5fFS5bB8kHdIBw==
   dependencies:
     "@nrwl/devkit" "11.6.1"
+    jest-resolve "^26.6.2"
+    rxjs "^6.5.4"
+    strip-json-comments "2.0.1"
+    tslib "^2.0.0"
+
+"@nrwl/jest@12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@nrwl/jest/-/jest-12.0.0.tgz#ebc3f19c1ffc576b2882fd2018f871aac768f757"
+  integrity sha512-By+THr8gEzfuPaF3azm1QJi9SBIFZsiO6yr9ocGZa1VpX4v1iOpjrsHCW+hiRJjb/J4j9fW0rZgH5vO8aZPoXA==
+  dependencies:
+    "@nrwl/devkit" "12.0.0"
     jest-resolve "^26.6.2"
     rxjs "^6.5.4"
     strip-json-comments "2.0.1"
@@ -3367,6 +3390,23 @@
     chalk "4.1.0"
     fs-extra "7.0.1"
     inquirer "^6.3.1"
+    minimist "^1.2.5"
+    rxjs "^6.5.4"
+    rxjs-for-await "0.0.2"
+    semver "7.3.4"
+    strip-json-comments "2.0.1"
+    tmp "0.0.33"
+    tslib "^2.0.0"
+    yargs-parser "20.0.0"
+
+"@nrwl/tao@12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@nrwl/tao/-/tao-12.0.0.tgz#52be7094fa03cc25ac9e30198f8134919b807e1e"
+  integrity sha512-g2MDk9nVQld60OJpK3kRz18UP3Y4L6PelnOgWSeXK5N37oc1wZ7FX33yHcNRHS3kiDfKIzBVTdcRiq0Zbxp62g==
+  dependencies:
+    chalk "4.1.0"
+    enquirer "~2.3.6"
+    fs-extra "7.0.1"
     minimist "^1.2.5"
     rxjs "^6.5.4"
     rxjs-for-await "0.0.2"
@@ -7766,7 +7806,7 @@ enhanced-resolve@^4.0.0, enhanced-resolve@^4.1.0:
     memory-fs "^0.5.0"
     tapable "^1.0.0"
 
-enquirer@^2.3.5:
+enquirer@^2.3.5, enquirer@~2.3.6:
   version "2.3.6"
   resolved "https://registry.yarnpkg.com/enquirer/-/enquirer-2.3.6.tgz#2a7fe5dd634a1e4125a975ec994ff5456dc3734d"
   integrity sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==
@@ -16106,12 +16146,7 @@ tslib@^1.0.0, tslib@^1.10.0, tslib@^1.13.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.0:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
-  integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==
-
-tslib@^2.1.0:
+tslib@^2.0.0, tslib@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
