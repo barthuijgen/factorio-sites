@@ -28,16 +28,18 @@ export const Pagination: React.FC<BoxProps & PaginationProps> = ({
 
   return (
     <StyledPagination>
-      <ReactPaginate
-        initialPage={page}
-        pageRangeDisplayed={4}
-        marginPagesDisplayed={2}
-        pageCount={totalPages}
-        onPageChange={handlePageChange}
-        previousLabel={<FaAngleDoubleLeft />}
-        nextLabel={<FaAngleDoubleRight />}
-        breakLabel={<FaEllipsisH />}
-      />
+      {totalPages > 1 && (
+        <ReactPaginate
+          initialPage={page}
+          pageRangeDisplayed={4}
+          marginPagesDisplayed={2}
+          pageCount={totalPages}
+          onPageChange={handlePageChange}
+          previousLabel={<FaAngleDoubleLeft />}
+          nextLabel={<FaAngleDoubleRight />}
+          breakLabel={<FaEllipsisH />}
+        />
+      )}
 
       {totalItems ? <Box>{totalItems} total items</Box> : null}
     </StyledPagination>
