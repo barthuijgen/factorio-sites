@@ -30,7 +30,7 @@ export const Pagination: React.FC<BoxProps & PaginationProps> = ({
     <StyledPagination>
       {totalPages > 1 && (
         <ReactPaginate
-          initialPage={page}
+          initialPage={page - 1}
           pageRangeDisplayed={4}
           marginPagesDisplayed={2}
           pageCount={totalPages}
@@ -76,7 +76,8 @@ const StyledPagination = styled(Box)`
           0 0 4px 0 #000;
         background-color: #8e8e8e;
 
-        &:hover {
+        &:hover,
+        &:focus {
           color: #000;
           text-decoration: none;
           outline: 0;
@@ -99,6 +100,16 @@ const StyledPagination = styled(Box)`
         background-color: #f1be64;
         filter: none;
         outline: 0;
+      }
+
+      &.disabled a,
+      &.disabled a:hover {
+        cursor: default;
+        filter: none;
+        background-color: #3d3d3d;
+        color: #818181;
+        box-shadow: inset 8px 0 4px -8px #000, inset -8px 0 4px -8px #000, inset 0 8px 4px -8px #000,
+          inset 0 -6px 4px -8px #818181, inset 0 -8px 4px -8px #000, 0 0 4px 0 #000;
       }
     }
   }
