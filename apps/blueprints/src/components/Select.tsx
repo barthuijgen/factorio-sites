@@ -18,29 +18,33 @@ const StyledSelect = styled(MultiSelect)`
   color: black;
   &.rmsc {
     .dropdown-container {
+      outline: none;
       border: none;
-      border-radius: 0;
-      background-color: #8e8e8e;
-      box-shadow: inset 8px 0 4px -8px #000, inset -8px 0 4px -8px #000,
-        inset 0 10px 2px -8px #e3e3e3, inset 0 10px 2px -8px #282828, inset 0 -9px 2px -8px #000,
-        0 0 4px 0 #000;
 
-      .gray {
-        color: #000 !important;
+      &:hover .dropdown-heading,
+      &:focus .dropdown-heading,
+      &[aria-expanded="true"] .dropdown-heading {
+        cursor: pointer;
+        color: #000;
+        text-decoration: none;
+        outline: 0;
+        box-shadow: inset 8px 0 4px -8px #000, inset -8px 0 4px -8px #000, inset 0 9px 2px -8px #fff,
+          inset 0 8px 4px -8px #000, inset 0 -8px 4px -8px #000, inset 0 -9px 2px -8px #432400,
+          0 0 4px 0 #000, inset 0 0 4px 2px #f9b44b;
+        background-color: #e39827;
+        filter: drop-shadow(0 0 2px #f9b44b);
       }
 
       .dropdown-heading {
-        cursor: pointer;
+        border: none;
+        border-radius: 0;
+        background-color: #8e8e8e;
+        box-shadow: inset 8px 0 4px -8px #000, inset -8px 0 4px -8px #000,
+          inset 0 10px 2px -8px #e3e3e3, inset 0 10px 2px -8px #282828, inset 0 -9px 2px -8px #000,
+          0 0 4px 0 #000;
 
-        &:hover {
-          color: #000;
-          text-decoration: none;
-          outline: 0;
-          box-shadow: inset 8px 0 4px -8px #000, inset -8px 0 4px -8px #000,
-            inset 0 9px 2px -8px #fff, inset 0 8px 4px -8px #000, inset 0 -8px 4px -8px #000,
-            inset 0 -9px 2px -8px #432400, 0 0 4px 0 #000, inset 0 0 4px 2px #f9b44b;
-          background-color: #e39827;
-          filter: drop-shadow(0 0 2px #f9b44b);
+        .gray {
+          color: #000 !important;
         }
       }
     }
