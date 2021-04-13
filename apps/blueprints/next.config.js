@@ -42,7 +42,7 @@ module.exports = {
           {
             key: "Content-Security-Policy",
             value:
-              "script-src 'self' https://storage.googleapis.com/factorio-blueprints-assets https://static.cloudflareinsights.com ;",
+              "script-src 'self' https://factorio-blueprints-assets.storage.googleapis.com https://static.cloudflareinsights.com ;",
           },
           {
             key: "X-Frame-Options",
