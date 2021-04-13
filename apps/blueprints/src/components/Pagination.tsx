@@ -19,6 +19,10 @@ export const Pagination: React.FC<BoxProps & PaginationProps> = ({
   const router = useRouter();
 
   const handlePageChange = ({ selected }: { selected: number }) => {
+    if ((router.query.page || "1") === String(selected + 1)) {
+      return;
+    }
+
     const query: Record<string, string> = { ...router.query, page: String(selected + 1) };
     const href = `/?${Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
