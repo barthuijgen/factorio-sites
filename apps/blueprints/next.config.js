@@ -41,8 +41,9 @@ module.exports = {
           },
           {
             key: "Content-Security-Policy",
+            // 'unsafe-eval' and 'worker-src blob:' are required for wasm
             value:
-              "script-src 'self' https://factorio-blueprints-assets.storage.googleapis.com https://static.cloudflareinsights.com ;",
+              "script-src 'self' 'unsafe-eval' https://factorio-blueprints-assets.storage.googleapis.com https://static.cloudflareinsights.com ; worker-src blob: ;",
           },
           {
             key: "X-Frame-Options",
