@@ -28,7 +28,7 @@ jobs:
       - run: yarn db-gen
       - run: yarn nx build blueprints
         env:
-          PUBLIC_URL: https://storage.googleapis.com/factorio-blueprints-assets/public
+          PUBLIC_URL: https://factorio-blueprints-assets.storage.googleapis.com/public
           CF_WEB_ANALYTICS: 4a7b06ea5bdb4d328a1baea602aea295
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
@@ -46,4 +46,4 @@ jobs:
           tags: eu.gcr.io/factorio-sites/blueprints
       - run: gsutil -h "Cache-Control:public, max-age=31536000" -m rsync -r -d ./dist/apps/blueprints/.next/static gs://factorio-blueprints-assets/_next/static
       - run: gsutil -h "Cache-Control:public, max-age=31536000" -m rsync -r -d ./dist/apps/blueprints/public gs://factorio-blueprints-assets/public
-      - run: gcloud run deploy factorio-blueprints --image=eu.gcr.io/factorio-sites/blueprints --platform managed --region=europe-west4 --update-env-vars PUBLIC_URL=https://storage.googleapis.com/factorio-blueprints-assets/public,ASSET_PREFIX=https://storage.googleapis.com/factorio-blueprints-assets,CF_WEB_ANALYTICS=4a7b06ea5bdb4d328a1baea602aea295
+      - run: gcloud run deploy factorio-blueprints --image=eu.gcr.io/factorio-sites/blueprints --platform managed --region=europe-west4 --update-env-vars PUBLIC_URL=https://factorio-blueprints-assets.storage.googleapis.com/public,ASSET_PREFIX=https://factorio-blueprints-assets.storage.googleapis.com,CF_WEB_ANALYTICS=4a7b06ea5bdb4d328a1baea602aea295
