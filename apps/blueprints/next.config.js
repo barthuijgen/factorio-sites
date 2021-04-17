@@ -40,7 +40,7 @@ module.exports = {
             value: "max-age=31536000; includeSubDomains",
           },
           {
-            key: "Content-Security-Policy",
+            key: "Content-Security-Policy-Report-Only",
             // 'unsafe-eval' and 'worker-src blob:' are required for wasm
             value:
               "script-src 'self' 'unsafe-eval' https://factorio-blueprints-assets.storage.googleapis.com https://static.cloudflareinsights.com ; worker-src blob: ;",
