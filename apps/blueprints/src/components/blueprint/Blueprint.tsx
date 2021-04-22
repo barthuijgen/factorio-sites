@@ -18,6 +18,7 @@ import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 import { useAuth } from "../../providers/auth";
 import { Button } from "../Button";
 import { PUBLIC_URL } from "../../utils/env";
+import { Comments } from "../Comments";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -133,7 +134,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         {string && (
           <BlueprintImage
             string={string}
-            label={blueprint.label}
+            label={blueprint.label || ""}
             blueprint_hash={blueprint.blueprint_hash}
             onSetRenderer={setRenderer}
           />
@@ -182,6 +183,10 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
         title={<span>Components</span>}
       >
         {data && <BlueprintEntities data={data} />}
+      </Panel>
+
+      <Panel title="Comments" gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 4" })}>
+        <Comments blueprint_page_id={blueprint_page.id} />
       </Panel>
 
       <Panel

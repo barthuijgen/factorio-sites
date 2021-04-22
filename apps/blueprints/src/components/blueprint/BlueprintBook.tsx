@@ -30,6 +30,7 @@ import { BlueprintImage, RENDERERS } from "./BlueprintImage";
 import { Button } from "../Button";
 import { useAuth } from "../../providers/auth";
 import { PUBLIC_URL } from "../../utils/env";
+import { Comments } from "../Comments";
 
 const StyledBlueptintPage = styled(Grid)`
   grid-gap: 16px;
@@ -206,7 +207,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         {selectedBlueprintString && (
           <BlueprintImage
             string={selectedBlueprintString}
-            label={selected.data.label}
+            label={selected.data.label || ""}
             blueprint_hash={selected.data.blueprint_hash}
             onSetRenderer={setRenderer}
           />
@@ -260,6 +261,10 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
           {selectedData && <BlueprintEntities data={selectedData} />}
         </Panel>
       )}
+
+      <Panel title="Comments" gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 4" })}>
+        <Comments blueprint_page_id={blueprint_page.id} />
+      </Panel>
 
       <Panel
         className="bp-strings"

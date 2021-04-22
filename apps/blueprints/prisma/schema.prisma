@@ -16,7 +16,7 @@ enum enum_user_role {
 model blueprint {
   id              String           @id @default(uuid()) @db.Uuid
   label           String?          @db.VarChar(255)
-  description     String?
+  description     String?          @db.Text
   game_version    String?          @db.VarChar(255)
   blueprint_hash  String           @unique @db.VarChar(40)
   image_hash      String           @db.VarChar(40)
@@ -32,7 +32,7 @@ model blueprint {
 model blueprint_book {
   id                       String           @id @default(uuid()) @db.Uuid
   label                    String?          @db.VarChar(255)
-  description              String?
+  description              String?          @db.Text
   child_tree               Json             @db.JsonB
   blueprint_hash           String           @unique @db.VarChar(40)
   is_modded                Boolean
@@ -51,7 +51,7 @@ model blueprint_page {
   blueprint_book_id    String?          @unique @db.Uuid
   blueprint_ids        String[]         @db.Uuid
   title                String           @db.VarChar(255)
-  description_markdown String?
+  description_markdown String?          @db.Text
   tags                 String[]         @db.VarChar(255)
   image_hash           String           @db.VarChar(40)
   factorioprints_id    String?          @unique @db.VarChar(255)
@@ -61,6 +61,7 @@ model blueprint_page {
   blueprint            blueprint?       @relation(fields: [blueprint_id], references: [id])
   user_favorites       user_favorites[]
   user                 user?            @relation(fields: [user_id], references: [id])
+  comments             comment[]
 }
 
 model session {
@@ -94,6 +95,7 @@ model user {
   session              session[]
   user_favorites       user_favorites[]
   blueprint_pages      blueprint_page[]
+  comment              comment[]
 }
 
 model user_favorites {
@@ -105,6 +107,20 @@ model user_favorites {
   user              user           @relation(fields: [user_id], references: [id])
 
   @@id([user_id, blueprint_page_id])
+}
+
+model comment {
+  id                String         @id @default(uuid()) @db.Uuid
+  blueprint_page_id String         @db.Uuid
+  user_id           String         @db.Uuid
+  body              String         @db.Text
+  reply_comment_id  String?        @db.Uuid
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  blueprint_page    blueprint_page @relation(fields: [blueprint_page_id], references: [id])
+  user              user           @relation(fields: [user_id], references: [id])
+  reply_to          comment?       @relation("commentToComment", fields: [reply_comment_id], references: [id])
+  replies           comment[]      @relation("commentToComment")
 }
 
 model blueprint_entities {
