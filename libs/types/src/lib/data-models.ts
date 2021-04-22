@@ -1,4 +1,5 @@
 import { Signal } from "./blueprint-string";
+
 export interface ChildTreeBlueprint {
   type: "blueprint";
   id: string;

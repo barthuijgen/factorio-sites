@@ -23,7 +23,6 @@ const handler = apiHandler(async (req, res, { session }) => {
   const errors: Record<string, string> = {};
 
   if (!title) errors.title = "Required";
-  if (!description) errors.description = "Required";
   if (!string) errors.string = "Required";
   if (!parsed) errors.string = "Not recognised as a blueprint string";
 

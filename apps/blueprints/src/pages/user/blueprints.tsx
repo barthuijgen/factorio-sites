@@ -27,6 +27,10 @@ export const UserBlueprints: NextPage<UserBlueprintsProps> = ({ blueprints: blue
   if (!blueprints) return null;
 
   const deleteBlueprint = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this blueprint?")) {
+      return;
+    }
+
     setDeleteId(id);
     try {
       await fetch(`/api/blueprint/delete/${id}`, { method: "DELETE" });

@@ -9,14 +9,15 @@ import {
   BlueprintPage,
   BlueprintStringData,
 } from "@factorio-sites/types";
-import {
-  chakraResponsive,
-  mergeBlueprintDataAndChildTree,
-  parseBlueprintStringClient,
-} from "@factorio-sites/web-utils";
+import { chakraResponsive, parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { Panel } from "../../components/Panel";
 import { Markdown } from "../../components/Markdown";
-import { BookChildTree } from "../../components/BookChildTree";
+import {
+  BlueprintBookItem,
+  BookChildTree,
+  convertBlueprintBookDataToTree,
+  mergeChildTreeWithTreeItem,
+} from "../../components/BookChildTree";
 import { CopyButton } from "../../components/CopyButton";
 import { useUrl } from "../../hooks/url.hook";
 import { FavoriteButton } from "./FavoriteButton";
@@ -39,17 +40,6 @@ const StyledBlueptintPage = styled(Grid)`
     text-overflow: ellipsis;
     margin-right: 0.5rem;
     flex-grow: 1;
-  }
-
-  .panel {
-    &.child-tree {
-      overflow: hidden;
-      position: relative;
-      .child-tree-wrapper {
-        height: 480px;
-        overflow: auto;
-      }
-    }
   }
 `;
 
@@ -111,14 +101,15 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
   }, []);
 
   const bookChildTreeData = useMemo(() => {
-    if (!mainBookData) return null;
-    return mergeBlueprintDataAndChildTree(mainBookData, {
-      id: blueprint_book.id,
-      name: blueprint_book.label,
-      type: "blueprint_book",
-      children: blueprint_book.child_tree,
-    });
-  }, [blueprint_book.child_tree, blueprint_book.id, blueprint_book.label, mainBookData]);
+    if (mainBookData?.blueprint_book) {
+      return mergeChildTreeWithTreeItem(
+        convertBlueprintBookDataToTree(mainBookData.blueprint_book),
+        blueprint_book.id,
+        blueprint_book.child_tree
+      ) as BlueprintBookItem;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainBookData]);
 
   useEffect(() => {
     fetch(`/api/string/${selectedHash}`)
@@ -164,7 +155,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         {bookChildTreeData && (
           <div className="child-tree-wrapper">
             <BookChildTree
-              blueprint_book={bookChildTreeData}
+              book_item={bookChildTreeData}
               base_url={`/blueprint/${blueprint_page.id}`}
               selected_id={selected.data.id}
             />

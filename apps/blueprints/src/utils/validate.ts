@@ -15,6 +15,12 @@ export const validateRequired = (value: string) => {
   }
 };
 
+export const validateTags = (value: string[]) => {
+  if (!Array.isArray(value)) {
+    return "Invalid value";
+  }
+};
+
 const filterUndefined = (errors: Record<string, string | undefined>): Record<string, string> => {
   return Object.keys(errors)
     .filter((key) => errors[key] !== undefined)
@@ -75,41 +81,28 @@ export const validateUserForm = (auth: AuthContextProps) => (values: UserFormVal
   return filterUndefined(errors);
 };
 
-interface CreateBlueprintValues {
-  title: string;
-  description: string;
-  string: string;
-  tags: string[];
-}
-
-export const validateCreateBlueprintForm = (values: CreateBlueprintValues) => {
-  const errors = {} as Record<keyof CreateBlueprintValues, string | undefined>;
-  errors.title = validateRequired(values.title);
-  errors.string = validateRequired(values.string);
-
-  if (values.string) {
-    console.log(parseBlueprintStringClient(values.string));
+export const joinValidations = <T>(...validations: Array<(value: T) => string | undefined>) => (
+  value: T
+): string | undefined => {
+  for (let i = 0; i < validations.length; i++) {
+    const error = validations[i](value);
+    if (error) return error;
   }
-
-  // If string is set also validate it to be parsable
-  if (!errors.string && !parseBlueprintStringClient(values.string)) {
-    errors.string = "Not recognised as a blueprint string";
-  }
-
-  if (!Array.isArray(values.tags)) {
-    errors.tags = "Invalid tags value";
-  }
-
-  return filterUndefined(errors);
 };
 
 export const validateBlueprintString = (value: string) => {
   if (value) {
     const parsed = parseBlueprintStringClient(value);
-    console.log(parsed);
+    console.log({ parsed });
 
     if (!parsed) {
       return "Not recognised as a blueprint string";
     }
+
+    if (!parsed.blueprint && !parsed.blueprint_book) {
+      return "Must have a blueprint or blueprint book";
+    }
+  } else {
+    return "Not recognised as a blueprint string";
   }
 };
