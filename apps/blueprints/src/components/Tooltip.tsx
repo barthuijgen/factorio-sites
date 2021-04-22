@@ -6,6 +6,15 @@ const StyledTooltip = styled.span`
   display: inline-block;
   cursor: pointer;
   vertical-align: middle;
+
+  &:active:after {
+    content: attr(title);
+    padding: 5px;
+    border: 1px solid #ccc;
+    top: 5px;
+    right: 10%;
+    background: #bada55;
+  }
 `;
 
 export interface TooltipProps extends React.HTMLAttributes<HTMLSpanElement> {

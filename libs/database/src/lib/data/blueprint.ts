@@ -3,7 +3,7 @@ import { blueprintDataToDbData, encodeBlueprint, hashString } from "@factorio-si
 import { blueprint as BlueprintModel } from "@prisma/client";
 import { saveBlueprintString } from "../gcp-storage";
 import { prisma } from "../postgres/database";
-import { Blueprint, BlueprintData } from "@factorio-sites/types";
+import { Blueprint, BlueprintData, DbBlueprintData } from "@factorio-sites/types";
 
 // const blueprintImageRequestTopic = getBlueprintImageRequestTopic();
 
@@ -11,12 +11,14 @@ const mapBlueprintInstanceToEntry = (entity: BlueprintModel): Blueprint => ({
   id: entity.id,
   blueprint_hash: entity.blueprint_hash,
   image_hash: entity.image_hash,
+  image_version: entity.image_version,
   label: entity.label || "",
   description: entity.description || "",
   tags: entity.tags,
   created_at: entity.created_at && entity.created_at.getTime() / 1000,
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   game_version: entity.game_version || null,
+  data: (entity.data as unknown) as DbBlueprintData,
 });
 
 export async function getBlueprintById(id: string): Promise<Blueprint | null> {

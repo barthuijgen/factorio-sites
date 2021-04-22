@@ -1,4 +1,5 @@
-import { Signal } from "./blueprint-string";
+import { comment, blueprint, user } from "@prisma/client";
+import { Icon, Signal } from "./blueprint-string";
 
 export interface ChildTreeBlueprint {
   type: "blueprint";
@@ -15,16 +16,10 @@ export interface ChildTreeBlueprintBook {
 
 export type ChildTree = Array<ChildTreeBlueprint | ChildTreeBlueprintBook>;
 
-export interface Blueprint {
-  id: string;
-  label: string; // from source
-  description: string | null; // from source
-  game_version: string | null; // from source
-  blueprint_hash: string;
-  image_hash: string;
+export interface Blueprint extends Omit<blueprint, "data" | "created_at" | "updated_at"> {
   created_at: number;
   updated_at: number;
-  tags: string[];
+  data: DbBlueprintData | null;
 }
 
 export interface BlueprintBook {
@@ -72,3 +67,7 @@ export interface DbBlueprintData {
   recipes: Record<string, number>;
   tiles: Record<string, number>;
 }
+
+export type Comment = comment;
+
+export type CommentWithUsername = comment & { user: Pick<user, "username"> };
