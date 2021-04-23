@@ -84,6 +84,13 @@ const BlueprintsApp = ({
             <title>Factorio Blueprints</title>
             <link rel="shortcut icon" href={`${PUBLIC_URL}/favicon.png`} />
             <meta name="description" content="Find blueprints for Factorio with advanced search" />
+            {CF_WEB_ANALYTICS && (
+              <script
+                defer
+                src="https://static.cloudflareinsights.com/beacon.min.js"
+                data-cf-beacon={`{"token": "${CF_WEB_ANALYTICS}"}`}
+              ></script>
+            )}
           </Head>
           {!auth.loading && (
             <>
@@ -94,13 +101,6 @@ const BlueprintsApp = ({
                 </div>
               </main>
             </>
-          )}
-          {CF_WEB_ANALYTICS && (
-            <script
-              defer
-              src="https://static.cloudflareinsights.com/beacon.min.js"
-              data-cf-beacon={`{"token": "${CF_WEB_ANALYTICS}"}`}
-            ></script>
           )}
         </AuthContext.Provider>
       </CookiesProvider>
