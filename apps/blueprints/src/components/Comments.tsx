@@ -56,8 +56,6 @@ export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log({ comments });
-
   const onSubmitComment: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
     const result = await fetch("/api/blueprint/comment", {
