@@ -1,5 +1,9 @@
 import { useEffect, useState, RefObject } from "react";
 import { PUBLIC_URL } from "../utils/env";
+import { createState, useState as useGlobalState } from "@hookstate/core";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const FbeDataState = createState<FactorioData | null>(null);
 
 export type FBE = typeof import("@fbe/editor");
 export type Editor = InstanceType<FBE["Editor"]>;
@@ -57,19 +61,21 @@ interface FactorioData {
 }
 
 export const useFbeData = (): FactorioData | null => {
-  const [data, setData] = useState<FactorioData | null>(null);
+  const fbeDataState = useGlobalState(FbeDataState);
 
   useEffect(() => {
     (async () => {
-      const result = await fetch("/api/fbe-proxy/data.json")
-        .then((res) => res.json())
-        .catch(() => {
-          console.error("Failed to fetch data.json");
-        });
-      if (result) setData(result);
+      if (!fbeDataState.value) {
+        const result = await fetch("/api/fbe-proxy/data.json")
+          .then((res) => res.json())
+          .catch(() => {
+            console.error("Failed to fetch data.json");
+          });
+        if (result) fbeDataState.set(result);
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return data;
+  return fbeDataState.value;
 };

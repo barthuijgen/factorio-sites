@@ -77,8 +77,9 @@ const InnerBookChildTree: React.FC<BookChildTreeProps> = ({ book_item, base_url,
       <OptionalLink
         include={Boolean(base_url && book_item.id)}
         href={`${base_url}?selected=${book_item.id}&type=book`}
-        replace
         className={"book" + (selected_id === book_item.id ? " active" : "")}
+        replace
+        scroll={false}
       >
         <FactorioIcon type="item" icon="blueprint-book" size={20} />
         {book_item.icons &&
@@ -96,8 +97,9 @@ const InnerBookChildTree: React.FC<BookChildTreeProps> = ({ book_item, base_url,
               include={Boolean(base_url && child.id)}
               key={child.id || index}
               href={`${base_url}?selected=${child.id}`}
-              replace
               className={"blueprint" + (selected_id === child.id ? " active" : "")}
+              replace
+              scroll={false}
             >
               {child.icons &&
                 child.icons.map((icon, index) => (
