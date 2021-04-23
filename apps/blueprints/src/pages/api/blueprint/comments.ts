@@ -9,7 +9,6 @@ const handler = apiHandler(async (req, res, { session }) => {
   if (!blueprint_page_id) return res.status(400).json({ status: "blueprint_page_id required" });
 
   const comments = await getComments(blueprint_page_id);
-  console.log(comments);
 
   res.status(200).json({ comments });
 });

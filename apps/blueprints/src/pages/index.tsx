@@ -143,6 +143,10 @@ export const Index: NextPage<IndexProps> = ({
     }
   };
 
+  const updateSearch = (data: Record<string, string | string[]>) => {
+    router.replace(routerQueryToHref(data), undefined, { scroll: false });
+  };
+
   return (
     <SimpleGrid columns={1}>
       <Panel title="Blueprints">
@@ -159,7 +163,7 @@ export const Index: NextPage<IndexProps> = ({
                   }}
                   onKeyUp={(event) => {
                     if (event.key === "Enter") {
-                      router.push(`/?q=${searchQuery}`);
+                      router.replace(`/?q=${searchQuery}`, undefined, { scroll: false });
                     }
                   }}
                 />
@@ -169,7 +173,7 @@ export const Index: NextPage<IndexProps> = ({
               <Text>Sort order</Text>
               <Box>
                 <RadioGroup
-                  onChange={(value: string) => router.push(routerQueryToHref({ order: value }))}
+                  onChange={(value: string) => updateSearch({ order: value })}
                   value={(router.query.order as string) || "favorites"}
                 >
                   <Stack>
@@ -183,7 +187,7 @@ export const Index: NextPage<IndexProps> = ({
               <Text>Search mode</Text>
               <Box>
                 <RadioGroup
-                  onChange={(value: string) => router.push(routerQueryToHref({ mode: value }))}
+                  onChange={(value: string) => updateSearch({ mode: value })}
                   value={(router.query.mode as string) || "and"}
                 >
                   <Stack>
@@ -198,7 +202,7 @@ export const Index: NextPage<IndexProps> = ({
               <Select
                 options={tagsOptions}
                 value={queryValueAsArray(router.query.tags)}
-                onChange={(tags) => router.push(routerQueryToHref({ tags }))}
+                onChange={(tags) => updateSearch({ tags })}
               />
             </Box>
             <Box css={SidebarRow}>
@@ -206,7 +210,7 @@ export const Index: NextPage<IndexProps> = ({
               <Select
                 options={entityOptions}
                 value={queryValueAsArray(router.query.entities)}
-                onChange={(entities) => router.push(routerQueryToHref({ entities }))}
+                onChange={(entities) => updateSearch({ entities })}
               />
             </Box>
             <Box css={SidebarRow}>
@@ -214,7 +218,7 @@ export const Index: NextPage<IndexProps> = ({
               <Select
                 options={recipeOptions}
                 value={queryValueAsArray(router.query.recipes)}
-                onChange={(recipes) => router.push(routerQueryToHref({ recipes }))}
+                onChange={(recipes) => updateSearch({ recipes })}
               />
             </Box>
             <Box css={SidebarRow}>
@@ -222,16 +226,14 @@ export const Index: NextPage<IndexProps> = ({
               <Select
                 options={itemOptions}
                 value={queryValueAsArray(router.query.items)}
-                onChange={(items) => router.push(routerQueryToHref({ items }))}
+                onChange={(items) => updateSearch({ items })}
               />
             </Box>
             <Box css={sidebarCheckbox}>
               <Text>Snaps to grid</Text>
               <Checkbox
                 value="true"
-                onChange={(ev) =>
-                  router.push(routerQueryToHref({ absolute_snapping: String(ev.target.checked) }))
-                }
+                onChange={(ev) => updateSearch({ absolute_snapping: String(ev.target.checked) })}
                 isChecked={router.query.absolute_snapping === "true"}
               />
             </Box>
