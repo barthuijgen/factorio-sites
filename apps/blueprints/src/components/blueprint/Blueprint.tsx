@@ -196,6 +196,19 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
       >
         {string && data && <BlueprintData string={string} data={data} />}
       </Panel>
+
+      {(auth?.role === "admin" || auth?.role === "moderator") && (
+        <Panel
+          gridColumn={chakraResponsive({ mobile: "1", desktop: "1 / span 4" })}
+          title="Moderation"
+        >
+          <Link href={`/user/blueprint/${blueprint_page.id}`} passHref>
+            <a>
+              <Button>Edit</Button>
+            </a>
+          </Link>
+        </Panel>
+      )}
     </StyledBlueptintPage>
   );
 };
