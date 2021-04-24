@@ -238,7 +238,9 @@ export const getServerSideProps = pageHandler(async (context, { session, redirec
 
   let selected!: UserBlueprintProps["selected"];
 
-  if (blueprintPage.user_id !== session.user_id) {
+  const isModerator = session.user.role === "admin" || session.user.role === "moderator";
+
+  if (blueprintPage.user_id !== session.user_id && !isModerator) {
     return redirect("/");
   }
 

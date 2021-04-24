@@ -93,7 +93,7 @@ export const joinValidations = <T>(...validations: Array<(value: T) => string | 
 export const validateBlueprintString = (value: string) => {
   if (value) {
     const parsed = parseBlueprintStringClient(value);
-    console.log({ parsed });
+    // console.log({ parsed });
 
     if (!parsed) {
       return "Not recognised as a blueprint string";

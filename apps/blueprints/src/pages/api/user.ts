@@ -9,6 +9,7 @@ const handler = apiHandler(async (_, res, { session }) => {
         username: session.user.username,
         email: session.user.email,
         steam_id: session.user.steam_id,
+        role: session.user.role
       } as AuthContextProps,
     });
   }
