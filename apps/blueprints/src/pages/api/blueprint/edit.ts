@@ -21,7 +21,9 @@ const handler = apiHandler(async (req, res, { session }) => {
   if (!existing) {
     return res.status(404).json({ status: "Blueprint not found" });
   }
-  if (existing?.user_id !== session.user_id) {
+
+  const isModerator = session.user.role === "admin" || session.user.role === "moderator";
+  if (existing?.user_id !== session.user_id && !isModerator) {
     return res.status(403).json({ status: "Unauthorised" });
   }
 
