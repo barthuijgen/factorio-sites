@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import {
@@ -70,6 +70,12 @@ const FormContent: React.FC = () => {
 
   const description =
     blueprintData?.blueprint?.description || blueprintData?.blueprint_book?.description || "";
+
+  const book_item = useMemo(
+    () =>
+      blueprintData?.blueprint_book && convertBlueprintBookDataToTree(blueprintData.blueprint_book),
+    [blueprintData?.blueprint_book]
+  );
 
   useEffect(() => {
     if (values.string) {
@@ -203,11 +209,8 @@ const FormContent: React.FC = () => {
       </Panel>
       <Panel title="Preview">
         <Box>
-          {blueprintData?.blueprint_book ? (
-            <BookChildTree
-              book_item={convertBlueprintBookDataToTree(blueprintData.blueprint_book)}
-              selected_id={null}
-            />
+          {book_item ? (
+            <BookChildTree book_item={book_item} selected_id={null} />
           ) : values.string ? (
             <ImageEditor string={values.string} />
           ) : null}
