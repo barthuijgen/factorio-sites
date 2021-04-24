@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { css } from "@emotion/react";
 import Link, { LinkProps } from "next/link";
 import { FactorioIcon } from "./FactorioIcon";
@@ -128,19 +129,17 @@ const InnerBookChildTree: React.FC<BookChildTreeProps> = ({ book_item, base_url,
   );
 };
 
-export const BookChildTree: React.FC<BookChildTreeProps> = ({
-  book_item,
-  base_url,
-  selected_id,
-}) => {
-  return (
-    <div css={componentStyles}>
-      <div className="child-tree-wrapper ">
-        <InnerBookChildTree book_item={book_item} base_url={base_url} selected_id={selected_id} />
+export const BookChildTree: React.FC<BookChildTreeProps> = memo(
+  ({ book_item, base_url, selected_id }) => {
+    return (
+      <div css={componentStyles}>
+        <div className="child-tree-wrapper ">
+          <InnerBookChildTree book_item={book_item} base_url={base_url} selected_id={selected_id} />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 const convertBlueprintDataToTree = (data: BlueprintStringData): TreeItem | null => {
   if (data.blueprint_book) {
