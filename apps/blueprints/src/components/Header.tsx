@@ -60,7 +60,7 @@ export const Header: React.FC = (props) => {
             <MenuItem href="/user/blueprints">My blueprints</MenuItem>
             <MenuItem href="/user/edit">Account</MenuItem>
             <MenuItem href="/about">About</MenuItem>
-            <MenuItem href={`/api/logout?redirect=${router.pathname}`}>Logout</MenuItem>
+            <MenuItem href={`/api/logout?redirect=${router.asPath}`}>Logout</MenuItem>
           </>
         ) : (
           <>

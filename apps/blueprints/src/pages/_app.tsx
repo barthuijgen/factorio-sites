@@ -10,6 +10,7 @@ import { Header } from "../components/Header";
 import { AuthContext, AuthContextProps } from "../providers/auth";
 import { useFetch } from "../hooks/fetch";
 import { CF_WEB_ANALYTICS, PUBLIC_URL } from "../utils/env";
+import { addPreserveScrollListeners } from "../utils/nextjs-preserve-scroll";
 
 const globalStyles = css`
   @font-face {
@@ -66,6 +67,7 @@ if (typeof window !== "undefined") {
   Router.events.on("routeChangeStart", () => NProgress.start());
   Router.events.on("routeChangeComplete", () => NProgress.done());
   Router.events.on("routeChangeError", () => NProgress.done());
+  addPreserveScrollListeners();
 }
 
 const BlueprintsApp = ({
