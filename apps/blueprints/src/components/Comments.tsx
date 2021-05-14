@@ -37,6 +37,10 @@ const AddCommentDiv = styled.div`
 const CommentDiv = styled.div`
   background: #4e4c4c;
   margin: 0.5rem 0;
+
+  .delete {
+    float: right;
+  }
 `;
 
 export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
@@ -71,6 +75,21 @@ export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
     fetchTopLevelComments();
   };
 
+  const onDelete = async (comment_id: string) => {
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
+    await fetch("/api/blueprint/comment", {
+      method: "DELETE",
+      body: JSON.stringify({ comment_id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    fetchTopLevelComments();
+  };
+
   return (
     <div>
       {auth && (
@@ -98,6 +117,11 @@ export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
         comments.map((comment) => (
           <CommentDiv key={comment.id}>
             <div>
+              {(auth?.role === "moderator" || auth?.role === "admin") && (
+                <div className="delete">
+                  <Button onClick={() => onDelete(comment.id)}>[moderator] Delete</Button>
+                </div>
+              )}
               {comment.user.username} at{" "}
               {format(new Date(comment.created_at), getLocaleDateFormat() + " HH:mm")}
             </div>

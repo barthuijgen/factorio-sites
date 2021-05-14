@@ -11,6 +11,12 @@ export async function createComment(blueprint_page_id: string, user: user, body:
   });
   return result;
 }
+export async function deleteComment(comment_id: string) {
+  const result = await prisma.comment.delete({
+    where: { id: comment_id },
+  });
+  return result;
+}
 
 export async function getComments(blueprint_page_id: string) {
   const result = await prisma.comment.findMany({
