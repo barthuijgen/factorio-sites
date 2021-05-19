@@ -13,14 +13,10 @@ interface CommentsProps {
 }
 
 const AddCommentDiv = styled.div`
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
-
   textarea {
     color: #fff;
     display: block;
-    margin-top: 0.5rem;
+    margin: 0.5rem 0;
     background: #414040;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -131,7 +127,7 @@ export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
                 Send
               </Button>
               <Button type="button" className="close" onClick={() => setAddCommentOpen(false)}>
-                close
+                Close
               </Button>
             </form>
           ) : (
