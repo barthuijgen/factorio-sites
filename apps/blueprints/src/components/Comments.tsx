@@ -5,6 +5,8 @@ import { Button } from "./Button";
 import styled from "@emotion/styled";
 import { format } from "date-fns";
 import { getLocaleDateFormat } from "@factorio-sites/web-utils";
+import Link from "next/link";
+import { IoMdTrash } from "react-icons/io";
 
 interface CommentsProps {
   blueprint_page_id: string;
@@ -22,8 +24,9 @@ const AddCommentDiv = styled.div`
     background: #414040;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 400px;
-    min-height: 80px;
+    width: 100%;
+    min-height: 140px;
+    padding: 8px;
   }
 
   button {
@@ -35,11 +38,38 @@ const AddCommentDiv = styled.div`
 `;
 
 const CommentDiv = styled.div`
-  background: #4e4c4c;
-  margin: 0.5rem 0;
+  background: #575959;
+  margin: 1rem 0;
+  padding: 10px;
+  border-radius: 4px;
+
+  hr {
+    border-color: #777;
+    height: 2px;
+    margin: 12px auto;
+  }
+
+  .username {
+    color: #ffe6c0;
+  }
 
   .delete {
     float: right;
+    margin-right: 2px;
+
+    button {
+      vertical-align: middle;
+
+      svg {
+        fill: #ff7e00;
+      }
+
+      &:hover {
+        svg {
+          fill: #ee3f07;
+        }
+      }
+    }
   }
 `;
 
@@ -116,15 +146,22 @@ export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
       {comments?.length ? (
         comments.map((comment) => (
           <CommentDiv key={comment.id}>
-            <div>
-              {(auth?.role === "moderator" || auth?.role === "admin") && (
+            <div className="comment-info">
+              {(auth?.role === "moderator" ||
+                auth?.role === "admin" ||
+                auth?.user_id === comment.user_id) && (
                 <div className="delete">
-                  <Button onClick={() => onDelete(comment.id)}>[moderator] Delete</Button>
+                  <button onClick={() => onDelete(comment.id)}>
+                    <IoMdTrash />
+                  </button>
                 </div>
               )}
-              {comment.user.username} at{" "}
-              {format(new Date(comment.created_at), getLocaleDateFormat() + " HH:mm")}
+              <Link href={`/?user=${comment.user_id}`}>
+                <a className="username">{comment.user.username}</a>
+              </Link>{" "}
+              at {format(new Date(comment.created_at), getLocaleDateFormat() + " HH:mm")}
             </div>
+            <hr />
             <div>{comment.body}</div>
           </CommentDiv>
         ))
