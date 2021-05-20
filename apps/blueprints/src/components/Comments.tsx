@@ -101,12 +101,12 @@ export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
     fetchTopLevelComments();
   };
 
-  const onDelete = async (comment: CommentWithUsername) => {
+  const onDelete = async (comment_id: string) => {
     // eslint-disable-next-line no-restricted-globals
     if (!confirm("Are you sure you want to delete this comment?")) return;
     await fetch("/api/blueprint/comment", {
       method: "DELETE",
-      body: JSON.stringify({ comment_id: comment.id, comment_author: comment.user_id }),
+      body: JSON.stringify({ comment_id }),
       headers: { "Content-Type": "application/json" },
     });
     fetchTopLevelComments();
@@ -143,7 +143,7 @@ export const Comments: React.FC<CommentsProps> = ({ blueprint_page_id }) => {
                 auth?.role === "admin" ||
                 auth?.user_id === comment.user_id) && (
                 <div className="delete">
-                  <button onClick={() => onDelete(comment)}>
+                  <button onClick={() => onDelete(comment.id)}>
                     <IoMdTrash />
                   </button>
                 </div>
