@@ -1,5 +1,5 @@
 import { apiHandler } from "../../../utils/api-handler";
-import { createComment, deleteComment } from "@factorio-sites/database";
+import { getComment, createComment, deleteComment } from "@factorio-sites/database";
 
 const handler = apiHandler(async (req, res, { session }) => {
   if (req.method === "POST") {
@@ -15,7 +15,8 @@ const handler = apiHandler(async (req, res, { session }) => {
 
     res.status(200).json({ status: "Comment submitted" });
   } else if (req.method === "DELETE") {
-    const { comment_id, comment_author } = req.body;
+    const { comment_id } = req.body;
+    const comment = await getComment(comment_id);
 
     if (!session) {
       return res.status(401).json({ status: "Not authenticated" });
@@ -24,7 +25,7 @@ const handler = apiHandler(async (req, res, { session }) => {
     if (
       session.user.role !== "moderator" &&
       session.user.role !== "admin" &&
-      session.user_id !== comment_author
+      session.user_id !== comment?.user_id
     ) {
       return res.status(401).json({ status: "Not authenticated" });
     }
