@@ -9,6 +9,7 @@ const _init = async () => {
   if (globalWithPrisma.prisma) return globalWithPrisma.prisma;
 
   const host = getEnvOrThrow("POSTGRES_HOST");
+  const port = host.includes(":") ? "" : ":5432";
   const user = getEnvOrThrow("POSTGRES_USER");
   const database = getEnvOrThrow("POSTGRES_DB");
   const passwordKey = getEnvOrThrow("POSTGRES_PASSWORD");
@@ -20,7 +21,7 @@ const _init = async () => {
     log: ["warn", "error"],
     datasources: {
       db: {
-        url: `postgresql://${user}:${password}@${host}:5432/${database}`,
+        url: `postgresql://${user}:${password}@${host}${port}/${database}`,
       },
     },
   });
