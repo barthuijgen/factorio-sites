@@ -37,7 +37,7 @@
     "@google-cloud/pubsub": "2.11.0",
     "@google-cloud/secret-manager": "3.6.0",
     "@google-cloud/storage": "5.8.3",
-    "@hookstate/core": "3.0.6",
+    "@hookstate/core": "3.0.11",
     "@prisma/client": "2.21.2",
     "bcrypt": "5.0.1",
     "clsx": "1.1.1",
