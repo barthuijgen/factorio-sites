@@ -2931,10 +2931,10 @@
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.1.0.tgz#6c9eafc78c1529248f8f4d92b0799a712b6052c6"
   integrity sha512-i9YbZPN3QgfighY/1X1Pu118VUz2Fmmhd6b2n0/O8YVgGGfw0FbUYoA97k7FkpGJ+pLCFEDLUmAPPV4D1kpeFw==
 
-"@hookstate/core@3.0.6":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@hookstate/core/-/core-3.0.6.tgz#1a686d05076f0c58e2c96c9afa2bed85964f2577"
-  integrity sha512-WxFM9gYJvjIXqnpRw74ue+5pEAHzTWf7CbAYV33yFTD9rxCw4o/aeGkAQO+alB+fXjIZuiZzRntP/BAbzAguKw==
+"@hookstate/core@3.0.12":
+  version "3.0.12"
+  resolved "https://registry.yarnpkg.com/@hookstate/core/-/core-3.0.12.tgz#a59df52da7c626fd424a77c5b054c2b4a8063bad"
+  integrity sha512-hAYS29Re/3YPS9DNxHD2LKcLUVZC2XWXcx8Y2QTAcEQg9h9TYrtbJrCzPfb2fPOV5tm+pcMLS5DZl2mkD/bEyQ==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
