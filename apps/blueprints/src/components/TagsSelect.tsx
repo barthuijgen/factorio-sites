@@ -1,5 +1,10 @@
-import MultiSelect from "react-multi-select-component";
+import { MultiSelect } from "react-multi-select-component";
 import { useFbeData } from "../hooks/fbe.hook";
+import styled from "@emotion/styled";
+
+const MultiSelectStyled = styled(MultiSelect)`
+  color: black;
+`;
 
 interface Tag {
   value: string;
@@ -25,8 +30,7 @@ export const TagsSelect: React.FC<TagsSelectProps> = ({ value, onChange, classNa
     });
 
   return (
-    <MultiSelect
-      css={{ color: "black" }}
+    <MultiSelectStyled
       className={className}
       options={TAGS}
       value={value.map((value) => ({ value, label: value.replace(/[_-]/g, " ") }))}

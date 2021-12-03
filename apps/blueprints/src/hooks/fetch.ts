@@ -25,7 +25,7 @@ export const useFetch = <T>(
         const response = await fetch(url);
         const data = await response.json();
         dataState.nested(url).set(data);
-      } catch (error) {
+      } catch (error: any) {
         setError(error);
       }
       setLoading(false);

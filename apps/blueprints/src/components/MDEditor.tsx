@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import SimpleMDE, { SimpleMDEEditorProps } from "react-simplemde-editor";
+import SimpleMDE, { SimpleMDEReactProps } from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 
 const StyledSimpleMDE = styled(SimpleMDE)`
@@ -34,7 +34,7 @@ const StyledSimpleMDE = styled(SimpleMDE)`
   }
 `;
 
-export const MDEditor: React.FC<SimpleMDEEditorProps> = (props) => {
+export const MDEditor: React.FC<SimpleMDEReactProps> = (props) => {
   return (
     <StyledSimpleMDE options={{ spellChecker: false, sideBySideFullscreen: false }} {...props} />
   );
