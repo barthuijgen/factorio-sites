@@ -1,9 +1,12 @@
-import React from "react";
-import styled from "@emotion/styled";
-import SimpleMDE, { SimpleMDEReactProps } from "react-simplemde-editor";
+import React, { Suspense } from "react";
+import { css } from "@emotion/react";
+import { Box } from "@chakra-ui/react";
+import type { SimpleMDEReactProps } from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 
-const StyledSimpleMDE = styled(SimpleMDE)`
+const SimpleMDE = React.lazy(() => import("react-simplemde-editor"));
+
+const styles = css`
   .editor-toolbar {
     button.active,
     button:hover {
@@ -36,6 +39,10 @@ const StyledSimpleMDE = styled(SimpleMDE)`
 
 export const MDEditor: React.FC<SimpleMDEReactProps> = (props) => {
   return (
-    <StyledSimpleMDE options={{ spellChecker: false, sideBySideFullscreen: false }} {...props} />
+    <Suspense fallback={null}>
+      <Box css={styles}>
+        <SimpleMDE options={{ spellChecker: false, sideBySideFullscreen: false }} {...props} />
+      </Box>
+    </Suspense>
   );
 };
