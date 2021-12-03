@@ -92,6 +92,7 @@ export const createSession = async (user: user, useragent: string, ip: string) =
 };
 
 export const getSessionByToken = async (token: string) => {
+  if (token.length !== 36 && token.length !== 32) return null;
   return await prisma.session.findUnique({
     where: { session_token: token },
     include: {

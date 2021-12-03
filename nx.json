@@ -1,9 +1,14 @@
 {
   "npmScope": "factorio-sites",
-  "affected": { "defaultBase": "master" },
+  "affected": {
+    "defaultBase": "master"
+  },
   "implicitDependencies": {
     "workspace.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
     ".eslintrc.json": "*",
@@ -12,18 +17,35 @@
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "parallel": 1
+      }
     }
   },
-  "projects": {
-    "blueprints": { "tags": [] },
-    "blueprints-e2e": { "tags": [], "implicitDependencies": ["blueprints"] },
-    "blueprint-image-function": { "tags": [] },
-    "factorioprints-scraper": { "tags": [] },
-    "database": { "tags": [] },
-    "node-utils": { "tags": [] },
-    "common-utils": { "tags": [] },
-    "web-utils": { "tags": [] },
-    "types": { "tags": [] }
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/next"
+  },
+  "defaultProject": "blueprints",
+  "generators": {
+    "@nrwl/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "style": "@emotion/styled",
+        "linter": "eslint"
+      }
+    }
   }
 }

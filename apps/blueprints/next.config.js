@@ -20,6 +20,11 @@ module.exports = {
       config.plugins.push(new ForkTsCheckerWebpackPlugin());
     }
 
+    if (!config.experiments) {
+      config.experiments = {};
+    }
+    config.experiments.asyncWebAssembly = true;
+
     return config;
   },
   async headers() {

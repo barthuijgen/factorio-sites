@@ -71,7 +71,7 @@ export const FullscreenImage: React.FC<FullscreenImageProps> = ({ alt, src }) =>
         />
       </StyledImage>
       {open && (
-        <div
+        <Box
           css={elementStyle}
           onClick={(e) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +89,7 @@ export const FullscreenImage: React.FC<FullscreenImageProps> = ({ alt, src }) =>
           <MapInteractionCSS value={state} onChange={setState}>
             <img alt={alt} src={src} />
           </MapInteractionCSS>
-        </div>
+        </Box>
       )}
     </>
   );

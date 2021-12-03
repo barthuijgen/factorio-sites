@@ -1,4 +1,3 @@
-import React from "react";
 import { NextPage } from "next";
 import { SimpleGrid, Box, Text, Image, Link } from "@chakra-ui/react";
 import { Panel } from "../components/Panel";
@@ -25,10 +24,10 @@ export const Index: NextPage = () => {
           })}
         >
           <Box>
-            <h2 css={{ fontSize: "30px" }}>Factorio Blueprints by Barry</h2>
+            <h2 style={{ fontSize: "30px" }}>Factorio Blueprints by Barry</h2>
           </Box>
           <Box css={{ marginRight: "1rem" }}>
-            <h3 css={{ color: "orange" }}>
+            <h3 style={{ color: "orange" }}>
               Work in progress! <IoIosConstruct css={{ display: "inline-block" }} />
             </h3>
           </Box>
@@ -67,7 +66,7 @@ export const Index: NextPage = () => {
             Factorio Blueprints uses the work of Teoxoy with the
             <a
               href="https://github.com/Teoxoy/factorio-blueprint-editor"
-              css={{
+              style={{
                 textDecoration: "underline",
                 display: "inline-flex",
                 alignItems: "center",
@@ -78,7 +77,7 @@ export const Index: NextPage = () => {
               <img
                 src={`${PUBLIC_URL}/fbe.svg`}
                 alt="Factorio blueprint editor"
-                css={{ display: "inline-block", height: "18px" }}
+                style={{ display: "inline-block", height: "18px" }}
               />
               Factorio Blueprints Editor
             </a>
@@ -88,7 +87,7 @@ export const Index: NextPage = () => {
             And the{" "}
             <a
               href="https://github.com/demodude4u/Factorio-FBSR"
-              css={{ textDecoration: "underline" }}
+              style={{ textDecoration: "underline" }}
             >
               FBSR
             </a>{" "}

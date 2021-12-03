@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import { parseBlueprintStringClient } from "@factorio-sites/web-utils";
 import { useEffect, useRef, useState } from "react";
 import { PUBLIC_URL } from "../utils/env";
+import { Box } from "@chakra-ui/react";
 
 type FBE = typeof import("@fbe/editor");
 type Editor = InstanceType<FBE["Editor"]>;
@@ -89,7 +90,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string, onError }) => 
 
         // const picture = await editor.getPicture();
         // setImage(URL.createObjectURL(picture));
-      } catch (reason) {
+      } catch (reason: any) {
         setRenderError(true);
         if (onError) onError();
         if (Array.isArray(reason.errors)) {
@@ -101,7 +102,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string, onError }) => 
   }, [string, editorLoaded, onError]);
 
   return (
-    <div css={editorCss}>
+    <Box css={editorCss}>
       {renderError && (
         <div className="error">
           <h3>Failed to render blueprint</h3>
@@ -113,6 +114,6 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string, onError }) => 
       )}
       <canvas id="pbe" ref={canvasRef} style={{ width: "100%", height: "auto" }} />
       {/* <img src={image} alt="blueprint" style={{ width: "500px" }}></img> */}
-    </div>
+    </Box>
   );
 };
