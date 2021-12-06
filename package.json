@@ -84,7 +84,7 @@
     "@nrwl/node": "13.2.1",
     "@nrwl/react": "13.2.1",
     "@nrwl/web": "13.2.1",
-    "@nrwl/workspace": "13.2.1",
+    "@nrwl/workspace": "13.2.3",
     "@testing-library/react": "12.1.2",
     "@types/bcrypt": "5.0.0",
     "@types/cookie": "0.4.1",
