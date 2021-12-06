@@ -1,5 +1,5 @@
 import { comment, blueprint, user } from "@prisma/client";
-import { Icon, Signal } from "./blueprint-string";
+import { Signal } from "./blueprint-string";
 
 export interface ChildTreeBlueprint {
   type: "blueprint";

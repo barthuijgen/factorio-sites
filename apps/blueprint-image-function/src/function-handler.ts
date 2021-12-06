@@ -75,6 +75,7 @@ export const functionHttpHandler: Handler = async (req, res) => {
     await saveBlueprintImage(blueprint.image_hash, min_image, "300");
 
     res.status(200).send("Done");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (reason: any) {
     res.status(500).send(`Error rendering image ${reason.stack || reason}`);
   }
