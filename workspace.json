@@ -14,7 +14,14 @@
             "outputPath": "dist/apps/blueprint-image-function",
             "main": "apps/blueprint-image-function/src/main.ts",
             "tsConfig": "apps/blueprint-image-function/tsconfig.app.json",
-            "assets": []
+            "assets": [
+              {
+                "input": "apps/blueprints/prisma",
+                "glob": "schema.prisma",
+                "output": "./prisma"
+              }
+            ],
+            "generatePackageJson": true
           },
           "configurations": {
             "production": {

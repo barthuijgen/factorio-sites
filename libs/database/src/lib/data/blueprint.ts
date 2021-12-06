@@ -18,7 +18,7 @@ const mapBlueprintInstanceToEntry = (entity: BlueprintModel): Blueprint => ({
   created_at: entity.created_at && entity.created_at.getTime() / 1000,
   updated_at: entity.updated_at && entity.updated_at.getTime() / 1000,
   game_version: entity.game_version || null,
-  data: (entity.data as unknown) as DbBlueprintData,
+  data: entity.data as unknown as DbBlueprintData,
 });
 
 export async function getBlueprintById(id: string): Promise<Blueprint | null> {
@@ -29,6 +29,17 @@ export async function getBlueprintById(id: string): Promise<Blueprint | null> {
 export async function getBlueprintByHash(hash: string): Promise<Blueprint | null> {
   const result = await prisma.blueprint.findUnique({ where: { blueprint_hash: hash } });
   return result ? mapBlueprintInstanceToEntry(result) : null;
+}
+
+export async function getPaginatedBlueprints({
+  skip = 0,
+  take = 30,
+}: {
+  skip: number;
+  take: number;
+}): Promise<Blueprint[]> {
+  const results = await prisma.blueprint.findMany({ skip, take });
+  return results.map(mapBlueprintInstanceToEntry);
 }
 
 export async function createBlueprint(
