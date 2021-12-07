@@ -3,7 +3,6 @@ jest.mock("next/config", () => () => ({
   publicRuntimeConfig: {},
 }));
 
-import React from "react";
 import { render } from "@testing-library/react";
 import Index from "../src/pages/index";
 import * as nextRouter from "next/router";

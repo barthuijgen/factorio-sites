@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/layout";
 import { IconSignalTypes } from "@factorio-sites/types";
 
 interface FactorioIconProps {
@@ -40,7 +41,7 @@ export const FactorioIcon: React.FC<FactorioIconProps> = ({ type, icon, size }) 
     return <span css={{ color: "#ffa700" }}>[{icon}]</span>;
   }
   return (
-    <div
+    <Box
       css={{
         display: "inline-block",
         width: `${size}px`,

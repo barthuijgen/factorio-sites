@@ -1,10 +1,9 @@
 /* eslint-disable no-irregular-whitespace */
-import React from "react";
 import { render } from "@testing-library/react";
 import { FactorioCode } from "../FactorioCode";
 import { createSerializer } from "@emotion/jest";
 
-expect.addSnapshotSerializer(createSerializer({ DOMElements: false }));
+expect.addSnapshotSerializer(createSerializer());
 
 const cleanUpElement = (element: Element) => {
   const el = element.querySelector("div > div");
@@ -30,7 +29,7 @@ describe("FactorioCode", () => {
     const { baseElement } = render(<FactorioCode code="Blueprint [color=red]red[/color]" />);
 
     expect(cleanUpElement(baseElement)).toMatchInlineSnapshot(`
-      .emotion-0 {
+      .emotion-1 {
         color: red;
         display: -webkit-inline-box;
         display: -webkit-inline-flex;
@@ -45,14 +44,16 @@ describe("FactorioCode", () => {
       <div
         class=""
       >
-        <span>
+        <p
+          class="chakra-text emotion-0"
+        >
           Blueprint 
-        </span>
-        <span
-          class="emotion-0"
+        </p>
+        <p
+          class="chakra-text emotion-1"
         >
           red
-        </span>
+        </p>
       </div>
     `);
   });
@@ -61,46 +62,6 @@ describe("FactorioCode", () => {
     const { baseElement } = render(<FactorioCode code="Blueprint [item=iron-ore]" />);
 
     expect(cleanUpElement(baseElement)).toMatchInlineSnapshot(`
-      .emotion-0 {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        background-image: url('https://storage.googleapis.com/factorio-blueprints-assets/factorio/graphics/icons/iron-ore.png');
-        -webkit-background-size: 38px;
-        background-size: 38px;
-      }
-
-      <div
-        class=""
-      >
-        <span>
-          Blueprint 
-        </span>
-        <div
-          class="emotion-0"
-        />
-      </div>
-    `);
-  });
-
-  it("should render icons in colors", () => {
-    const { baseElement } = render(
-      <FactorioCode code="Blueprint [color=white]hello [item=iron-ore][/color]" />
-    );
-
-    expect(cleanUpElement(baseElement)).toMatchInlineSnapshot(`
-      .emotion-0 {
-        color: white;
-        display: -webkit-inline-box;
-        display: -webkit-inline-flex;
-        display: -ms-inline-flexbox;
-        display: inline-flex;
-        -webkit-align-items: center;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-      }
-
       .emotion-1 {
         display: inline-block;
         width: 20px;
@@ -113,19 +74,65 @@ describe("FactorioCode", () => {
       <div
         class=""
       >
-        <span>
-          Blueprint 
-        </span>
-        <span
-          class="emotion-0"
+        <p
+          class="chakra-text emotion-0"
         >
-          <span>
+          Blueprint 
+        </p>
+        <div
+          class="emotion-1"
+        />
+      </div>
+    `);
+  });
+
+  it("should render icons in colors", () => {
+    const { baseElement } = render(
+      <FactorioCode code="Blueprint [color=white]hello [item=iron-ore][/color]" />
+    );
+
+    expect(cleanUpElement(baseElement)).toMatchInlineSnapshot(`
+      .emotion-1 {
+        color: white;
+        display: -webkit-inline-box;
+        display: -webkit-inline-flex;
+        display: -ms-inline-flexbox;
+        display: inline-flex;
+        -webkit-align-items: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+      }
+
+      .emotion-3 {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-image: url('https://storage.googleapis.com/factorio-blueprints-assets/factorio/graphics/icons/iron-ore.png');
+        -webkit-background-size: 38px;
+        background-size: 38px;
+      }
+
+      <div
+        class=""
+      >
+        <p
+          class="chakra-text emotion-0"
+        >
+          Blueprint 
+        </p>
+        <p
+          class="chakra-text emotion-1"
+        >
+          <p
+            class="chakra-text emotion-0"
+          >
             hello 
-          </span>
+          </p>
           <div
-            class="emotion-1"
+            class="emotion-3"
           />
-        </span>
+        </p>
       </div>
     `);
   });
