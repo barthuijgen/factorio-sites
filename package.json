@@ -79,7 +79,7 @@
     "@nrwl/cli": "13.2.1",
     "@nrwl/cypress": "13.2.1",
     "@nrwl/eslint-plugin-nx": "13.2.1",
-    "@nrwl/jest": "13.2.1",
+    "@nrwl/jest": "13.2.3",
     "@nrwl/next": "13.2.1",
     "@nrwl/node": "13.2.1",
     "@nrwl/react": "13.2.1",
