@@ -60,7 +60,8 @@ export async function subscribeToPubSub() {
       await saveBlueprintImage(blueprint.image_hash, min_image, "300");
 
       return ack("[pubsub] image saved", true);
-    } catch (reason) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (reason: any) {
       return ack(`[pubsub:error] ${reason.stack || reason}`, false);
     }
   };

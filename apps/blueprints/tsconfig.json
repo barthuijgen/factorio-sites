@@ -14,7 +14,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "jsxImportSource": "@emotion/react",
+    "incremental": true
   },
   "include": [
     "**/*.ts",

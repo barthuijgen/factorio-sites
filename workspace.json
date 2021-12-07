@@ -1,6 +1,64 @@
 {
   "version": 1,
   "projects": {
+    "blueprint-image-function": {
+      "root": "apps/blueprint-image-function",
+      "sourceRoot": "apps/blueprint-image-function/src",
+      "projectType": "application",
+      "prefix": "blueprint-image-function",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/blueprint-image-function",
+            "main": "apps/blueprint-image-function/src/main.ts",
+            "tsConfig": "apps/blueprint-image-function/tsconfig.app.json",
+            "assets": [
+              {
+                "input": "apps/blueprints/prisma",
+                "glob": "schema.prisma",
+                "output": "./prisma"
+              }
+            ],
+            "generatePackageJson": true
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/blueprint-image-function/src/environments/environment.ts",
+                  "with": "apps/blueprint-image-function/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "blueprint-image-function:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/blueprint-image-function/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/blueprint-image-function/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "blueprints": {
       "root": "apps/blueprints",
       "sourceRoot": "apps/blueprints",
@@ -39,9 +97,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/blueprints/**/*.{ts,tsx}"
-            ]
+            "lintFilePatterns": ["apps/blueprints/**/*.{ts,tsx}"]
           }
         },
         "test": {
@@ -51,7 +107,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "blueprints-e2e": {
       "root": "apps/blueprints-e2e",
@@ -74,64 +131,56 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/blueprints-e2e/**/*.{js,ts}"
-            ]
+            "lintFilePatterns": ["apps/blueprints-e2e/**/*.{js,ts}"]
           }
         }
-      }
+      },
+      "tags": [],
+      "implicitDependencies": ["blueprints"]
     },
-    "blueprint-image-function": {
-      "root": "apps/blueprint-image-function",
-      "sourceRoot": "apps/blueprint-image-function/src",
-      "projectType": "application",
-      "prefix": "blueprint-image-function",
+    "common-utils": {
+      "root": "libs/common-utils",
+      "sourceRoot": "libs/common-utils/src",
+      "projectType": "library",
       "schematics": {},
       "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/blueprint-image-function",
-            "main": "apps/blueprint-image-function/src/main.ts",
-            "tsConfig": "apps/blueprint-image-function/tsconfig.app.json",
-            "assets": []
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/blueprint-image-function/src/environments/environment.ts",
-                  "with": "apps/blueprint-image-function/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "blueprint-image-function:build"
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/blueprint-image-function/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/common-utils/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/blueprint-image-function/jest.config.js",
+            "jestConfig": "libs/common-utils/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
+    },
+    "database": {
+      "root": "libs/database",
+      "sourceRoot": "libs/database/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/database/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/database/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
     },
     "factorioprints-scraper": {
       "root": "apps/factorioprints-scraper",
@@ -146,9 +195,7 @@
             "outputPath": "dist/apps/factorioprints-scraper",
             "main": "apps/factorioprints-scraper/src/main.ts",
             "tsConfig": "apps/factorioprints-scraper/tsconfig.app.json",
-            "assets": [
-              "apps/factorioprints-scraper/src/assets"
-            ]
+            "assets": ["apps/factorioprints-scraper/src/assets"]
           },
           "configurations": {
             "production": {
@@ -173,9 +220,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/factorioprints-scraper/**/*.ts"
-            ]
+            "lintFilePatterns": ["apps/factorioprints-scraper/**/*.ts"]
           }
         },
         "test": {
@@ -185,30 +230,8 @@
             "passWithNoTests": true
           }
         }
-      }
-    },
-    "database": {
-      "root": "libs/database",
-      "sourceRoot": "libs/database/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/database/**/*.ts"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/database/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
+      },
+      "tags": []
     },
     "node-utils": {
       "root": "libs/node-utils",
@@ -219,9 +242,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/node-utils/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/node-utils/**/*.ts"]
           }
         },
         "test": {
@@ -231,30 +252,30 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
-    "common-utils": {
-      "root": "libs/common-utils",
-      "sourceRoot": "libs/common-utils/src",
+    "types": {
+      "root": "libs/types",
+      "sourceRoot": "libs/types/src",
       "projectType": "library",
-      "schematics": {},
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/common-utils/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/types/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/types"],
           "options": {
-            "jestConfig": "libs/common-utils/jest.config.js",
+            "jestConfig": "libs/types/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "web-utils": {
       "root": "libs/web-utils",
@@ -265,9 +286,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/web-utils/**/*.ts"
-            ]
+            "lintFilePatterns": ["libs/web-utils/**/*.ts"]
           }
         },
         "test": {
@@ -277,49 +296,8 @@
             "passWithNoTests": true
           }
         }
-      }
-    },
-    "types": {
-      "root": "libs/types",
-      "sourceRoot": "libs/types/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/types/**/*.ts"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/types"
-          ],
-          "options": {
-            "jestConfig": "libs/types/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
+      },
+      "tags": []
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/next"
-  },
-  "schematics": {
-    "@nrwl/react": {
-      "application": {
-        "babel": true
-      }
-    },
-    "@nrwl/next": {
-      "application": {
-        "style": "@emotion/styled",
-        "linter": "eslint"
-      }
-    }
-  },
-  "defaultProject": "blueprints"
+  }
 }

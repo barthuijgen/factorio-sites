@@ -109,7 +109,7 @@ export const BlueprintTile: React.FC<BlueprintTileProps> = ({
   };
 
   return (
-    <div css={linkStyles}>
+    <Box css={linkStyles}>
       <Link
         href={editLink ? `/user/blueprint/${blueprint.id}` : `/blueprint/${blueprint.id}`}
         passHref
@@ -127,6 +127,7 @@ export const BlueprintTile: React.FC<BlueprintTileProps> = ({
                   objectFit="contain"
                   alt={blueprint.title}
                   onError={onImageError}
+                  unoptimized
                 />
               )}
             </div>
@@ -150,6 +151,6 @@ export const BlueprintTile: React.FC<BlueprintTileProps> = ({
           </Box>
         </a>
       </Link>
-    </div>
+    </Box>
   );
 };

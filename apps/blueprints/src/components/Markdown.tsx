@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
+import { Box } from "@chakra-ui/react";
 
 const markdownStyle = css`
   overflow: auto;
@@ -19,7 +20,7 @@ const markdownStyle = css`
 `;
 
 export const Markdown: React.FC<{ children: string }> = ({ children, ...props }) => (
-  <div css={markdownStyle} {...props}>
+  <Box css={markdownStyle} {...props}>
     <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>{children}</ReactMarkdown>
-  </div>
+  </Box>
 );

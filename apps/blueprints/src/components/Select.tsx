@@ -1,6 +1,7 @@
-import MultiSelect from "react-multi-select-component";
+import { MultiSelect } from "react-multi-select-component";
 import styled from "@emotion/styled";
-import { ISelectProps } from "react-multi-select-component/dist/lib/interfaces";
+
+type ISelectProps = Parameters<typeof MultiSelect>[0];
 
 interface Tag {
   value: string;

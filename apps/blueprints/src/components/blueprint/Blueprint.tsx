@@ -102,7 +102,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
               <img
                 src={`${PUBLIC_URL}/fbe.svg`}
                 alt="Factorio blueprint editor"
-                css={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
+                style={{ display: "inline-block", height: "24px", marginLeft: "10px" }}
               />
             )}
             <Box css={{ display: "inline-block", flexGrow: 1, textAlign: "right" }}>

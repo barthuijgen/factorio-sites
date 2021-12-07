@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/layout";
+import { Box, Text } from "@chakra-ui/layout";
 import styled from "@emotion/styled";
 import { IconSignalTypes } from "@factorio-sites/types";
 import { ReactNode } from "react";
@@ -49,7 +49,7 @@ const parseFactorioCode = (string: string): ReactNode => {
     if (match.start > lastHandledIndex) {
       let content = string.substr(lastHandledIndex, match.start - lastHandledIndex);
       content = content.replace(/ /g, "\u00A0");
-      result.push(<span key={lastHandledIndex}>{content}</span>);
+      result.push(<Text key={lastHandledIndex}>{content}</Text>);
     }
 
     if (match.groups.color && match.groups.content) {
@@ -57,12 +57,12 @@ const parseFactorioCode = (string: string): ReactNode => {
         match.groups.color = `rgb(${match.groups.color})`;
       }
       result.push(
-        <span
+        <Text
           key={match.start}
           css={{ color: match.groups.color, display: "inline-flex", alignItems: "center" }}
         >
           {parseFactorioCode(match.groups.content)}
-        </span>
+        </Text>
       );
     } else if (match.groups.type && match.groups.icon) {
       if (match.groups.type === "img") {
@@ -88,7 +88,7 @@ const parseFactorioCode = (string: string): ReactNode => {
   });
 
   if (lastHandledIndex < string.length) {
-    result.push(<span key={lastHandledIndex}>{string.substr(lastHandledIndex)}</span>);
+    result.push(<Text key={lastHandledIndex}>{string.substr(lastHandledIndex)}</Text>);
   }
 
   return result;

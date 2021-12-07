@@ -9,3 +9,8 @@ updates:
     target-branch: develop
     ignore:
       - dependency-name: "@fbe/editor"
+      - dependency-name: "factorio-wasm"
+      - dependency-name: "react-map-interaction"
+      - dependency-name: "pako" # v2 does not support required use case
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]

@@ -1,5 +1,9 @@
 {
-  "extends": ["../../.eslintrc.json", "plugin:@next/next/recommended"],
+  "extends": [
+    "plugin:@nrwl/nx/react-typescript",
+    "../../.eslintrc.json",
+    "plugin:@next/next/recommended"
+  ],
   "ignorePatterns": ["!**/*"],
   "env": {
     "browser": true,
@@ -281,7 +285,9 @@
       "parserOptions": {
         "project": ["apps/blueprints/tsconfig(.*)?.json"]
       },
-      "rules": {}
+      "rules": {
+        "@next/next/no-html-link-for-pages": ["error", "apps/blueprints/src/pages"]
+      }
     },
     {
       "files": ["*.ts", "*.tsx"],

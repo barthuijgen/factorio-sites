@@ -25,7 +25,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn
-      - run: yarn db-gen
       - run: yarn nx build blueprints
         env:
           PUBLIC_URL: https://factorio-blueprints-assets.storage.googleapis.com/public

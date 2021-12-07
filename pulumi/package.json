@@ -1,0 +1,13 @@
+{
+  "name": "factorio-sites",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "pulumi:up": "pulumi up"
+  },
+  "devDependencies": {
+    "@pulumi/pulumi": "^3.0.0",
+    "@pulumi/gcp": "^5.0.0"
+  }
+}

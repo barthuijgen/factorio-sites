@@ -1,31 +1,20 @@
+import * as phin from "phin";
 import {
   getBlueprintById,
-  getBlueprintStringByHash,
   hasBlueprintImage,
   saveBlueprintImage,
   init,
 } from "@factorio-sites/database";
 import { jsonReplaceErrors } from "@factorio-sites/node-utils";
 import { optimise } from "./image-optimiser";
-import { renderImage } from "./image-renderer";
 
 // {"blueprintId":"ee9b98eb-313a-4401-8aee-d6e970b76aad"}
 // ^ image_hash: 6f78c0a93c20fe99076e8defe4e396923f42753b
 
-/** express req interface for http-triggered function */
-interface Req {
-  query: Record<string, string>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body: any;
-}
-/** express res interface for http-triggered function */
-interface Res {
-  status(status: number): Res;
-  send(body: string): void;
-}
 /** message body for pubsub triggered function */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Message = Record<string, any>;
+
 /** context for pubsub triggered function */
 interface Context {
   eventId: string;
@@ -33,53 +22,12 @@ interface Context {
   timestamp: string;
   resource: { service: string; name: string };
 }
-type Handler = (req: Req, res: Res) => void;
+
 type PubSubHandler = (
   message: Message,
   context: Context,
   callback: (error?: string) => void
 ) => void;
-
-export const functionHttpHandler: Handler = async (req, res) => {
-  try {
-    const blueprintId = req.body.blueprintId;
-
-    if (!blueprintId) {
-      return res.status(400).send("No blueprintId in body");
-    }
-
-    console.log("generating image for", blueprintId);
-
-    await init();
-    const blueprint = await getBlueprintById(blueprintId);
-
-    if (!blueprint) {
-      return res.status(400).send("Blueprint not found");
-    }
-
-    if (await hasBlueprintImage(blueprint.image_hash, "300")) {
-      return res.status(200).send(`Image already exists ${blueprint.image_hash}`);
-    }
-
-    const blueprint_string = await getBlueprintStringByHash(blueprint.blueprint_hash);
-    if (!blueprint_string) {
-      return res.status(400).send("Blueprint string not found");
-    }
-
-    const image = await renderImage(blueprint_string);
-    console.log("Image generated");
-
-    // Make thumbnail, max size 300px
-    const min_image = await optimise(image, 300);
-
-    await saveBlueprintImage(blueprint.image_hash, min_image, "300");
-
-    res.status(200).send("Done");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (reason: any) {
-    res.status(500).send(`Error rendering image ${reason.stack || reason}`);
-  }
-};
 
 export const functionPubSubHandler: PubSubHandler = async (message, _context, callback) => {
   const error = (message: string, data: Record<string, unknown> = {}) => {
@@ -109,19 +57,16 @@ export const functionPubSubHandler: PubSubHandler = async (message, _context, ca
     }
 
     if (await hasBlueprintImage(blueprint.image_hash, "300")) {
-      log("Image already exists");
+      log(`Image already exists ${blueprint.image_hash}`);
       return callback();
     }
 
-    log(`generating image for ${blueprintId}`);
-
-    const blueprint_string = await getBlueprintStringByHash(blueprint.blueprint_hash);
-    if (!blueprint_string) {
-      return error("Blueprint string not found");
-    }
-
-    const image = await renderImage(blueprint_string);
-    log("Image generated");
+    console.log(`Fetching https://fbsr.factorio.workers.dev/${blueprint.blueprint_hash}?size=300`);
+    const response = await phin(
+      `https://fbsr.factorio.workers.dev/${blueprint.blueprint_hash}?size=300`
+    );
+    const image = response.body;
+    console.log("Image fetched");
 
     // Make thumbnail, max size 300px
     const min_image = await optimise(image, 300);

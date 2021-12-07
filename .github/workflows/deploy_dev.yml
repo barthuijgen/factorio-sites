@@ -25,7 +25,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn
-      - run: yarn db-gen
       - run: yarn nx build blueprints
         env:
           CF_WEB_ANALYTICS: 6c563c1e5db141129a5fc95d5c459722

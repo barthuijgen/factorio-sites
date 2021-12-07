@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import {
@@ -97,9 +97,8 @@ export const Index: NextPage<IndexProps> = ({
   const [blueprints, setBlueprints] = useState<BlueprintPageWithUserFavorite[]>([]);
   const routerQueryToHref = useRouterQueryToHref();
   const data = useFbeData();
-  const searchOptions = useFetch<{ entities: string[]; items: string[]; recipes: string[] }>(
-    "/api/searchoptions"
-  );
+  const searchOptions =
+    useFetch<{ entities: string[]; items: string[]; recipes: string[] }>("/api/searchoptions");
 
   useEffect(() => {
     setSearchQuery((router.query.q as string) || "");
@@ -250,7 +249,7 @@ export const Index: NextPage<IndexProps> = ({
                   />
                 ))
               ) : (
-                <p css={{ marginTop: "10px" }}>No results found</p>
+                <Text css={{ marginTop: "10px" }}>No results found</Text>
               )}
             </Box>
             <Box css={{ marginTop: "15px" }}>
