@@ -13,7 +13,6 @@ import { useRouterQueryToHref } from "../hooks/query.hook";
 import { BlueprintTile } from "../components/BlueprintTile";
 import { Select } from "../components/Select";
 import { queryValueAsArray } from "../utils/query.utils";
-import { useFbeData } from "../hooks/fbe.hook";
 import {
   Box,
   Text,
@@ -96,7 +95,6 @@ export const Index: NextPage<IndexProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [blueprints, setBlueprints] = useState<BlueprintPageWithUserFavorite[]>([]);
   const routerQueryToHref = useRouterQueryToHref();
-  const data = useFbeData();
   const searchOptions =
     useFetch<{ entities: string[]; items: string[]; recipes: string[] }>("/api/searchoptions");
 
@@ -107,8 +105,6 @@ export const Index: NextPage<IndexProps> = ({
   useEffect(() => {
     setBlueprints(blueprintsProp);
   }, [blueprintsProp]);
-
-  if (!data) return null;
 
   const entityOptions = searchOptions.data?.entities || [];
   const itemOptions = searchOptions.data?.items || [];
