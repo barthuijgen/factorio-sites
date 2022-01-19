@@ -102,7 +102,7 @@
     "@typescript-eslint/eslint-plugin": "5.5.0",
     "@typescript-eslint/parser": "5.5.0",
     "babel-jest": "27.4.2",
-    "cypress": "7.1.0",
+    "cypress": "9.3.1",
     "dotenv": "10.0.0",
     "eslint": "7.24.0",
     "eslint-config-prettier": "8.3.0",
