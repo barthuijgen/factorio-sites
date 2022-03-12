@@ -111,6 +111,11 @@ const BlueprintsApp = ({
 };
 
 BlueprintsApp.getInitialProps = ({ ctx }: AppContext) => {
+  if (ctx.req?.headers?.host === "factorioblueprints.tech" && ctx.res) {
+    ctx.res.statusCode = 302;
+    ctx.res.setHeader("Location", "https://factorio.tools" + ctx.req?.url);
+  }
+
   const userToken = getSessionToken(ctx.req);
   return { authenticated: !!userToken };
 };
