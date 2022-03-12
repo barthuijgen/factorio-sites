@@ -1,4 +1,3 @@
-import React from "react";
 import { NextPage } from "next";
 import { SimpleGrid, Box, Text } from "@chakra-ui/react";
 import { getUserFavoriteBlueprintPages } from "@factorio-sites/database";
