@@ -66,7 +66,9 @@ export const useFbeData = (): FactorioData | null => {
   useEffect(() => {
     (async () => {
       if (!fbeDataState.value) {
-        const result = await fetch("/api/fbe-proxy/data.json")
+        const result = await fetch(
+          "https://storage.googleapis.com/factorio-blueprints-fbe-assets/data.json"
+        )
           .then((res) => res.json())
           .catch(() => {
             console.error("Failed to fetch data.json");

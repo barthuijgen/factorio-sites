@@ -14,7 +14,7 @@ export const useFetch = <T>(
   const data = dataState.nested(url).value;
 
   const [loading, setLoading] = useState(() => !data && !skip);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!url || data || skip) return;
@@ -25,8 +25,8 @@ export const useFetch = <T>(
         const response = await fetch(url);
         const data = await response.json();
         dataState.nested(url).set(data);
-      } catch (error: any) {
-        setError(error);
+      } catch (error: unknown) {
+        setError(error as Error);
       }
       setLoading(false);
     };

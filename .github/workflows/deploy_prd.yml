@@ -29,15 +29,15 @@ jobs:
         env:
           PUBLIC_URL: https://factorio-blueprints-assets.storage.googleapis.com/public
           CF_WEB_ANALYTICS: 4a7b06ea5bdb4d328a1baea602aea295
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+      - name: Authenticate gcloud
+        uses: google-github-actions/auth@v1
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: "${{ secrets.GCP_SA_KEY }}"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
       - run: gcloud auth configure-docker --quiet
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: blueprints.github.Dockerfile
