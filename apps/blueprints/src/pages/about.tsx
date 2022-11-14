@@ -26,21 +26,26 @@ export const Index: NextPage = () => {
           <Box>
             <h2 style={{ fontSize: "30px" }}>Factorio Blueprints by Barry</h2>
           </Box>
-          <Box css={{ marginRight: "1rem" }}>
-            <h3 style={{ color: "orange" }}>
-              Work in progress! <IoIosConstruct css={{ display: "inline-block" }} />
-            </h3>
-          </Box>
+        </Box>
+        <Box>
+          <p>
+            Factorio blueprints aims to be a feature complete blueprints library where you can
+            upload, organize and search for blueprints. It scans uploaded blueprints and blueprint
+            books to break down their contents allowing you to view and copy individual blueprints,
+            but also power the search where you can find any type of entity and recipe, even modded
+            once.
+          </p>
+          <p>
+            If you have any suggestions or feedback please join our discord below or create an
+            github issue and get in touch!
+          </p>
         </Box>
         <Box css={headerCss}>
           <h3>Join our discord server</h3>
         </Box>
         <Box>
           <Link href="https://discord.gg/87b92d6vDk" target="__blank" rel="noopener">
-            <Image
-              src="https://discord.com/assets/e4923594e694a21542a489471ecffa50.svg"
-              height="35px"
-            />
+            <Image src="./discord_logo.svg" height="35px" />
           </Link>
         </Box>
         <Box css={headerCss}>
@@ -52,10 +57,7 @@ export const Index: NextPage = () => {
             target="__blank"
             rel="noopener"
           >
-            <Image
-              src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png"
-              css={{ height: "25px", display: "inline" }}
-            />
+            <Image src="./github_logo.png" css={{ height: "25px", display: "inline" }} />
           </Link>
         </Box>
         <Box css={headerCss}>
@@ -115,7 +117,7 @@ export const Index: NextPage = () => {
             target="__blank"
             css={{ textDecoration: "underline" }}
           >
-            Create an issue on GitHub!
+            Create an issue on GitHub
           </Link>
         </Box>
       </Panel>

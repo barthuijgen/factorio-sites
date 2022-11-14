@@ -46,5 +46,5 @@ const promise = _init()
 
 export const init = async () => {
   await promise;
-  await prisma.$connect();
+  // await prisma.$connect();
 };
