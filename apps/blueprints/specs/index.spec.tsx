@@ -1,4 +1,4 @@
-/* eslint-disable import/first */
+/* eslint-disable @typescript-eslint/no-explicit-any, import/first */
 jest.mock("next/config", () => () => ({
   publicRuntimeConfig: {},
 }));
@@ -6,16 +6,15 @@ jest.mock("next/config", () => () => ({
 import { render } from "@testing-library/react";
 import Index from "../src/pages/index";
 import * as nextRouter from "next/router";
+import { NextRouter } from "next/router";
 
 const useRouter = jest.spyOn(nextRouter, "useRouter");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global as any).fetch = jest.fn(() => Promise.resolve());
 console.error = jest.fn();
 
 describe("Index", () => {
   it("should render successfully", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    useRouter.mockImplementationOnce(() => ({ query: {} } as any));
+    useRouter.mockImplementation(() => ({ query: {} } as NextRouter));
 
     const { baseElement } = render(
       <Index totalItems={0} currentPage={0} totalPages={0} blueprints={[]} />

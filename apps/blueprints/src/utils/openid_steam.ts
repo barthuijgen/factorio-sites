@@ -47,8 +47,8 @@ export const fetchSteamProfile = async (steam_id: string, api_key: string) => {
     } else {
       throw Error("No players found for the given SteamID.");
     }
-  } catch (error: any) {
-    throw Error("Steam server error: " + error.message);
+  } catch (error: unknown) {
+    throw Error("Steam server error: " + (error as Error).message);
   }
 };
 

@@ -29,7 +29,7 @@ jobs:
         env:
           CF_WEB_ANALYTICS: 6c563c1e5db141129a5fc95d5c459722
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}

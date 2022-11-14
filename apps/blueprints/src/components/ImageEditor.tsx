@@ -90,6 +90,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string, onError }) => 
 
         // const picture = await editor.getPicture();
         // setImage(URL.createObjectURL(picture));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (reason: any) {
         setRenderError(true);
         if (onError) onError();

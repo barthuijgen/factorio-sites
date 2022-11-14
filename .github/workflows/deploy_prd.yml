@@ -30,7 +30,7 @@ jobs:
           PUBLIC_URL: https://factorio-blueprints-assets.storage.googleapis.com/public
           CF_WEB_ANALYTICS: 4a7b06ea5bdb4d328a1baea602aea295
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
