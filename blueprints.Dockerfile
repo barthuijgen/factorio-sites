@@ -1,4 +1,4 @@
-FROM node:14-slim as builder
+FROM node:18-slim as builder
 
 RUN apt-get -qy update && apt-get -qy install openssl
 
@@ -15,7 +15,7 @@ COPY . .
 
 RUN yarn nx build blueprints --prod
 
-FROM node:14-slim
+FROM node:18-slim
 
 RUN apt-get -qy update && apt-get -qy install openssl
 
