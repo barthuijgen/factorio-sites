@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useMemo } from "react";
 import { css } from "@emotion/react";
 import { Box } from "@chakra-ui/react";
 import type { SimpleMDEReactProps } from "react-simplemde-editor";
@@ -37,12 +37,13 @@ const styles = css`
   }
 `;
 
-export const MDEditor: React.FC<SimpleMDEReactProps> = (props) => {
+export const MDEditor = React.forwardRef<HTMLDivElement, SimpleMDEReactProps>((props, ref) => {
+  const options = useMemo(() => ({ spellChecker: false, sideBySideFullscreen: false }), []);
   return (
     <Suspense fallback={null}>
       <Box css={styles}>
-        <SimpleMDE options={{ spellChecker: false, sideBySideFullscreen: false }} {...props} />
+        <SimpleMDE options={options} {...props} ref={ref} />
       </Box>
     </Suspense>
   );
-};
+});
