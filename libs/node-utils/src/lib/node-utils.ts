@@ -90,7 +90,7 @@ export function getFirstBlueprintFromChildTree(child_tree: ChildTree): string {
   let blueprint_id: string | null = null;
   child_tree.forEach((child) => {
     if (child.type === "blueprint_book") {
-      const bp = getFirstBlueprintFromChildTree([child]);
+      const bp = getFirstBlueprintFromChildTree(child.children);
       if (bp) blueprint_id = bp;
     }
   });
