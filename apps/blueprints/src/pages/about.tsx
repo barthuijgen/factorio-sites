@@ -2,7 +2,6 @@ import { NextPage } from "next";
 import { SimpleGrid, Box, Text, Image, Link } from "@chakra-ui/react";
 import { Panel } from "../components/Panel";
 import { css } from "@emotion/react";
-import { IoIosConstruct } from "react-icons/io";
 import { PUBLIC_URL } from "../utils/env";
 
 const headerCss = css`
