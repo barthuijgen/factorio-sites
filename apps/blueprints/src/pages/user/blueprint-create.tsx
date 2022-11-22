@@ -54,7 +54,6 @@ interface FormValues {
 
 export const UserBlueprintCreate: NextPage = () => {
   const router = useRouter();
-
   const {
     control,
     handleSubmit,
@@ -62,7 +61,7 @@ export const UserBlueprintCreate: NextPage = () => {
     setValue,
     setError,
     clearErrors,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     mode: "onTouched",
   });

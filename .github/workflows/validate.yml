@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: 18
           cache: "yarn"
-      - run: yarn --prefer-offline
+      - run: yarn
       - run: yarn nx run-many --all --target=lint
       - run: yarn nx run-many --all --target=test "--ci"
       - run: yarn nx build blueprints

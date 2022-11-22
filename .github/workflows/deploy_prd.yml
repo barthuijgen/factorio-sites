@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: 18
           cache: "yarn"
-      - run: yarn --prefer-offline
+      - run: yarn
       - run: yarn nx build blueprints
         env:
           PUBLIC_URL: https://factorio-blueprints-assets.storage.googleapis.com/public

@@ -298,13 +298,13 @@ export const getServerSideProps = pageHandler(async ({ query }, { session }) => 
 
   return {
     props: {
-      totalItems: count,
+      totalItems: Number(count),
       currentPage: page,
-      totalPages: Math.ceil(count / perPage),
+      totalPages: Math.ceil(Number(count) / perPage),
       blueprints: rows.map((row) => ({
         id: row.id,
         image_hash: row.image_hash,
-        favorite_count: row.favorite_count,
+        favorite_count: Number(row.favorite_count),
         title: row.title,
         updated_at: row.updated_at,
         user_favorite: userFavorites.includes(row.id),
