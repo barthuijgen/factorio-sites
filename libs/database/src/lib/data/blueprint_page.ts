@@ -130,7 +130,7 @@ export async function searchBlueprintPages({
     conditionals.push(sqltag`blueprint_page.tags ${matchSql} array[${join(tags)}::varchar]`);
   }
   if (user) {
-    conditionals.push(sqltag`blueprint_page.user_id = ${user}`);
+    conditionals.push(sqltag`blueprint_page.user_id = ${user}::uuid`);
   }
   if (absolute_snapping) {
     conditionals.push(sqltag`(blueprint.data -> 'absolute_snapping')::boolean = true`);
