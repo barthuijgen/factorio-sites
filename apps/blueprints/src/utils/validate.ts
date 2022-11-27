@@ -81,14 +81,14 @@ export const validateUserForm = (auth: AuthContextProps) => (values: UserFormVal
   return filterUndefined(errors);
 };
 
-export const joinValidations = <T>(...validations: Array<(value: T) => string | undefined>) => (
-  value: T
-): string | undefined => {
-  for (let i = 0; i < validations.length; i++) {
-    const error = validations[i](value);
-    if (error) return error;
-  }
-};
+export const joinValidations =
+  <T>(...validations: Array<(value: T) => string | undefined>) =>
+  (value: T): string | undefined => {
+    for (let i = 0; i < validations.length; i++) {
+      const error = validations[i](value);
+      if (error) return error;
+    }
+  };
 
 export const validateBlueprintString = (value: string) => {
   if (value) {
@@ -102,7 +102,5 @@ export const validateBlueprintString = (value: string) => {
     if (!parsed.blueprint && !parsed.blueprint_book) {
       return "Must have a blueprint or blueprint book";
     }
-  } else {
-    return "Not recognised as a blueprint string";
   }
 };

@@ -41,17 +41,21 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ string, onError }) => 
   // Load editor async, it does not work server side
   useEffect(() => {
     (async () => {
-      const FBE = await import("@fbe/editor");
-      const editor = new FBE.Editor();
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      await editor.init(canvas, PUBLIC_URL);
-      canvas.style.width = "100%";
-      canvas.style.height = "auto";
-      editor.setRendererSize(canvas.offsetWidth, canvas.offsetHeight);
-      FbeRef.current = FBE;
-      editorRef.current = editor;
-      setEditorLoaded(true);
+      try {
+        const FBE = await import("@fbe/editor");
+        const editor = new FBE.Editor();
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        await editor.init(canvas, PUBLIC_URL);
+        canvas.style.width = "100%";
+        canvas.style.height = "auto";
+        editor.setRendererSize(canvas.offsetWidth, canvas.offsetHeight);
+        FbeRef.current = FBE;
+        editorRef.current = editor;
+        setEditorLoaded(true);
+      } catch (error) {
+        console.log("Failed to init editor", error);
+      }
     })();
 
     const resizeFn = () => {
