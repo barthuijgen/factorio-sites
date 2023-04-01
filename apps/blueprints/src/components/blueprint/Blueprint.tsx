@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Head from "next/head";
 import { Grid, Box } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
@@ -91,6 +92,11 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
     <StyledBlueptintPage
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr 1fr 1fr" })}
     >
+      <Head>
+        <title>
+          {(blueprint_page.title ? `${blueprint_page.title} - ` : "") + "Factorio blueprints"}
+        </title>
+      </Head>
       <Panel
         className="image"
         gridColumn={chakraResponsive({ mobile: "1", desktop: "3 / span 2" })}
