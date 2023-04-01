@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Head from "next/head";
 import { Box, Grid } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
@@ -142,6 +143,11 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
       className="bp-book"
       templateColumns={chakraResponsive({ mobile: "1fr", desktop: "1fr 1fr 1fr 1fr" })}
     >
+      <Head>
+        <title>
+          {(blueprint_page.title ? `${blueprint_page.title} - ` : "") + "Factorio blueprints"}
+        </title>
+      </Head>
       <Panel
         className="child-tree"
         title={

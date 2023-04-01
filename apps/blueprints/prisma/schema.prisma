@@ -124,6 +124,12 @@ model comment {
   replies           comment[]      @relation("commentToComment")
 }
 
+model blueprint_string {
+  id     String @id @default(uuid()) @db.Uuid
+  hash   String @unique @db.VarChar(40)
+  string String @db.Text
+}
+
 model blueprint_entities {
   entity String @unique
 }
