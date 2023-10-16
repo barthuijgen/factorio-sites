@@ -8,7 +8,7 @@ import { createBlueprint } from "./blueprint";
 
 const mapBlueprintBookEntityToObject = (entity: blueprint_book): BlueprintBook => ({
   id: entity.id,
-  child_tree: entity.child_tree ? ((entity.child_tree as unknown) as ChildTree) : [],
+  child_tree: entity.child_tree ? (entity.child_tree as unknown as ChildTree) : [],
   blueprint_hash: entity.blueprint_hash,
   label: entity.label || "",
   description: entity.description || "",
@@ -61,6 +61,8 @@ export async function createBlueprintBook(
         type: "blueprint",
         id: result.id,
         name: blueprint.blueprint.label || "",
+        icons:
+          blueprint.blueprint.icons?.map((icon) => `${icon.signal.type}:${icon.signal.name}`) || [],
       });
       blueprint_ids.push(result.id);
     } else if (blueprint.blueprint_book) {
@@ -70,6 +72,10 @@ export async function createBlueprintBook(
         id: result.id,
         name: blueprint.blueprint_book.label,
         children: result.child_tree,
+        icons:
+          blueprint.blueprint_book.icons?.map(
+            (icon) => `${icon.signal.type}:${icon.signal.name}`
+          ) || [],
       });
       blueprint_book_ids.push(result.id);
     }
@@ -81,7 +87,7 @@ export async function createBlueprintBook(
       description: blueprintBook.description,
       blueprint_hash: blueprint_hash,
       is_modded: false,
-      child_tree: (child_tree as unknown) as Prisma.InputJsonObject,
+      child_tree: child_tree as unknown as Prisma.InputJsonObject,
       updated_at: extraInfo.updated_at ? new Date(extraInfo.updated_at * 1000) : new Date(),
       created_at: extraInfo.created_at ? new Date(extraInfo.created_at * 1000) : new Date(),
       blueprint_books: {
