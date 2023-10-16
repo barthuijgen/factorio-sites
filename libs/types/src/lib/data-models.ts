@@ -5,6 +5,7 @@ export interface ChildTreeBlueprint {
   type: "blueprint";
   id: string;
   name: string;
+  icons?: string[];
 }
 
 export interface ChildTreeBlueprintBook {
@@ -12,6 +13,7 @@ export interface ChildTreeBlueprintBook {
   id: string;
   name: string;
   children: ChildTree;
+  icons?: string[];
 }
 
 export type ChildTree = Array<ChildTreeBlueprint | ChildTreeBlueprintBook>;
