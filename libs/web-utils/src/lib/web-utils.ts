@@ -60,10 +60,11 @@ export function getFirstBookFromString(string: string): BlueprintString | null {
   return null;
 }
 
-interface ChildTreeBlueprintEnriched extends ChildTreeBlueprint {
+interface ChildTreeBlueprintEnriched extends Omit<ChildTreeBlueprint, "icons"> {
   icons: Icon[];
 }
-export interface ChildTreeBlueprintBookEnriched extends ChildTreeBlueprintBook {
+export interface ChildTreeBlueprintBookEnriched
+  extends Omit<ChildTreeBlueprintBook, "icons" | "children"> {
   icons?: Icon[];
   children: ChildTreeEnriched;
 }
