@@ -147,6 +147,17 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
         <title>
           {(blueprint_page.title ? `${blueprint_page.title} - ` : "") + "Factorio blueprints"}
         </title>
+        <meta
+          property="og:title"
+          content={
+            (blueprint_page.title ? `${blueprint_page.title} - ` : "") + "Factorio blueprints"
+          }
+          key="title"
+        />
+        <meta
+          property="og:image"
+          content={`https://storage.googleapis.com/blueprint-images/300/${blueprint_page.image_hash}.webp`}
+        />
       </Head>
       <Panel
         className="child-tree"
