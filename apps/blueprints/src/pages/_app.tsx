@@ -54,6 +54,13 @@ const globalStyles = css`
       width: 100%;
     }
   }
+  .global-notice {
+    margin: 0.5rem 1rem;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+  }
 `;
 
 if (typeof window !== "undefined") {
@@ -97,6 +104,9 @@ const BlueprintsApp = ({
           {!auth.loading && (
             <>
               <Header />
+              <div className="global-notice">
+                Site is being updated for factorio 2.0 and Space Age.
+              </div>
               <main>
                 <div className="container">
                   <Component {...pageProps} />
