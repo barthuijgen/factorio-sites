@@ -39,7 +39,8 @@ export const BlueprintImage: React.FC<BlueprintImageProps> = ({
     <ImageEditor string={string} onError={() => setRenderer("fbsr")}></ImageEditor>
   ) : (
     <FullscreenImage
-      src={`https://fbsr.factorio.workers.dev/${blueprint_hash}?size=1000`}
+      // src={`https://fbsr.factorio.workers.dev/${blueprint_hash}?size=1000`}
+      src={`https://render.factorio.tools/render?url=https://factorioblueprints.tech/api/string/${blueprint_hash}`}
       alt={label}
     />
   );
