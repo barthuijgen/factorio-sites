@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Heading, Flex, Text } from "@chakra-ui/react";
+import { Box, Heading, Flex, Text, Button } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "../providers/auth";
@@ -15,9 +15,37 @@ const MenuItem: React.FC<{ href: string }> = ({ children, href }) => (
   </Link>
 );
 
-export const Header: React.FC = (props) => {
+const Buttons: React.FC = () => {
   const auth = useAuth();
   const router = useRouter();
+
+  if (auth) {
+    return (
+      <>
+        <MenuItem href="/user/blueprint-create">
+          <Button primary>Upload</Button>
+        </MenuItem>
+        <MenuItem href="/user/favorites">My Favorites</MenuItem>
+        <MenuItem href="/user/blueprints">My blueprints</MenuItem>
+        <MenuItem href="/user/edit">Account</MenuItem>
+        <MenuItem href="/about">About</MenuItem>
+        <MenuItem href={`/api/logout?redirect=${router.asPath}`}>Logout</MenuItem>
+      </>
+    );
+  }
+  return (
+    <>
+      <MenuItem href="/login">
+        <Button primary>Upload</Button>
+      </MenuItem>
+      <MenuItem href="/register">Register</MenuItem>
+      <MenuItem href="/login">Login</MenuItem>
+      <MenuItem href="/about">About</MenuItem>
+    </>
+  );
+};
+
+export const Header: React.FC = (props) => {
   const [show, setShow] = useState(false);
   const handleToggle = () => setShow(!show);
 
@@ -54,21 +82,7 @@ export const Header: React.FC = (props) => {
         }}
         width={{ base: "full", md: "auto" }}
       >
-        {auth ? (
-          <>
-            <MenuItem href="/user/favorites">My Favorites</MenuItem>
-            <MenuItem href="/user/blueprints">My blueprints</MenuItem>
-            <MenuItem href="/user/edit">Account</MenuItem>
-            <MenuItem href="/about">About</MenuItem>
-            <MenuItem href={`/api/logout?redirect=${router.asPath}`}>Logout</MenuItem>
-          </>
-        ) : (
-          <>
-            <MenuItem href="/register">Register</MenuItem>
-            <MenuItem href="/login">Login</MenuItem>
-            <MenuItem href="/about">About</MenuItem>
-          </>
-        )}
+        <Buttons />
       </Box>
     </Flex>
   );
