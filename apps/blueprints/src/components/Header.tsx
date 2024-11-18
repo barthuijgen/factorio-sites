@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Heading, Flex, Text } from "@chakra-ui/react";
+import { Box, Heading, Flex, Text, Button } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "../providers/auth";
@@ -43,7 +43,6 @@ const Buttons: React.FC = () => {
           <Button primary>Upload</Button>
         </a>
       </Link>
-
       <MenuItem href="/register">Register</MenuItem>
       <MenuItem href="/login">Login</MenuItem>
       <MenuItem href="/about">About</MenuItem>
