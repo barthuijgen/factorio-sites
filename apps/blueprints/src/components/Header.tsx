@@ -9,7 +9,7 @@ const MenuItem: React.FC<{ href: string }> = ({ children, href }) => (
   <Link href={href} passHref>
     {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
     <a>
-      <Text mt={{ base: 4, md: 0 }} mr={6} display="block">
+      <Text mt={{ base: 4, md: 0 }} display="block">
         {children}
       </Text>
     </a>
@@ -86,6 +86,10 @@ export const Header: React.FC = (props) => {
         display={{
           base: show ? "block" : "none",
           md: "flex",
+        }}
+        alignItems="center"
+        css={{
+          gap: "16px",
         }}
         width={{ base: "full", md: "auto" }}
       >
