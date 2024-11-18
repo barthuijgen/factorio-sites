@@ -118,7 +118,11 @@ export const BlueprintTile: React.FC<BlueprintTileProps> = ({
           <Box className="block">
             <div className="image">
               {imageError ? (
-                <div>The image is not generated yet.</div>
+                <div
+                  data-src={`https://storage.factorio.tools/factorio-blueprint-images/thumbnail/${blueprint.image_hash}.webp`}
+                >
+                  The image is not generated yet.
+                </div>
               ) : (
                 <Image
                   loader={({ src }) => src}
