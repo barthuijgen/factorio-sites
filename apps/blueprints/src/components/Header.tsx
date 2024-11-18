@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Box, Heading, Flex, Text, Button } from "@chakra-ui/react";
+import { Box, Heading, Flex, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "../providers/auth";
+import { Button } from "./Button";
 
 const MenuItem: React.FC<{ href: string }> = ({ children, href }) => (
   <Link href={href} passHref>
@@ -22,9 +23,11 @@ const Buttons: React.FC = () => {
   if (auth) {
     return (
       <>
-        <MenuItem href="/user/blueprint-create">
-          <Button primary>Upload</Button>
-        </MenuItem>
+        <Link href="/user/blueprint-create" passHref>
+          <a>
+            <Button primary>Upload</Button>
+          </a>
+        </Link>
         <MenuItem href="/user/favorites">My Favorites</MenuItem>
         <MenuItem href="/user/blueprints">My blueprints</MenuItem>
         <MenuItem href="/user/edit">Account</MenuItem>
@@ -35,9 +38,12 @@ const Buttons: React.FC = () => {
   }
   return (
     <>
-      <MenuItem href="/login">
-        <Button primary>Upload</Button>
-      </MenuItem>
+      <Link href="/login" passHref>
+        <a>
+          <Button primary>Upload</Button>
+        </a>
+      </Link>
+
       <MenuItem href="/register">Register</MenuItem>
       <MenuItem href="/login">Login</MenuItem>
       <MenuItem href="/about">About</MenuItem>
@@ -53,6 +59,7 @@ export const Header: React.FC = (props) => {
     <Flex
       as="header"
       align="center"
+      alignItems="center"
       justify="space-between"
       wrap="wrap"
       padding="1.5rem"
