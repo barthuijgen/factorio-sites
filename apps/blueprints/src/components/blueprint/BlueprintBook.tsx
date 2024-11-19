@@ -226,6 +226,7 @@ export const BlueprintBookSubPage: React.FC<BlueprintBookSubPageProps> = ({
             string={selectedBlueprintString}
             label={selected.data.label || ""}
             blueprint_hash={selected.data.blueprint_hash}
+            image_hash={selected.type === "blueprint" ? selected.data.image_hash : undefined}
             onSetRenderer={setRenderer}
           />
         )}

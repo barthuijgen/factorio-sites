@@ -153,6 +153,7 @@ export const BlueprintSubPage: React.FC<BlueprintProps> = ({
             string={string}
             label={blueprint.label || ""}
             blueprint_hash={blueprint.blueprint_hash}
+            image_hash={blueprint.image_hash}
             onSetRenderer={setRenderer}
           />
         )}
