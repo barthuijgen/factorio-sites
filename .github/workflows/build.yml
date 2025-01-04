@@ -25,3 +25,5 @@ jobs:
         with:
           tags: ${{ vars.DOCKER_REGISTRY }}/factorio-blueprints:latest
           push: true
+          context: .
+          file: blueprints.github.Dockerfile
