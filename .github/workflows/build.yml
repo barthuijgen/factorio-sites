@@ -1,0 +1,27 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to custom registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.DOCKER_REGISTRY }}
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          tags: ${{ vars.DOCKER_REGISTRY }}/factorio-blueprints:latest
+          push: true
